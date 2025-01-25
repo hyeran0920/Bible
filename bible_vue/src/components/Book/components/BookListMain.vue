@@ -30,10 +30,10 @@
   
   <script>
   import axios from 'axios';
-  import '../../BookListStyle.css';
+  import '../styles/BookListStyle.css';
   import BookList from './BookList.vue';
   import BookModal from './BookModal.vue';
-  import Pagination from '../Pagination.vue';
+  import Pagination from './Pagination.vue';
   
   export default {
     components: {

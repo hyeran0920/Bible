@@ -47,7 +47,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         
         // cookie에 JWT 토큰이 존재하는지 확인
     	String accessToken = jwtProvider.resolveTokenInCookie(request);
-    	if(accessToken.equals(null)) {
+    	if(accessToken == null) {
 	          chain.doFilter(request, response);
 	          return;
     	}

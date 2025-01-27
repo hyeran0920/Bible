@@ -89,17 +89,17 @@
 	
 	<update id="updateBook" parameterType="com.library.bible.book.model.Book">
 	    UPDATE BOOK
-	    SET book_title = #{bookTitle}, 
-	        book_author = #{bookAuthor}, 
-	        book_publisher = #{bookPublisher}, 
-	        book_release_date = #{bookReleaseDate}, 
-	        book_category = #{bookCategory}, 
-	        book_price = #{bookPrice}, 
-	        book_stock = #{bookStock}, 
-	        book_img = #{bookImg}, 
+	    SET book_title = #{bookTitle},
+	        book_author = #{bookAuthor},
+	        book_publisher = #{bookPublisher},
+	        book_release_date = #{bookReleaseDate, jdbcType=DATE},
+	        book_category = #{bookCategory},
+	        book_price = #{bookPrice},
+	        book_stock = #{bookStock},
 	        book_detail = #{bookDetail}
 	    WHERE book_id = #{bookId}
 	</update>
+
 	
 	<delete id="deleteBook">
 	    DELETE FROM BOOK 

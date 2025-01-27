@@ -94,4 +94,14 @@ public class BookService implements IBookService {
 	public List<Map<String, Object>> getAllCategory() {
 		return bookRepository.getAllCategory();
 	}
+
+	@Override
+	public List<Map<String, Object>> getBooksByCategory(String category) {
+		return bookRepository.getBooksByCategory(category);
+	}
+
+	@Override
+	public List<Map<String, Object>> searchBooks(String keyword) {
+		return bookRepository.searchBooks(keyword);
+	}
 }

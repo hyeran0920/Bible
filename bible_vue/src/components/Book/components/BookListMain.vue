@@ -1,7 +1,14 @@
 <template>
   <div class="container" id="app">
+
     <h2>Book List</h2>
+
+    <!--ADD BOOK BTN-->
     <button @click="openModal(false)" class="add-book-button">Add Book</button>
+
+    <!--Book Search and category-->
+    <BookSearch @update-books-list="updateBookList"/>
+    
     <!-- Book List -->
     <BookList 
       :paginatedBooks="paginatedBooks" 
@@ -10,6 +17,8 @@
       :bookImgDelete="bookImgDelete"
       :getBookImageUrl="getBookImageUrl"
     />
+
+    
 
     <!-- Add/Edit Book Modal -->
     <BookModal 
@@ -35,12 +44,14 @@ import '../styles/BookListStyle.css';
 import BookList from './BookList.vue';
 import BookModal from './BookModal.vue';
 import Pagination from './Pagination.vue';
+import BookSearch from './BookSearch.vue';
 
 export default {
   components: {
     BookList,
     BookModal,
     Pagination,
+    BookSearch,
   },
   data() {
     return {
@@ -125,10 +136,14 @@ export default {
     },
 
     getBookImageUrl(bookId) {
-      // 이미지 API URL 생성
       return `http://localhost:8080/api/uploads/book-image?bookid=${bookId}`;
     },
 
+
+    updateBookList(filteredBooks){
+      this.books=filteredBooks;
+      this.currentPage=1;
+    },
 
     async bookImgDelete(bookId) {
       try {

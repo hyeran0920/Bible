@@ -64,6 +64,9 @@
   </div>
 </template>
 
+
+
+
 <script>
 export default {
   props: ['isModalVisible', 'isEditing', 'currentBook'],
@@ -99,13 +102,17 @@ export default {
       },
     },
   },
+
+
+
   methods: {
     getBookImageUrl(bookId) {
-      // 이미지 URL 생성
       return `http://localhost:8080/api/uploads/book-image?bookid=${bookId}`;
     },
+
+    //Image 선택 + 미리보기 이미지
     onImageSelected(event) {
-      // 파일 선택 시 상태에 저장
+      // 파일 상태에 저장
       this.selectedFile = event.target.files[0];
 
       // 미리보기 이미지 업데이트
@@ -117,11 +124,14 @@ export default {
     },
     async handleSubmit() {
       if (this.selectedFile) {
+
         // 선택된 파일이 있으면 업로드
         const formData = new FormData();
         formData.append('file', this.selectedFile);
-        formData.append('bookid', this.currentBook.bookId); // bookId를 함께 전송
+        formData.append('bookid', this.currentBook.bookId);
 
+
+        //Book Img Upload
         try {
           await fetch('http://localhost:8080/api/uploads/book-image', {
             method: 'POST',

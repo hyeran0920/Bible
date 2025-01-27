@@ -18,8 +18,6 @@
       :getBookImageUrl="getBookImageUrl"
     />
 
-    
-
     <!-- Add/Edit Book Modal -->
     <BookModal 
       :isModalVisible="isModalVisible" 
@@ -74,6 +72,8 @@ export default {
     },
   },
   methods: {
+
+    //Open Close Modal
     openModal(editing = false, book = null) {
       this.isEditing = editing;
       this.currentBook = editing ? { ...book } : this.getDefaultBook();
@@ -83,6 +83,8 @@ export default {
       this.isModalVisible = false;
       this.currentBook = {};
     },
+
+    //Get Default Book
     getDefaultBook() {
       return {
         bookId: '',
@@ -97,6 +99,8 @@ export default {
         bookDetail: '',
       };
     },
+
+    //UPDATE, ADD Book
     async handleSubmit() {
       if (this.isEditing) {
         await this.updateBook();
@@ -123,6 +127,8 @@ export default {
         console.error('Error updating book:', error);
       }
     },
+
+    //GET BOOKS
     async fetchData() {
       try {
         const response = await axios.get('http://localhost:8080/api/books');
@@ -131,20 +137,24 @@ export default {
         console.error('Error fetching books:', error);
       }
     },
+
+    //
     updateCurrentPage(page) {
       this.currentPage = page;
     },
 
+    //GET BOOK IMG
     getBookImageUrl(bookId) {
       return `http://localhost:8080/api/uploads/book-image?bookid=${bookId}`;
     },
 
-
+    //
     updateBookList(filteredBooks){
       this.books=filteredBooks;
       this.currentPage=1;
     },
 
+    //DELETE BOOK IMG 
     async bookImgDelete(bookId) {
       try {
         const response = await fetch(`http://localhost:8080/api/uploads/book-image?bookid=${bookId}`, {
@@ -164,14 +174,26 @@ export default {
       }
     },
 
+    //DELETE BOOK QR
+    async bookQRImgDelete(bookId){
+      try{
+        const response=await fetch(`http://localhost:8080/api/uploads/book-qr-image?bookid=${bookId}`, {
+          method: 'DELETE',
+        });
+      }catch(error){
+        console.error('Error deleting book qr img:', error);
+      }
+    },
 
+    //DELETE BOOK
     async promptDelete(bookId, bookAuthor) {
       const userInput = prompt('삭제할 책의 저자 입력');
       if (userInput && userInput === bookAuthor) {
         try {
-          await this.bookImgDelete(bookId); // 이미지 삭제
+          await this.bookImgDelete(bookId); // 책 이미지 삭제
+          await this.bookQRImgDelete(bookId);// 책 qr 이미지 삭제
           await axios.delete(`http://localhost:8080/api/books?bookid=${bookId}`); // 책 삭제
-          this.books = this.books.filter((b) => b.bookId !== bookId);
+          this.books = this.books.filter((b) => b.bookId !== bookId);//책 목록 갱신
           alert('Book successfully deleted.');
         } catch (error) {
           console.error('Error deleting book or image:', error);

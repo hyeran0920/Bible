@@ -28,7 +28,6 @@ public class BookService implements IBookService {
 		return bookRepository.getBookCount(categoryid);
 	}
 
-
 	
 	//GET BOOKS
 	@Override
@@ -104,4 +103,6 @@ public class BookService implements IBookService {
 	public List<Map<String, Object>> searchBooks(String keyword) {
 		return bookRepository.searchBooks(keyword);
 	}
+
+	
 }

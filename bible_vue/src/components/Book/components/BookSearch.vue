@@ -31,6 +31,8 @@
       };
     },
     methods: {
+
+      //Category들 가져오기
       async fetchCategories() {
         try {
           const response = await axios.get("http://localhost:8080/api/books/categories");
@@ -39,14 +41,16 @@
           console.error("Error fetching categories:", error);
         }
       },
+
+      //Category에 해당하는 books 가져오기
       async fetchBooksByCategory() {
         try {
-            // All books
+          // All books
           if (this.selectedCategory === "All") {
             const response = await axios.get("http://localhost:8080/api/books");
             this.$emit("update-books-list", response.data);
           } else {
-            //Filtering된 books
+          //Filtering된 books
             const response = await axios.get(
               `http://localhost:8080/api/books/categories/${encodeURIComponent(this.selectedCategory)}`
             );
@@ -57,25 +61,27 @@
         }
       },
 
-        async fetchSearchResults() {
-            try {
-                //빈칸 입력시 모두 출력
-                if (!this.searchKeyword) {
-                    const response = await axios.get("http://localhost:8080/api/books");
-                    this.$emit("update-books-list", response.data);
-                }
-
-                //search
-                const response = await axios.get(
-                `http://localhost:8080/api/books/search`,
-                { params: { keyword: this.searchKeyword } }
-                );
+      //Search 키워드에 대한 books 가져오기
+      async fetchSearchResults() {
+        try {
+            //빈칸 입력시 모두 출력
+            if (!this.searchKeyword) {
+                const response = await axios.get("http://localhost:8080/api/books");
                 this.$emit("update-books-list", response.data);
-
-            } catch (error) {
-                console.error("Error fetching search results:", error);
             }
-        },
+
+            //search
+            const response = await axios.get(
+            `http://localhost:8080/api/books/search`,
+            { params: { keyword: this.searchKeyword } }
+            );
+            this.$emit("update-books-list", response.data);
+
+        } catch (error) {
+            console.error("Error fetching search results:", error);
+        }
+      },
+
     },
     mounted() {
       this.fetchCategories();

@@ -32,4 +32,6 @@ public interface IBookRepository {
 	List<Map<String, Object>> getAllAuthor();
 	List<Map<String, Object>> getAllPublisher();
 	List<Map<String, Object>> getAllCategory();
+	List<Map<String, Object>> getBooksByCategory(String category);
+	List<Map<String, Object>> searchBooks(String keyword);
 }

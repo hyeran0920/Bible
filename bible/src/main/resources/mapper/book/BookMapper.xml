@@ -118,6 +118,46 @@
 	<select id="getAllCategory" resultType="hashmap">
 	    SELECT DISTINCT book_category AS "bookCategory" FROM BOOK
 	</select>
+	
+	<select id="getBooksByCategory" resultType="map">
+		SELECT  book_id          AS "bookId",
+	            book_title       AS "bookTitle",
+	            book_author      AS "bookAuthor",
+	            book_publisher   AS "bookPublisher",
+	            TO_CHAR(book_release_date, 'YYYY-MM-DD') AS "bookReleaseDate",
+	            book_category    AS "bookCategory",
+	            book_price       AS "bookPrice",
+	            book_stock       AS "bookStock",
+	            book_img         AS "bookImg",
+	            book_detail      AS "bookDetail"
+	    FROM BOOK
+	    WHERE BOOK_CATEGORY=#{category}
+	</select>
+
+	<select id="searchBooks" resultType="hashmap">
+		<![CDATA[
+			SELECT  book_id          AS "bookId",
+		            book_title       AS "bookTitle",
+		            book_author      AS "bookAuthor",
+		            book_publisher   AS "bookPublisher",
+		            TO_CHAR(book_release_date, 'YYYY-MM-DD') AS "bookReleaseDate",
+		            book_category    AS "bookCategory",
+		            book_price       AS "bookPrice",
+		            book_stock       AS "bookStock",
+		            book_img         AS "bookImg",
+		            book_detail      AS "bookDetail"
+		    FROM BOOK
+		    WHERE 1=1
+		]]>
+		<if test="keyword != null and keyword != ''">
+			AND (
+				LOWER(REPLACE(book_title, ' ', '')) LIKE LOWER('%' || REPLACE(#{keyword}, ' ', '') || '%')
+				OR LOWER(REPLACE(book_author, ' ', '')) LIKE LOWER('%' || REPLACE(#{keyword}, ' ', '') || '%')
+				OR LOWER(REPLACE(book_publisher, ' ', '')) LIKE LOWER('%' || REPLACE(#{keyword}, ' ', '') || '%')
+			)
+		</if>
+	</select>
+
 
 	
 </mapper>

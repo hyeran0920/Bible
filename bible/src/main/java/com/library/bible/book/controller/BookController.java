@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.library.bible.book.model.Book;
@@ -19,7 +20,7 @@ import com.library.bible.book.service.IBookService;
 
 @RestController
 @RequestMapping("/api/books")
-//@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:3000")
 public class BookController {
 	
 	@Autowired
@@ -36,6 +37,12 @@ public class BookController {
 	public Map<String, Object> getBook(@PathVariable int bookid) {
 		return bookService.getBookInfoMap(bookid);
 	}
+	//SEARCH
+	 @GetMapping("/search")
+    public List<Map<String, Object>> searchBooks(@RequestParam String keyword) {
+        System.out.println("Keyword received: " + keyword);
+        return bookService.searchBooks(keyword);
+    }
 	
 	
 	
@@ -62,7 +69,7 @@ public class BookController {
 	
 	
 	
-	//GET
+	
 	@GetMapping("/authors")
 	public List<Map<String, Object>> getAllAuthor() {
 		return bookService.getAllAuthor();
@@ -73,8 +80,13 @@ public class BookController {
 		return bookService.getAllPublisher();
 	}
 	
+	//CATEGORY
 	@GetMapping("/categories")
 	public List<Map<String, Object>> getAllCategory() {
 		return bookService.getAllCategory();
+	}
+	@GetMapping("/categories/{category}")
+	public List<Map<String,Object>> getBooksByCategory(@PathVariable String category){
+		return bookService.getBooksByCategory(category);
 	}
 }

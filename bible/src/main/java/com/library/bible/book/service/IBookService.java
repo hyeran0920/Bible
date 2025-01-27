@@ -12,7 +12,7 @@ public interface IBookService {
 	
 	List<Map<String, Object>> getBookListMap();
 	Map<String, Object> getBookInfoMap(int bookid);
-
+	
 	List<Book> getBookList();
 	Book getBookInfo(int bookid);
 	void updateBook(Book book);
@@ -25,4 +25,5 @@ public interface IBookService {
 	List<Map<String, Object>> getAllPublisher();
 	List<Map<String, Object>> getAllCategory();
 	List<Map<String, Object>> searchBooks(String keyword);
+	
 }

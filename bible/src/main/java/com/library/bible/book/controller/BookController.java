@@ -1,9 +1,12 @@
 package com.library.bible.book.controller;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,8 +18,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.zxing.WriterException;
 import com.library.bible.book.model.Book;
 import com.library.bible.book.service.IBookService;
+import com.library.bible.qr.QRCodeGenerator;
 
 @RestController
 @RequestMapping("/api/books")
@@ -25,6 +30,7 @@ public class BookController {
 	
 	@Autowired
 	IBookService bookService;
+	
 	
 	//GET
 	@GetMapping
@@ -37,6 +43,13 @@ public class BookController {
 	public Map<String, Object> getBook(@PathVariable int bookid) {
 		return bookService.getBookInfoMap(bookid);
 	}
+	
+
+
+	
+	
+	
+	
 	//SEARCH
 	 @GetMapping("/search")
     public List<Map<String, Object>> searchBooks(@RequestParam String keyword) {
@@ -49,10 +62,25 @@ public class BookController {
 	//INSERT, UPDATE, DELETE
 	@PostMapping
 	public Book insertBook(@RequestBody Book book) {
-		
-		bookService.insertBook(book);
-		return book;
+
+		try {
+			//add book
+			bookService.insertBook(book); 
+            
+			//create qr
+            String data = "Book ID: " + book.getBookId() + ", Title: " + book.getBookTitle();
+            String filePath = "uploads/book-qr/" + book.getBookId() + ".png";
+            QRCodeGenerator.generateQRCode(data, filePath);
+
+            return book;
+        } catch (WriterException | IOException e) {
+            System.out.println("Error - qr generating");
+        	e.printStackTrace();
+            return null;
+        }
 	}
+	
+	
 	
 	@PutMapping
 	public void updateBook(@RequestBody Book book) {

@@ -27,9 +27,9 @@ public class UploadController {
     IBookService bookService;
 
     private final String UPLOAD_DIR = "uploads/book-images/";
+    private final String BOOK_QR_DIR="uploads/book-qr/";
 
-
-
+    //Get BookImg by bookId
     @GetMapping("/book-image")
     public ResponseEntity<byte[]> getBookImage(@RequestParam("bookid") int bookId) {
         String fileName = bookId + ".jpg";
@@ -56,7 +56,7 @@ public class UploadController {
     }
 
 
-
+    //Upload Book img
     @PostMapping("/book-image")
     public ResponseEntity<String> uploadBookImage(
             @RequestParam("file") MultipartFile file,
@@ -78,7 +78,7 @@ public class UploadController {
     }
 
 
-    
+    //Delete Book img
     @DeleteMapping("/book-image")
     public ResponseEntity<String> deleteBookImage(@RequestParam("bookid") int bookId) {
         String[] possibleExtensions = {".jpg", ".png", ".jpeg"};
@@ -102,8 +102,38 @@ public class UploadController {
             }
         } catch (IOException e) {
             System.err.println("Error deleting file: " + filePath);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting image for book ID: " + bookId);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            		.body("Error deleting image for book ID: " + bookId);
         }
     }
+    
+    
+    
+    //Delete QR img
+    @DeleteMapping("/book-qr-image")
+    public ResponseEntity<String> deleteQRImage(@RequestParam("bookid") int bookId) {
+        String[] possibleExtensions = {".jpg", ".png", ".jpeg"};
+        Path filePath = null;
 
+        for (String extension : possibleExtensions) {
+            filePath = Paths.get(BOOK_QR_DIR, bookId + extension);
+            if (Files.exists(filePath)) { break; }
+            filePath = null;
+        }
+
+        try {
+            if (filePath != null) {
+                Files.delete(filePath);
+                return ResponseEntity.ok().body("QR Image deleted for book ID: " + bookId);
+            } else {
+            	//there is no qr img
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("QR img not found - book ID: " + bookId);
+            }
+        } catch (IOException e) {
+        	//error
+            System.err.println("Error deleting file: " + filePath);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            		.body("Error deleting QR img - book ID: " + bookId);
+        }
+    }
 }

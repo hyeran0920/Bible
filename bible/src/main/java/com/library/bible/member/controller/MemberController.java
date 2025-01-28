@@ -5,9 +5,11 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -60,5 +62,18 @@ public class MemberController {
 	public ResponseEntity<List<MemberResponseDto>> selectAllMembers() {
 		List<Member> members = memberService.selectAllMembers();
 		return ResponseEntity.ok(memberMapper.membersToMemberResponseDtos(members));
+	}
+	
+	// 사용자 정보 변경(update)
+	@PutMapping("/{memid}")
+	public ResponseEntity<MemberResponseDto> updateMember(@RequestBody Member member){
+		memberService.updateMember(member);
+		return ResponseEntity.ok(memberMapper.memberToMemberResponseDto(member));
+	}
+	
+	// 사용자 정보 삭제(delete)
+	@DeleteMapping("/{memid}")
+	public void deleteMember(@PathVariable int memid) {
+		memberService.deleteMember(memid);
 	}
 }

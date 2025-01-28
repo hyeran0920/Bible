@@ -1,6 +1,8 @@
 <template>
   <div class="container" id="app">
 
+    <SocketTest></SocketTest>
+
     <h2>Book List</h2>
 
     <!--ADD BOOK BTN-->
@@ -43,6 +45,7 @@ import BookList from './BookList.vue';
 import BookModal from './BookModal.vue';
 import Pagination from './Pagination.vue';
 import BookSearch from './BookSearch.vue';
+import SocketTest from '../../WebSocket/components/SocketTest.vue';
 
 export default {
   components: {
@@ -50,6 +53,7 @@ export default {
     BookModal,
     Pagination,
     BookSearch,
+    SocketTest,
   },
   data() {
     return {

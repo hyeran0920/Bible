@@ -105,7 +105,7 @@
 		</dependency>
 		
 		
-		<!--Barcode-->
+		<!--QR-->
 		<dependency>
 		    <groupId>com.google.zxing</groupId>
 		    <artifactId>core</artifactId>
@@ -116,8 +116,13 @@
 		    <artifactId>javase</artifactId>
 		    <version>3.5.1</version>
 		</dependency>
-
-
+		
+		<!--Web Socket-->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-websocket</artifactId>
+		</dependency>
+		
 		<!-- JWT -->
 		<!-- https://mvnrepository.com/artifact/com.auth0/java-jwt -->
 		<dependency>

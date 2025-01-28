@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -75,5 +76,12 @@ public class MemberController {
 	@DeleteMapping("/{memid}")
 	public void deleteMember(@PathVariable int memid) {
 		memberService.deleteMember(memid);
+	}
+	
+	@GetMapping("/admin-page")
+	@PreAuthorize
+	("hasRole('ADMIN')")//권한 체크 확인용
+	public ResponseEntity<String> adminOnlyPage() {
+	return ResponseEntity.ok("관리자 페이지에 접근 성공!!!");
 	}
 }

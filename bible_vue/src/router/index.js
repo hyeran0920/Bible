@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import store from "../store"; // Vuex 스토어 가져오기
-import BookListMain from "../components/Book/components/BookListMain.vue";
+import BookListMain from "../components/Book/components/BookListPage.vue";
 import BookDetail from "../components/Book/components/BookDetail.vue";
 import Main from "../components/MainPage/components/Main.vue";
 import SignUp from "../components/Member/components/SignUp.vue";
@@ -19,7 +19,7 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(import.meta.env.BASE_URL), // 브라우저 히스토리 사용용
   routes,
 });
 

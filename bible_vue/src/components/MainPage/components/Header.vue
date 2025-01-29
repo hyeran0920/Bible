@@ -8,9 +8,15 @@
         <button class="search-button">🔍</button>
       </div>
       <div class="auth-buttons">
+      <template v-if="!isLoggedIn">
         <button class="auth-button"><a href="/login">Login</a></button>
         <button class="auth-button"><a href="/signUp">회원가입</a></button>
-      </div>
+      </template>
+      <template v-else>
+        <button class="auth-button"><a href="/mypage">Mypage</a></button>
+        <button class="auth-button" @click="logout">Logout</button>
+      </template>
+    </div>
     </header>
 
     <!-- Navigation -->
@@ -28,7 +34,22 @@
 
 <script>
 export default {
-  name: 'Header'
+  name: 'Header',
+  data(){
+    return {
+      isLoggedIn: false,
+    };
+  },
+  mounted(){
+    this.isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  },
+  methods: {
+    logout() {
+      localStorage.removeItem("isLoggedIn"); // 로그인 정보 삭제
+      this.isLoggedIn = false;
+      alert("로그아웃 되었습니다.");
+    }
+  }
 }
 </script>
 

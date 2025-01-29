@@ -11,6 +11,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.library.bible.security.filter.CustomLogoutSuccessHandler;
 import com.library.bible.security.filter.JwtAuthenticationFilter;
@@ -33,6 +36,7 @@ public class SecurityConfig {
 //    private final CustomAuthenticationFailureHandler authenticationFailureHandler;
     private final IMemberRepository memberRepository;
     private final JwtProvider jwtProvider;;
+    private final CorsConfiguration corsConfiguration;
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -53,7 +57,8 @@ public class SecurityConfig {
 	                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.formLogin(AbstractHttpConfigurer::disable)
 			.httpBasic(AbstractHttpConfigurer::disable)
-			.addFilter(new JwtAuthenticationFilter(authenticationManager(), jwtProvider)) // AuthenticationManager가 로그인 실행함
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .addFilter(new JwtAuthenticationFilter(authenticationManager(), jwtProvider)) // AuthenticationManager가 로그인 실행함
 			.addFilter(new JwtAuthorizationFilter(authenticationManager(), memberRepository, jwtProvider)) // AuthenticationManager 필요함
 			.exceptionHandling(e -> e // 에러 처리
 	                .authenticationEntryPoint(authenticationEntryPoint)
@@ -75,5 +80,12 @@ public class SecurityConfig {
 //                    .anyRequest().authenticated()); // 그 외 요청은 인증 필요
             );
         return http.build();
+    }
+    
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", corsConfiguration); // 모든 엔드포인트에 CORS 설정 적용
+        return source;
     }
 }

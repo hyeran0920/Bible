@@ -1,9 +1,6 @@
 package com.library.bible.security.filter;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.library.bible.security.jwt.JwtProperties;
 import com.library.bible.security.jwt.JwtProvider;
 import com.library.bible.security.utils.LoginDto;
 import com.library.bible.security.utils.MemberUserDetails;
@@ -14,16 +11,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.*;
 
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.http.HttpHeaders;
 
 import java.io.IOException;
-import java.util.Date;
 
 // 스프링 시큐리티에서 UsernamePasswordAuthenticationFilter 존재함
 // /login 요청 시 username, password 전송(POST) 하면
@@ -36,8 +30,6 @@ public class JwtAuthenticationFilter  extends UsernamePasswordAuthenticationFilt
     // /login 요청 을 하면 로그인 시도를 위해서 실행되는 함수
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        System.out.println("JwtAuthenticationFilter 로그인 시도중");
-
         // 1. username과 password 받아서
         try {
             // request에서 로그인 객체

@@ -1,8 +1,5 @@
 package com.library.bible.security.filter;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.library.bible.security.jwt.JwtProperties;
 import com.library.bible.security.jwt.JwtProvider;
 import com.library.bible.security.utils.MemberUserDetails;
 import com.library.bible.member.model.Member;

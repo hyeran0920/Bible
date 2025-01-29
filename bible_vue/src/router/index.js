@@ -6,6 +6,7 @@ import Main from "../components/MainPage/components/Main.vue";
 import SignUp from "../components/Member/components/SignUp.vue";
 import Login from "../components/Member/components/Login.vue";
 import AdminPage from "../components/Admin/AdminPage.vue";
+import Mypage from "../components/Mypage/Mypage.vue";
 
 const routes = [
   { path: "/", name: "main", component: Main },
@@ -15,6 +16,7 @@ const routes = [
   { path: "/login", name: "Login", component: Login },
   { path: "/admin", name: "AdminPage", component: AdminPage, meta: { requiresAdmin: true } },
   { path: "/", redirect: "/login" },
+  { path: "/mypage", name: "Mypage", component: Mypage},
 
 ];
 

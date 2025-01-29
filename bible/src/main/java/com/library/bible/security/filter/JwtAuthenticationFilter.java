@@ -73,6 +73,7 @@ public class JwtAuthenticationFilter  extends UsernamePasswordAuthenticationFilt
         String accescToken = jwtProvider.generateToken(memberUserDetails);
         String refreshToken = jwtProvider.generateRefreshToken(memberUserDetails);
         
+        System.out.println("로그인했습니다");
         // JWT 토큰을 만들어서 request 요청한 사용자에게 JWT 토큰을 response에 반환
         // header 방식
 //        jwtProvider.saveTokenInHeader(response, accescToken, refreshToken);

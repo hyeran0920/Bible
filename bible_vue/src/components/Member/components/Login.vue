@@ -6,7 +6,7 @@
         <div>
           <label for="email">이메일:</label>
           <input
-            type="email"
+            type="text"
             v-model="login.email"
             required
             placeholder="이메일을 입력하세요"

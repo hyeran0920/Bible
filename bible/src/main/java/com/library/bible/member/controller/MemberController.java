@@ -1,6 +1,8 @@
 package com.library.bible.member.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -79,9 +81,11 @@ public class MemberController {
 	}
 	
 	@GetMapping("/admin-page")
-	@PreAuthorize
-	("hasRole('ADMIN')")//권한 체크 확인용
-	public ResponseEntity<String> adminOnlyPage() {
-	return ResponseEntity.ok("관리자 페이지에 접근 성공!!!");
+	@PreAuthorize("hasRole('ADMIN')") // 권한 체크 확인용
+	public ResponseEntity<Map<String, String>> adminOnlyPage() {
+	    Map<String, String> response = new HashMap<>();
+	    response.put("message", "관리자 페이지에 접근 성공!!!"); // 메시지를 JSON 형식으로 감쌈
+	    return ResponseEntity.ok(response); // JSON 형태로 응답
 	}
+
 }

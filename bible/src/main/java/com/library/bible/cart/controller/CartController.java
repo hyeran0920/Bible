@@ -1,39 +1,43 @@
 package com.library.bible.cart.controller;
 
-import com.library.bible.cart.model.Cart;
-import com.library.bible.cart.service.ICartService;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.library.bible.cart.model.Cart;
+import com.library.bible.cart.service.ICartService;
+import com.library.bible.member.model.Member;
+import com.library.bible.resolver.AuthMember;
 
 @RestController
 @RequestMapping("/api/carts")
 public class CartController {
 
     private final ICartService cartService;
-
+    
     public CartController(ICartService cartService) {
         this.cartService = cartService;
     }
 
-    // 전체 장바구니 목록 조회
     @GetMapping("/list")
-    public ResponseEntity<List<Cart>> getAllCarts(@RequestParam("memId") int memId) {
+    public ResponseEntity<List<Cart>> getAllCarts(@AuthMember Member member) {
+        System.out.println("get lists cart!!");
+        Integer memId=member.getMemId();
+        // 장바구니 목록 조회
         List<Cart> cartList = cartService.getAllCarts(memId);
         return ResponseEntity.ok(cartList);
     }
-    /*
-    @GetMapping("/user/cart")
-	public ResponseEntity<List<Cart>> getUserCart(@AuthenticationPrincipal UserDetails userDetails) {
-	    int memId = Integer.parseInt(userDetails.getUsername()); // JWT에서 사용자 ID 추출
-	    List<Cart> cartList = cartService.getAllCarts(memId);
-	    return ResponseEntity.ok(cartList);
-	}
-    */
     
-    //특정 장바구니 조회 (Cart ID)
+    // 특정 장바구니 조회 (Cart ID)
     @GetMapping("/{cartId}")
     public ResponseEntity<Cart> getCart(@PathVariable int cartId) {
         Cart cart = cartService.getCart(cartId);
@@ -47,11 +51,18 @@ public class CartController {
         int memId = request.get("memId");
         int bookCount = request.get("bookCount");
 
-        cartService.addCart(bookId, memId, bookCount);
-        return ResponseEntity.ok("장바구니에 추가되었습니다.");
+        // 이미 존재하는 책인지 확인
+        int exists = cartService.isBookInCart(memId, bookId);
+        if (exists==1) {
+            cartService.updateCartByBookId(bookId, memId, bookCount); // 수량 업데이트
+            return ResponseEntity.ok("장바구니 항목이 업데이트되었습니다.");
+        } else {
+            cartService.addCart(bookId, memId, bookCount); // 새로 추가
+            return ResponseEntity.ok("장바구니에 추가되었습니다.");
+        }
     }
 
-    // 장바구니 수량 업데이트
+    // 장바구니 수량 업데이트 (cartId 기준)
     @PutMapping("/update")
     public ResponseEntity<String> updateCart(@RequestBody Map<String, Integer> request) {
         int cartId = request.get("cartId");

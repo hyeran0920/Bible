@@ -8,6 +8,7 @@ import Login from "../components/Member/components/Login.vue";
 import AdminFilter from "../components/Admin/AdminFilter.vue";
 import AdminPage from "../components/Admin/AdminPage.vue";
 import Mypage from "../components/Mypage/Mypage.vue";
+import Cart from "../components/Cart/components/CartPage.vue";
 
 const routes = [
   { path: "/", name: "main", component: Main },
@@ -18,9 +19,10 @@ const routes = [
   { path: "/admin", name: "AdminFilter", component: AdminFilter },
   { path: "/", redirect: "/login" },
   { path: "/mypage", name: "Mypage", component: Mypage },
+  { path: "/cart", name:"cart", component:Cart},
 
   { path: "/admin-page", name: "AdminPage",component: AdminPage, beforeEnter: (to, from, next) => {
-      // ✅ "/admin"을 거치지 않고 접근하면 강제 이동
+      // "/admin"을 거치지 않고 접근하면 강제 이동
       if (from.name !== "AdminFilter") {
         next("/admin"); // 필터를 먼저 거치게 강제
       } else {

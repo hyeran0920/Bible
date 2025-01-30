@@ -3,6 +3,10 @@ package com.library.bible.member.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,22 +28,26 @@ public class MemberService implements IMemberService{
     private final BCryptPasswordEncoder passwordEncoder;
 
 	@Override
+	@Cacheable(value="member", key="#memId")
 	public Member selectMember(int memId) {
 		return memberRepository.selectMember(memId);
 	}
 
 	@Override
+	@Cacheable(value="member", key="#memEmail")
 	public Member selectMemberByMemEmail(String memEmail) {
 		return memberRepository.selectMemberByMemEmail(memEmail);
 	}
 
 	@Override
+	@Cacheable(value="member", key="'allMember'")
 	public List<Member> selectAllMembers() {
 		return memberRepository.selectAllMembers();
 	}
 
 	@Override
 	@Transactional
+	@CacheEvict(value = "memberCache", allEntries = true)  // 모든 멤버 캐시 삭제
 	public Member insertMember(Member member, String role) {
 		try {
 			// role 이외의 컬럼 저장
@@ -69,6 +77,7 @@ public class MemberService implements IMemberService{
 	// TODO : 테스트 필요
 	@Override
 	@Transactional
+	@CachePut(value="member", key="#member.memId")
 	public Member updateMember(Member member) {
 		// role 이외의 컬럼 수정
 		member.setMemPassword(passwordEncoder.encode(member.getMemPassword())); // 비밀번호 암호화
@@ -86,6 +95,10 @@ public class MemberService implements IMemberService{
 	// TODO : 테스트 필요
 	@Override
 	@Transactional
+	@Caching(evict = {
+		    @CacheEvict(value = "memberCache", key = "#memId"), // 특정 회원 캐시 삭제
+		    @CacheEvict(value = "roleCache", key = "#memId")   // 역할 캐시도 삭제
+		})
 	public void deleteMember(int memId) {
 		memberRepository.deleteRoles(memId);
 		memberRepository.deleteMember(memId);
@@ -98,6 +111,7 @@ public class MemberService implements IMemberService{
 	}
 
 	@Override
+	@Cacheable(value="role", key="#memId")
 	public List<Role> selectRolesByMemId(int memId) {
 		return memberRepository.selectRolesByMemId(memId);
 	}

@@ -28,10 +28,24 @@
     <!-- 장바구니에 책 추가 -->
     <insert id="addCart">
         INSERT INTO cart (book_id, mem_id, book_count)
-        VALUES (#{bookId}, #{memId}, #{count})
+        VALUES (#{bookId}, #{memId}, #{bookCount})
     </insert>
 
-    <!-- 장바구니 수량 업데이트 -->
+    <!-- 이미 존재하는 책인지 확인 -->
+    <select id="isBookInCart" parameterType="map" resultType="int">
+        SELECT COUNT(*) 
+        FROM cart
+        WHERE mem_id = #{memId} AND book_id = #{bookId}
+    </select>
+
+    <!-- 특정 장바구니 항목 수량 업데이트 (book_id, mem_id 기준) -->
+    <update id="updateCartByBookId">
+        UPDATE cart
+        SET book_count = book_count + #{bookCount}
+        WHERE mem_id = #{memId} AND book_id = #{bookId}
+    </update>
+
+    <!-- 특정 장바구니 항목 수량 업데이트 (cartId 기준) -->
     <update id="updateCart">
         UPDATE cart
         SET book_count = #{newCount}

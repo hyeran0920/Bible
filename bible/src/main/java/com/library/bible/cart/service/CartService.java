@@ -25,21 +25,32 @@ public class CartService implements ICartService{
 		return cartRepos.getCart(cartId);
 	}
 	
+	@Override
+	public int isBookInCart(int memId, int bookId) {
+	    return cartRepos.isBookInCart(memId,bookId);
+	}
+
 	
 	//UPDATE, INSERT, DELETE
 	@Override
 	public void updateCart(int cartId, int newCount) {
 		cartRepos.updateCart(cartId, newCount);
 	}
-
+	@Override
+	public void updateCartByBookId(int bookId, int memId, int bookCount) {
+		cartRepos.updateCartByBookId(bookId, memId, bookCount);
+		
+	}
+	
+	
 	@Override
 	public void deleteCart(int cartId) {
 		cartRepos.deleteCart(cartId);
 	}
 
 	@Override
-	public void addCart(int bookId, int memId,int count) {
-		cartRepos.addCart(bookId,memId, count);
+	public void addCart(int bookId, int memId,int bookCount) {
+		cartRepos.addCart(bookId,memId, bookCount);
 	}
 	
 	//GET PRICES
@@ -60,6 +71,10 @@ public class CartService implements ICartService{
 	    }
 	    return sum;
 	}
+
+	
+
+	
 
 
 }

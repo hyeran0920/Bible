@@ -72,7 +72,7 @@ public class WebSocketHandler extends TextWebSocketHandler implements Initializi
                             logger.info("메시지 전송: {}", messageContent);
                         }
                     }
-                    Thread.sleep(7000); // 7초 간격으로 메시지 전송
+                    Thread.sleep(100000); // 간격으로 메시지 전송
                     
                 } catch (InterruptedException e) {
                     logger.error("쓰레드 중단!", e);

@@ -1,5 +1,5 @@
 <template>
-  <div class="app">
+  <div :class="{'no-style': isAdminPage}" class="app" :style="adminPageStyle">
     <main>
       <router-view></router-view>
     </main>
@@ -9,17 +9,27 @@
 <script>
 export default {
   name: 'App',
+  computed: {
+    isAdminPage() {
+      return this.$route.path === '/admin-page'; // admin 페이지에서만 true
+    },
+    adminPageStyle() {
+      // 어드민 페이지일 때만 스타일을 리셋
+      return this.isAdminPage ? { width: '100% !important', margin: '0 !important', padding: '0 !important' } : {};
+    }
+  }
 };
 </script>
 
-<style>
+<style scoped>
+/* 기본 스타일은 그대로 */
 .app {
-  width: 1280px !important; /* 우선순위 강제로 높여줌 */
-  margin: 0 auto; /* 수평 중앙 정렬 */
-  padding: 0 16px; /* 여유 공간 주기 */
+  width: 1280px !important;
+  margin: 0 auto !important;
+  padding: 0 16px !important;
 }
 
 main {
-  width: 100%; /* main 내용은 컨테이너 안에서 꽉 채우게 설정 */
+  width: 100%;
 }
 </style>

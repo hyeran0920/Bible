@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -61,7 +62,7 @@ public class MemberController {
 	} 
 
 	// 사용자 전체 조회
-	@GetMapping
+	@GetMapping("/members")
 	public ResponseEntity<List<MemberResponseDto>> selectAllMembers() {
 		List<Member> members = memberService.selectAllMembers();
 		return ResponseEntity.ok(memberMapper.membersToMemberResponseDtos(members));
@@ -82,9 +83,15 @@ public class MemberController {
 	
 	@GetMapping("/admin-page")
 	@PreAuthorize("hasRole('ADMIN')") // 권한 체크 확인용
-	public ResponseEntity<Map<String, String>> adminOnlyPage() {
+	public ResponseEntity<Map<String, String>> adminOnlyPage(Authentication authentication) { // ✅ 인증 정보 받기
+	    String adminName = authentication.getName(); // ✅ 현재 로그인한 관리자 이름 가져오기
+
 	    Map<String, String> response = new HashMap<>();
-	    response.put("message", "관리자 페이지에 접근 성공!!!"); // 메시지를 JSON 형식으로 감쌈
+	    String message = "관리자 " + adminName + "님 관리자 페이지 접속 성공!!!"; // ✅ 메시지 수정
+	    response.put("message", message);
+
+	    System.out.println(message); // ✅ 콘솔에 출력!!!
+
 	    return ResponseEntity.ok(response); // JSON 형태로 응답
 	}
 

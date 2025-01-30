@@ -30,13 +30,17 @@ public class MemberService implements IMemberService{
 	@Override
 	@Cacheable(value="member", key="#memId")
 	public Member selectMember(int memId) {
-		return memberRepository.selectMember(memId);
+		Member member = memberRepository.selectMember(memId);
+		if(member == null) throw new CustomException(ExceptionCode.MEMBER_NOT_FOUND);
+		return member;
 	}
 
 	@Override
 	@Cacheable(value="member", key="#memEmail")
 	public Member selectMemberByMemEmail(String memEmail) {
-		return memberRepository.selectMemberByMemEmail(memEmail);
+		Member member = memberRepository.selectMemberByMemEmail(memEmail);
+		if(member == null) throw new CustomException(ExceptionCode.MEMBER_NOT_FOUND);
+		return member;
 	}
 
 	@Override

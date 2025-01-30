@@ -2,6 +2,10 @@ package com.library.bible.security.filter;
 
 import com.library.bible.security.jwt.JwtProvider;
 import com.library.bible.security.utils.MemberUserDetails;
+import com.library.bible.aop.PrintLog;
+import com.library.bible.exception.CustomException;
+import com.library.bible.exception.ExceptionCode;
+import com.library.bible.exception.ExceptionResponseUtil;
 import com.library.bible.member.model.Member;
 import com.library.bible.member.repository.IMemberRepository;
 
@@ -24,11 +28,16 @@ import java.io.IOException;
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     private IMemberRepository memberRepository;
     private JwtProvider jwtProvider;
+    private final ExceptionResponseUtil exceptionResponseUtil;
+	private final PrintLog printLog;
 
-    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, IMemberRepository memberRepository, JwtProvider jwtProvider) {
+    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, IMemberRepository memberRepository, JwtProvider jwtProvider,
+    		ExceptionResponseUtil exceptionResponseUtil, PrintLog printLog) {
         super(authenticationManager);
         this.memberRepository = memberRepository;
         this.jwtProvider = jwtProvider;
+        this.exceptionResponseUtil = exceptionResponseUtil;
+        this.printLog = printLog;
     }
 
     // 인증이나 권한이 필요한 주소요청이 있을 경우 해당 필터 동작
@@ -50,17 +59,37 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     	}
 
         // JWT 토큰을 검증해서 정상적인 사용자인지 확인
-        Integer memId = jwtProvider.getMemIdAndVerifyIntegerByHeader(accessToken);
+    	Integer memId = null;
+    	try {
+            memId = jwtProvider.getMemIdAndVerify(accessToken);
+    	} catch(Exception e) {
+			exceptionResponseUtil.sendErrorResponse(ExceptionCode.INVALID_TOKEN_SIGNATURE, request, response, e);
+			
+			// logging
+			printLog.printInfoByRequest(request);
+			printLog.printErrorByRequest(request, e);
+			return;
+    	}
 
         if (memId != null) {
+        	// 사용자 id로 사용자 조회
             Member member = memberRepository.selectMember(Integer.valueOf(memId));
-
+            if (member == null) {
+            	CustomException e = new CustomException(ExceptionCode.TOKEN_USER_NOT_FOUND);
+    			exceptionResponseUtil.sendErrorResponse(e.getErrorCode(), request, response, e);
+    			
+    			// logging
+    			printLog.printInfoByRequest(request);
+    			printLog.printErrorByRequest(request, e);
+    			return;
+            }
+            
             // 인증은 토큰 검증시 끝. 인증을 하기 위해서가 아닌 스프링 시큐리티가 수행해주는 권한 처리를 위해
-            // 아래와 같이 토큰을 만들어서 Authentication 객체를 강제로 만들고 그걸 세션에 저장!
+            // 아래와 같이 토큰을 만들어서 Authentication 객체를 강제로 만들고 그걸 세션에 저장
             MemberUserDetails principalDetails = new MemberUserDetails(member);
             Authentication authentication = new UsernamePasswordAuthenticationToken(
-                    principalDetails, // 나중에 컨트롤러에서 DI해서 쓸 때 사용하기 편함.
-                    null, // 패스워드는 모르니까 null 처리, 어차피 지금 인증하는게 아니니까!!
+                    principalDetails, // 나중에 컨트롤러에서 DI해서 쓸 때 사용하기 편함
+                    null,
                     principalDetails.getAuthorities());
 
             // 강제로 시큐리티의 세션에 접근하여 값 저장

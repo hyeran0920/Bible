@@ -17,8 +17,8 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class JwtProvider {
-	// JWT 생성
-	public String generateToken(MemberUserDetails memberUserDetails) {
+	// JWT 생성(access token)
+	public String generateAccessToken(MemberUserDetails memberUserDetails) {
         // HS256(RSA 방식 X)
         String jwt = JWT.create()
                 .withSubject(memberUserDetails.getUsername())
@@ -49,6 +49,7 @@ public class JwtProvider {
 	// cookie에서 JWT 존재 확인
 	public String resolveTokenInCookie(HttpServletRequest request) {
       Cookie[] cookies = request.getCookies();
+      
       if (cookies == null) return null;
       
       String accessToken = Arrays.stream(cookies)
@@ -60,7 +61,7 @@ public class JwtProvider {
 	}
 	
 	// 토큰 검증 후 memId 반환
-	public Integer getMemIdAndVerifyIntegerByHeader(String accessToken) {
+	public Integer getMemIdAndVerify(String accessToken) {
         // JWT 토큰을 검증해서 정상적인 사용자인지 확인
         accessToken = accessToken.replace(JwtProperties.TOKEN_PREFIX, "");
 

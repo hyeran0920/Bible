@@ -6,7 +6,7 @@
         <div>
           <label for="email">이메일:</label>
           <input
-            type="email"
+            type="text"
             v-model="login.email"
             required
             placeholder="이메일을 입력하세요"
@@ -62,6 +62,7 @@
             console.log("로그인 성공:", response.data);
             alert("로그인 성공!!!");
 
+            localStorage.setItem("isLoggedIn", "true");
             this.$router.push("/"); 
         } catch (error) {
             console.error("로그인 실패:", error.response?.data || error.message);

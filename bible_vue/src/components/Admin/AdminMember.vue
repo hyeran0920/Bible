@@ -1,0 +1,106 @@
+<template>
+<div>
+    
+    <main class="main-content">
+      <header class="header">
+        <h1>Member</h1>
+      </header>
+
+      <div class="stats">
+        <div class="stat-item">
+          <span class="icon">👤</span>
+          <h2>New Visits</h2>
+          <p>102,400</p>
+        </div>
+        <div class="stat-item">
+          <span class="icon">💬</span>
+          <h2>Messages</h2>
+          <p>81,212</p>
+        </div>
+        <div class="stat-item">
+          <span class="icon">💴</span>
+          <h2>Purchases</h2>
+          <p>9,280</p>
+        </div>
+        <div class="stat-item">
+          <span class="icon">🛒</span>
+          <h2>Shoppings</h2>
+          <p>13,600</p>
+        </div>
+      </div>
+
+      <div class="charts">
+        <div class="line-chart">
+          <h3>Line Chart</h3>
+          <p>(Fake line chart data)</p>
+        </div>
+        <div class="radar-chart">
+          <h3>Radar Chart</h3>
+          <p>(Fake radar chart data)</p>
+        </div>
+        <div class="pie-chart">
+          <h3>Pie Chart</h3>
+          <p>(Fake pie chart data)</p>
+        </div>
+        <div class="bar-chart">
+          <h3>Bar Chart</h3>
+          <p>(Fake bar chart data)</p>
+        </div>
+      </div>
+    </main>
+</div>
+</template>
+
+<script>
+export default {
+  name: "AdminContent",
+};
+</script>
+
+<style>
+
+.main-content {
+  flex: 1;
+  padding: 20px;
+  background-color: #ecf0f1;
+}
+
+.header {
+  margin-bottom: 20px;
+}
+
+.stats {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.stat-item {
+  flex: 1;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.stat-item .icon {
+  font-size: 24px;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.charts {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.line-chart, .radar-chart, .pie-chart, .bar-chart {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+</style>

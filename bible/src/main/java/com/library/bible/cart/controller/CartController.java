@@ -3,7 +3,6 @@ package com.library.bible.cart.controller;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,41 +10,30 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.library.bible.cart.model.Cart;
 import com.library.bible.cart.service.ICartService;
-import com.library.bible.security.jwt.JwtProvider;
+import com.library.bible.member.model.Member;
+import com.library.bible.resolver.AuthMember;
 
 @RestController
 @RequestMapping("/api/carts")
 public class CartController {
 
     private final ICartService cartService;
-    private final JwtProvider jwtProvider;
     
-    public CartController(ICartService cartService, JwtProvider jwtProvider) {
+    public CartController(ICartService cartService) {
         this.cartService = cartService;
-        this.jwtProvider = jwtProvider;
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<Cart>> getAllCarts(@RequestHeader(name = "Authorization", required = false) String token) {
-        if (token == null || !token.startsWith("Bearer ")) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null); // JWT 없으면 401 반환
-        }
+    public ResponseEntity<List<Cart>> getAllCarts(@AuthMember Member member) {
         System.out.println("get lists cart!!");
-        
-        // "Bearer " 제거, JWT 토큰 추출
-        String jwt = token.replace("Bearer ", "");
-
-        // JWT에서 memId 추출
-        Integer memberId = jwtProvider.getMemIdAndVerifyIntegerByHeader(jwt);
-
+        Integer memId=member.getMemId();
         // 장바구니 목록 조회
-        List<Cart> cartList = cartService.getAllCarts(memberId);
+        List<Cart> cartList = cartService.getAllCarts(memId);
         return ResponseEntity.ok(cartList);
     }
     

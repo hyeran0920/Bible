@@ -1,6 +1,9 @@
 package com.library.bible.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.library.bible.aop.PrintLog;
+import com.library.bible.exception.ExceptionCode;
+import com.library.bible.exception.ExceptionResponseUtil;
 import com.library.bible.security.jwt.JwtProvider;
 import com.library.bible.security.utils.LoginDto;
 import com.library.bible.security.utils.MemberUserDetails;
@@ -11,7 +14,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.*;
 
+import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.CredentialsExpiredException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -25,7 +32,9 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter  extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
+    private final ExceptionResponseUtil exceptionResponseUtil;
     private final JwtProvider jwtProvider;
+	private final PrintLog printLog;
 
     // /login 요청 을 하면 로그인 시도를 위해서 실행되는 함수
     @Override
@@ -48,7 +57,7 @@ public class JwtAuthenticationFilter  extends UsernamePasswordAuthenticationFilt
 
             // 3. PrincipalDetails를 세션에 담고
             // 세션에 담는 이유 : 권한 관리를 위해서
-            MemberUserDetails principalDetails = (MemberUserDetails) authentication.getPrincipal();
+//            MemberUserDetails principalDetails = (MemberUserDetails) authentication.getPrincipal();
 
             // authentication 객체가 session 영역에 저장을 해야하고 그 방법이 returne됨
             // 리턴 이유 : 권한 관리를 security가 대신 해주기 때문에 편하려고 하는거임
@@ -70,7 +79,7 @@ public class JwtAuthenticationFilter  extends UsernamePasswordAuthenticationFilt
             throws IOException, ServletException {
     	// JWT 토큰 생성
         MemberUserDetails memberUserDetails = (MemberUserDetails) authResult.getPrincipal();
-        String accescToken = jwtProvider.generateToken(memberUserDetails);
+        String accescToken = jwtProvider.generateAccessToken(memberUserDetails);
         String refreshToken = jwtProvider.generateRefreshToken(memberUserDetails);
         
         System.out.println("로그인했습니다");
@@ -80,5 +89,34 @@ public class JwtAuthenticationFilter  extends UsernamePasswordAuthenticationFilt
         
         // cookie 방식
         jwtProvider.saveTokenInCookie(response, accescToken, refreshToken);
+        
+		// logging
+		printLog.printInfoByRequest(request);
+    }
+    
+    // 로그인 실패 시 실행됨
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, 
+            HttpServletResponse response, AuthenticationException failed) 
+            throws IOException {
+		exceptionResponseUtil.printErrorLog("# Authentication failed: ", failed);
+		
+	    ExceptionCode exceptionCode;
+	    if (failed instanceof DisabledException) {
+	        exceptionCode = ExceptionCode.ACCOUNT_DISABLED;
+	    } else if (failed instanceof LockedException) {
+	        exceptionCode = ExceptionCode.ACCOUNT_LOCKED;
+	    } else if (failed instanceof AccountExpiredException) {
+	        exceptionCode = ExceptionCode.ACCOUNT_EXPIRED;
+	    } else if (failed instanceof CredentialsExpiredException) {
+	        exceptionCode = ExceptionCode.CREDENTIALS_EXPIRED;
+	    } else {
+	        exceptionCode = ExceptionCode.INVALID_CREDENTIALS;
+	    }
+		exceptionResponseUtil.sendErrorResponse(exceptionCode, request, response, failed);
+		
+		// logging
+		printLog.printInfoByRequest(request);
+		printLog.printErrorByRequest(request, failed);
     }
 }

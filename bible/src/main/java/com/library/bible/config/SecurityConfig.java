@@ -15,12 +15,14 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.library.bible.security.filter.CustomLogoutSuccessHandler;
 import com.library.bible.security.filter.JwtAuthenticationFilter;
 import com.library.bible.security.filter.JwtAuthorizationFilter;
 import com.library.bible.security.handler.CustomAccessDeniedHandler;
 import com.library.bible.security.handler.CustomAuthenticationEntryPoint;
+import com.library.bible.security.handler.CustomLogoutSuccessHandler;
 import com.library.bible.security.jwt.JwtProvider;
+import com.library.bible.aop.PrintLog;
+import com.library.bible.exception.ExceptionResponseUtil;
 import com.library.bible.member.repository.IMemberRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -33,10 +35,11 @@ public class SecurityConfig {
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
     private final CustomAccessDeniedHandler accessDeniedHandler;
     private final CustomLogoutSuccessHandler logoutSuccessHandler;
-//    private final CustomAuthenticationFailureHandler authenticationFailureHandler;
     private final IMemberRepository memberRepository;
-    private final JwtProvider jwtProvider;;
+    private final JwtProvider jwtProvider;
     private final CorsConfiguration corsConfiguration;
+    private final ExceptionResponseUtil exceptionResponseUtil;
+    private final PrintLog printLog;
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -58,8 +61,8 @@ public class SecurityConfig {
 			.formLogin(AbstractHttpConfigurer::disable)
 			.httpBasic(AbstractHttpConfigurer::disable)
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .addFilter(new JwtAuthenticationFilter(authenticationManager(), jwtProvider)) // AuthenticationManager가 로그인 실행함
-			.addFilter(new JwtAuthorizationFilter(authenticationManager(), memberRepository, jwtProvider)) // AuthenticationManager 필요함
+            .addFilter(new JwtAuthenticationFilter(authenticationManager(), exceptionResponseUtil, jwtProvider, printLog)) // AuthenticationManager가 로그인 실행함
+			.addFilter(new JwtAuthorizationFilter(authenticationManager(), memberRepository, jwtProvider, exceptionResponseUtil, printLog)) // AuthenticationManager 필요함
 			.exceptionHandling(e -> e // 에러 처리
 	                .authenticationEntryPoint(authenticationEntryPoint)
 	                .accessDeniedHandler(accessDeniedHandler)

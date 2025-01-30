@@ -62,7 +62,7 @@ public class MemberController {
 	} 
 
 	// 사용자 전체 조회
-	@GetMapping("/members")
+	@GetMapping
 	public ResponseEntity<List<MemberResponseDto>> selectAllMembers() {
 		List<Member> members = memberService.selectAllMembers();
 		return ResponseEntity.ok(memberMapper.membersToMemberResponseDtos(members));

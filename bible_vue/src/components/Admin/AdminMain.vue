@@ -51,12 +51,13 @@
 </template>
 
 <script>
+import AdminProduct from './AdminProduct.vue';
 import Chart1 from './Chart1.vue';
 
 export default {
   name: "AdminContent",
   components: {
-    Chart1
+    Chart1,
   },
 };
 </script>

@@ -19,6 +19,7 @@
 import AdminMember from './AdminMember.vue';
 
 import AdminMain from './AdminMain.vue';
+import AdminProduct from './AdminProduct.vue';
 
 export default {
   name: "AdminDashboard",
@@ -33,6 +34,7 @@ export default {
       switch (this.selectedMenu) {
         case 'main': return AdminMain;
         case 'member': return AdminMember;
+        case 'product': return AdminProduct;
         default: return AdminMain;
       }
     }

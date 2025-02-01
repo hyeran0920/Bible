@@ -104,6 +104,7 @@ export default {
       this.currentPage = 1;
     },
 
+    //DELETE/////////////////////////////////////////////////////////////////////////////////////////////////////
     // Delete Book Image
     async bookImgDelete(bookId) {
       try {
@@ -143,7 +144,17 @@ export default {
           await this.bookImgDelete(bookId); // 책 이미지 삭제
           await this.bookQRImgDelete(bookId); // 책 qr 이미지 삭제
           await axios.delete(`http://localhost:8080/api/books?bookid=${bookId}`); // 책 삭제
-          this.books = this.books.filter((b) => b.bookId !== bookId); // 책 목록 갱신
+          
+          console.log("Before Update:", this.books);
+          
+          //this.books = this.books.filter((b) => b.bookId !== bookId); // 책 목록 갱신
+          // 책 목록 갱신
+          const index=this.books.findIndex((b)=>b.bookId===bookId);
+          if(index !==-1){this.books.splice(index,1);}//배열에서 요소 삭제
+
+          await this.fetchData();
+          console.log("After Update:", this.books);
+
           alert('Book successfully deleted.');
         } catch (error) {
           console.error('Error deleting book or image:', error);
@@ -154,6 +165,9 @@ export default {
       }
     },
   },
+
+
+
   mounted() {
     this.fetchData();
   },

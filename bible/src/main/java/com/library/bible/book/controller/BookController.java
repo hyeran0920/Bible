@@ -55,14 +55,20 @@ public class BookController {
 	public Book insertBook(@RequestBody Book book) {
 
 		try {
-			//add book
-			bookService.insertBook(book); 
-            
+
 			//create qr
             String data = "Book ID: " + book.getBookId() + ", Title: " + book.getBookTitle();
             String filePath = "uploads/book-qr/" + book.getBookId() + ".png";
             QRCodeGenerator.generateQRCode(data, filePath);
-
+            
+            // QR 코드 생성 후 Base64 URL 반환
+            //String qrCodeUrl = QRCodeGenerator.generateQRCodeURL(data);
+            //System.out.println("QR Code URL: " + qrCodeUrl);
+            
+            
+            //add book
+			bookService.insertBook(book); 
+            
             return book;
         } catch (WriterException | IOException e) {
             System.out.println("Error - qr generating");

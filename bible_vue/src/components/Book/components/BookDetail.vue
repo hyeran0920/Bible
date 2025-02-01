@@ -10,22 +10,43 @@
     <p><strong>Stock:</strong> {{ book.bookStock }}</p>
     <p><strong>Details:</strong> {{ book.bookDetail }}</p>
   </div>
+
+  <!-- 수량 입력 -->
+  <div>
+    <input 
+      type="number" 
+      v-model="nowBookCount" 
+      class="nowCartBookCount"
+      min="1"
+    />
+  </div>
+
+  <!-- 장바구니 추가 버튼 -->
+  <div>
+    <button 
+      class="addCartBtn" 
+      @click="addCart(book.bookId)">
+      cart
+    </button>
+  </div>
 </template>
 
 <script>
 import axios from 'axios';
 
 export default {
+  props: {
+    bookId: 0,
+  },
   data() {
     return {
       book: null, // 책 정보 저장객체
+      nowBookCount: 1,
     };
   },
 
-
-
   async created() {
-    const bookId = this.$route.params.bookId; // URL에서 bookId 가져오기
+    const bookId = this.$route.params.bookId || this.bookId; // URL에서 bookId 가져오기
     try {
       const response = await axios.get(`http://localhost:8080/api/books/${bookId}`);
       this.book = response.data;
@@ -37,6 +58,20 @@ export default {
   methods: {
     getBookImageUrl(bookId) {
       return `http://localhost:8080/api/uploads/book-image?bookid=${bookId}`;
+    },
+
+    addCart(bookid) {
+      axios.post(`http://localhost:8080/api/carts/add`, {
+        bookId: bookid,
+        bookCount: this.nowBookCount
+      }, { withCredentials: true })
+      .then(response => {
+        alert(response.data);
+      })
+      .catch(error => {
+        console.error("Error - add cart:", error);
+        alert("장바구니 추가 실패");
+      });
     },
   },
 };

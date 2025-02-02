@@ -1,4 +1,4 @@
-package com.library.bible.member.model;
+package com.library.bible.memberetc.model;
 
 public enum RoleName {
 	ROLE_USER,

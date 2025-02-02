@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import com.library.bible.exception.CustomException;
 import com.library.bible.exception.ExceptionCode;
 import com.library.bible.member.model.Member;
-import com.library.bible.member.model.Role;
+import com.library.bible.memberetc.model.Role;
 import com.library.bible.memberetc.respository.IMemberEtcRepository;
 
 import lombok.RequiredArgsConstructor;

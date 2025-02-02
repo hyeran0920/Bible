@@ -14,9 +14,9 @@ import org.springframework.stereotype.Service;
 import com.library.bible.exception.CustomException;
 import com.library.bible.exception.ExceptionCode;
 import com.library.bible.member.model.Member;
-import com.library.bible.member.model.Role;
-import com.library.bible.member.model.RoleName;
 import com.library.bible.member.repository.IMemberRepository;
+import com.library.bible.memberetc.model.Role;
+import com.library.bible.memberetc.model.RoleName;
 import com.library.bible.memberetc.service.IMemberEtcService;
 import com.library.bible.upload.service.UploadService;
 

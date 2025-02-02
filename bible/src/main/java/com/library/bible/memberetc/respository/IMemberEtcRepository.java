@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
 import com.library.bible.member.model.Member;
-import com.library.bible.member.model.Role;
+import com.library.bible.memberetc.model.Role;
 
 @Mapper
 @Repository

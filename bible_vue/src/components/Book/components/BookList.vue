@@ -22,12 +22,16 @@
         <!-- Img, Title 클릭 시 책 상세 페이지 -->
         <td>
           <router-link :to="'/book/' + book.bookId">
-            <img :src="getBookImageUrl(book.bookId)" :alt="book.bookTitle" width="100" height="auto" />
+            <img :src="getBookImageUrl(book.bookId)" 
+              :alt="book.bookTitle" 
+              width="100" height="auto" />
           </router-link>
         </td>
 
         <td>
-          <router-link :to="'/book/' + book.bookId"> {{ book.bookTitle }} </router-link>
+          <router-link :to="'/book/' + book.bookId"> 
+            {{ book.bookTitle }} 
+          </router-link>
         </td>
 
         <td>{{ book.bookAuthor }}</td>
@@ -51,9 +55,14 @@ export default {
     paginatedBooks: Array,
     openModal: Function,
     promptDelete: Function,
-    bookImgDelete: Function,
-    getBookImageUrl: Function,
     userRole: String,
   },
+  methods:{
+
+    getBookImageUrl(bookId){
+      return `http://localhost:8080/api/uploads/book-image?bookid=${bookId}`;
+    }
+
+  }
 };
 </script>

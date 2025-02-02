@@ -71,7 +71,7 @@ public class BookController {
             
             return book;
         } catch (WriterException | IOException e) {
-            System.out.println("Error - qr generating");
+            System.out.println("Error - book qr generating");
         	e.printStackTrace();
             return null;
         }

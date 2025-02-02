@@ -10,6 +10,7 @@
             <label class="info">아이디:</label><span>{{ member.memId }}</span>
             <label class="info">비밀번호:</label><span>{{ member.memPassword || '********'}}</span>
             <label class="info">이메일:</label><span>{{ member.memEmail }}</span>
+            <label class="info">전화번호:</label><span>{{ member.memPhone}}</span>
         </div>
         <div class="memberInfoBtn">
             <button @click="openModal(true, member)" type="button" class="btn btn-secondary">정보 수정</button>
@@ -32,11 +33,15 @@
                 </div>
                 <div class="form-group">
                     <label for="memPassword">비밀번호: </label>
-                    <input v-model="currentMember.memPassword" type="text" id="memPassword" required/>
+                    <input v-model="currentMember.memPassword" type="password" id="memPassword" required/>
                 </div>
                 <div class="form-group">
                     <label for="memEmail">이메일: </label>
                     <input v-model="currentMember.memEmail" type="text" id="memEmail" required/>
+                </div>
+                <div class="form-group">
+                    <label for="memPhone">전화번호: </label>
+                    <input v-model="currentMember.memPhone" type="text" id="memPhone" required/>
                 </div>
                 <div class="modal-actions">
                     <button type="submit" class="btn-primary">저장하기</button>
@@ -59,6 +64,7 @@
                 memName: [],
                 memPassword: [],
                 memEmail: [],
+                memPhone: [],
                 currentMember: {},
                 isModalVisible: false,
                 isEditing: false,
@@ -72,6 +78,7 @@
                     memId: '',
                     memPassword: '',
                     memEmail: '',
+                    memPhone: '',
                 };
             },
             handleSubmit(){

@@ -14,12 +14,7 @@
 	        <result property="roleName" column="role_name"/>
 	    </collection>
     </resultMap>
-
-	<resultMap id="roleResultMap" type="Role">
-	    <id property="memId" column="mem_id"/>
-	    <result property="roleName" column="role_name"/>
-	</resultMap>
-        
+    
     <!-- 회원 조회 -->
     <select id="selectMember" parameterType="int" resultMap="memberResultMap">
         SELECT 
@@ -79,16 +74,6 @@
         )
     </insert>
 
-	<!-- Role 등록 -->
-	<insert id="insertMemberRoles" parameterType="Member">
-	    INSERT ALL
-	    <foreach collection="roles" item="role">
-	        INTO role (mem_id, role_name) 
-	        VALUES (#{memId}, #{role.roleName})
-	    </foreach>
-	    SELECT * FROM DUAL
-	</insert>
-
     <!-- 회원 수정 -->
     <update id="updateMember" parameterType="Member">
         UPDATE member
@@ -103,31 +88,5 @@
     <!-- 회원 삭제 -->
     <delete id="deleteMember" parameterType="int">
         DELETE FROM member WHERE mem_id = #{memId}
-    </delete> 
-      
-    <!-- Role 등록 -->
-    <insert id="insertRole" parameterType="Role">
-        INSERT INTO role (
-            mem_id,
-            role_name
-        ) VALUES (
-            #{memId},
-            #{roleName}
-        )
-    </insert>
-    
-    <!-- ID로 Role 조회 -->
-	<select id="selectRolesByMemId" parameterType="int" resultMap="roleResultMap">
-	    SELECT 
-	        mem_id,
-	        role_name
-	    FROM role
-	    WHERE mem_id = #{memId}
-	</select>
-    
-    <!-- Role 삭제 -->
-	<delete id="deleteRoles">
-	    DELETE FROM role
-	    WHERE mem_id = #{memId}
-	</delete>
+    </delete>
 </mapper>

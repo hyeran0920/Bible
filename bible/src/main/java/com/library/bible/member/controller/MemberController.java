@@ -74,11 +74,23 @@ public class MemberController {
 		memberService.updateMember(member);
 		return ResponseEntity.ok(memberMapper.memberToMemberResponseDto(member));
 	}
+
+	@PutMapping()
+	public ResponseEntity<MemberResponseDto> updateMember(@RequestBody @Valid Member updateMember, @AuthMember Member member){
+		updateMember.setMemId(member.getMemId());
+		memberService.updateMember(updateMember);
+		return ResponseEntity.ok(memberMapper.memberToMemberResponseDto(updateMember));
+	}
 	
 	// 사용자 정보 삭제(delete)
 	@DeleteMapping("/{memid}")
-	public void deleteMember(@PathVariable  @Positive int memid) {
+	public void deleteMember(@PathVariable @Positive int memid) {
 		memberService.deleteMember(memid);
+	}
+
+	@DeleteMapping
+	public void deleteMemberByToken(@AuthMember Member member) {
+		memberService.deleteMember(member.getMemId());
 	}
 	
 	@GetMapping("/admin-page")
@@ -94,6 +106,4 @@ public class MemberController {
 
 	    return ResponseEntity.ok(response); // JSON 형태로 응답
 	}
-
-
 }

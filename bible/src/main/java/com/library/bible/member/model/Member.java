@@ -2,7 +2,7 @@ package com.library.bible.member.model;
 
 import java.util.List;
 
-import com.library.bible.memberetc.model.Role;
+import com.library.bible.role.model.Role;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;

@@ -15,9 +15,9 @@ import com.library.bible.exception.CustomException;
 import com.library.bible.exception.ExceptionCode;
 import com.library.bible.member.model.Member;
 import com.library.bible.member.repository.IMemberRepository;
-import com.library.bible.memberetc.model.Role;
-import com.library.bible.memberetc.model.RoleName;
-import com.library.bible.memberetc.service.IMemberEtcService;
+import com.library.bible.role.model.Role;
+import com.library.bible.role.model.RoleName;
+import com.library.bible.role.service.IRoleService;
 import com.library.bible.upload.service.UploadService;
 
 import jakarta.transaction.Transactional;
@@ -27,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MemberService implements IMemberService{
 	private final IMemberRepository memberRepository;
-	private final IMemberEtcService memberEtcService;
+	private final IRoleService memberEtcService;
     private final BCryptPasswordEncoder passwordEncoder;
     private final UploadService uploadService;
     
@@ -89,7 +89,6 @@ public class MemberService implements IMemberService{
         return member;
     }
 
-	// TODO : 테스트 필요
 	@Override
 	@Transactional
 	@CachePut(value="member", key="#member.memId")
@@ -107,7 +106,6 @@ public class MemberService implements IMemberService{
         return member;
 	}
 
-	// TODO : 테스트 필요
 	@Override
 	@Transactional
 	@Caching(evict = {

@@ -6,13 +6,24 @@
 
     <!-- 주문 데이터 삽입 -->
     <insert id="insertOrder">
-        INSERT INTO orders (book_id, selling_price, book_count, total_price)
-        VALUES (#{bookId}, #{sellingPrice}, #{bookCount}, #{totalPrice})
+        INSERT INTO orders (book_id, order_history_id, selling_price, book_count, total_price)
+        VALUES (#{bookId}, #{orderHistoryId}, #{sellingPrice}, #{bookCount}, #{totalPrice})
     </insert>
 
     <!-- 특정 회원의 주문 목록 조회 -->
     <select id="getOrdersByMemId" resultType="com.library.bible.order.OrderPageItemDTO">
-    SELECT * FROM ORDERS WHERE MEM_ID = #{memId}
+        SELECT o.* FROM orders o
+        JOIN order_history oh ON o.order_history_id = oh.order_history_id
+        WHERE oh.mem_id = #{memId}
     </select>
+
+    <!-- 주문 내역 기록 -->
+    <insert id="insertOrderHistory" parameterType="OrderHistory" keyProperty="orderHistoryId">
+    	<selectKey keyProperty="orderHistoryId" resultType="long" order="BEFORE">
+       		SELECT order_history_seq.NEXTVAL FROM DUAL
+    	</selectKey>
+    	INSERT INTO order_history (order_history_id, mem_id, order_history_date, order_history_total_price, order_history_received_name, order_history_address)  
+    	VALUES (#{orderHistoryId}, #{memId}, SYSDATE, #{totalPrice}, #{receivedName}, #{address})
+	</insert>
 
 </mapper>

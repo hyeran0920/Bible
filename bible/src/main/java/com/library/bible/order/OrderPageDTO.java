@@ -2,20 +2,24 @@ package com.library.bible.order;
 
 import java.util.List;
 
-public class OrderPageDTO {
-	private List<OrderPageItemDTO> orders;
-	
-	public List<OrderPageItemDTO> getOrders() {
-		return orders;
-	}
-	
-	public void setOrders(List<OrderPageItemDTO> orders) {
-		this.orders = orders;
-	}
-	
-	@Override
-	public String toString() {
-		return "OrderPageDTO [orders=" + orders +"]";
-	}
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
+public class OrderPageDTO {
+    private Long memId;
+    private Long totalPrice;
+    private String receivedName;
+    private String address;
+    private List<OrderPageItemDTO> orders;
+
+    public OrderHistory toOrderHistory() {
+        return OrderHistory.builder()
+                .memId(memId)
+                .totalPrice(totalPrice)
+                .receivedName(receivedName)
+                .address(address)
+                .build();
+    }
 }

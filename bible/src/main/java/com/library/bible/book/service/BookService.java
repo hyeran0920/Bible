@@ -9,16 +9,21 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.library.bible.book.repository.IBookRepository;
 import com.library.bible.book.model.Book;
+import com.library.bible.book.repository.IBookRepository;
+import com.library.bible.upload.service.UploadService;
 
 @Service
 public class BookService implements IBookService {
 
     @Autowired
     IBookRepository bookRepository;
-
+    
+    @Autowired
+    UploadService uploadService;
+    
     // GET BOOK COUNT
     @Override
     @Cacheable(value = "bookCount", key = "'all'")
@@ -60,14 +65,33 @@ public class BookService implements IBookService {
     // UPDATE, INSERT, DELETE
     @Override
     @CachePut(value = "books", key = "#book.bookId")
-    public void updateBook(Book book) {
-        bookRepository.updateBook(book);
+    public Book updateBook(Book book, MultipartFile file) {
+        
+    	//update book in database
+    	bookRepository.updateBook(book);
+        
+        //book cover img
+    	if (file != null && !file.isEmpty()) {
+        	uploadService.uploadBookImage(book.getBookId(),file);
+        }
+    	return book;
     }
 
     @Override
-    @CachePut(value = "books", key = "#book.bookId")
-    public void insertBook(Book book) {
-        bookRepository.insertBook(book);
+    //@CachePut(value = "books", key = "#book.bookId")
+    public void insertBook(Book book, MultipartFile file) {
+    	
+    	//insert book in database
+    	bookRepository.insertBook(book);
+    	int bookId=book.getBookId();
+    	
+    	//book QR img
+    	uploadService.createBookQRImage(book,bookId);
+    	
+    	//book cover img
+    	if (file != null && !file.isEmpty()) {
+        	uploadService.uploadBookImage(bookId,file);
+        }
     }
 
     @Override
@@ -80,7 +104,16 @@ public class BookService implements IBookService {
     @Override
     @CacheEvict(value = "books", allEntries = true, beforeInvocation = true)
     public void deleteBook(int bookId) {
+    	
+    	//delete database
         bookRepository.deleteBook(bookId);
+        
+        //delete qr img
+        uploadService.deleteBookQRImage(bookId);
+        
+        //delete img
+        uploadService.deleteBookImage(bookId);
+        
     }
 
     // GET Authors, Publishers, Categories

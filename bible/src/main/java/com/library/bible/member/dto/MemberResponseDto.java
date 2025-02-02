@@ -15,5 +15,6 @@ public class MemberResponseDto {
 	private int memId;
 	private String memName;
 	private String memEmail;
+	private String memPhone;
     private List<Role> roles;
 }

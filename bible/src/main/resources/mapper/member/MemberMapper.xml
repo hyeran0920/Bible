@@ -8,6 +8,7 @@
         <result property="memName" column="mem_name"/>
         <result property="memPassword" column="mem_password"/>
         <result property="memEmail" column="mem_email"/>
+        <result property="memPhone" column="mem_phone"/>
 	    <collection property="roles" ofType="Role">
 	        <result property="memId" column="mem_id"/>
 	        <result property="roleName" column="role_name"/>
@@ -26,6 +27,7 @@
             m.mem_name,
             m.mem_password,
             m.mem_email,
+            m.mem_phone,
             r.mem_id,
             r.role_name
         FROM member m
@@ -40,6 +42,7 @@
             m.mem_name,
             m.mem_password,
             m.mem_email,
+            m.mem_phone,
             r.mem_id,
             r.role_name
         FROM member m
@@ -54,6 +57,7 @@
 	        m.mem_name,
 	        m.mem_password,
 	        m.mem_email,
+            m.mem_phone,
             r.mem_id,
 	        r.role_name
 	    FROM member m
@@ -65,11 +69,13 @@
         INSERT INTO member (
             mem_name,
             mem_password,
-            mem_email
+            mem_email,
+            mem_phone
         ) VALUES (
             #{memName},
             #{memPassword},
-            #{memEmail}
+            #{memEmail},
+            #{memPhone}
         )
     </insert>
 
@@ -89,6 +95,7 @@
         SET 
             mem_name = #{memName},
             mem_email = #{memEmail},
+            mem_phone = #{memPhone},
             mem_password = #{memPassword}
         WHERE mem_id = #{memId}
     </update>

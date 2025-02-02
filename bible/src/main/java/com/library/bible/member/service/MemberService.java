@@ -88,10 +88,10 @@ public class MemberService implements IMemberService{
 		memberRepository.updateMember(member);
 		
 		// role 수정
-        if (member.getRoles() != null && !member.getRoles().isEmpty()) {
-        	memberRepository.deleteRoles(member.getMemId()); // 이전에 저장된 role 제거
-        	memberRepository.insertMemberRoles(member); // role 추가
-        }
+//        if (member.getRoles() != null && !member.getRoles().isEmpty()) {
+//        	memberRepository.deleteRoles(member.getMemId()); // 이전에 저장된 role 제거
+//        	memberRepository.insertMemberRoles(member); // role 추가
+//        }
         
         return member;
 	}

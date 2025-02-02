@@ -7,9 +7,9 @@
         <h3>내 정보</h3>
         <div class="memberInfo">
             <label class="info">이름: </label><span>{{ member.memName }}</span>
-            <label class="info">아이디:</label><span>{{ member.memId }}</span>
-            <label class="info">비밀번호:</label><span>{{ member.memPassword || '********'}}</span>
             <label class="info">이메일:</label><span>{{ member.memEmail }}</span>
+            <label class="info">비밀번호:</label><span>********</span>
+            <label class="info">전화번호:</label><span>{{ member.memPhone}}</span>
 
             <!--QR IMG-->
             <label class="info">QR:</label>
@@ -34,16 +34,24 @@
                     <input v-model="currentMember.memName" type="text" id="memName" required/>
                 </div>
                 <div class="form-group">
-                    <label for="memId">아이디: </label>
-                    <input v-model="currentMember.memId" type="text" id="memId" required/>
+                    <label for="memEmail">이메일: </label>
+                    <input v-model="currentMember.memEmail" type="email" id="memEmail" placeholder="bible@gmail.com" :class="{ 'error-border': emailError }"  required/>
+                    <span v-if="emailError" class="error-message">유효한 이메일 형식이 아닙니다</span>
                 </div>
+
                 <div class="form-group">
                     <label for="memPassword">비밀번호: </label>
-                    <input v-model="currentMember.memPassword" type="text" id="memPassword" required/>
+                    <input v-model="currentMember.memPassword" type="password" id="memPassword" :class="{ 'error-border': passwordError }" required/>
                 </div>
                 <div class="form-group">
-                    <label for="memEmail">이메일: </label>
-                    <input v-model="currentMember.memEmail" type="text" id="memEmail" required/>
+                    <label for="memPassword2">비밀번호 확인: </label>
+                    <input v-model="currentMember.memPassword2" type="password" id="memPassword2" :class="{ 'error-border': passwordError }" required />
+                    <span v-if="passwordError" class="error-message">비밀번호가 일치하지 않습니다!</span>
+                </div>
+                <div class="form-group">
+                    <label for="memPhone">전화번호: </label>
+                    <input v-model="currentMember.memPhone" type="tel" id="memPhone" pattern="^010-\d{4}-\d{4}$" placeholder="010-1234-5678" :class="{ 'error-border': phoneError }" maxlength="13" required />
+                    <span v-if="phoneError" class="error-message">010-XXXX-XXXX 형식입니다.</span>
                 </div>
                 <div class="modal-actions">
                     <button type="submit" class="btn-primary">저장하기</button>
@@ -55,40 +63,90 @@
 </template>
 
 <script>
-    import axios from 'axios';
-    const BASEURL = "http://localhost:8080/api/members";
+    // import axios from 'axios';
+    const MEMBER_BASEURL = "/members";
     const QR_BASEURL="http://localhost:8080/api/uploads/member-qr-image";
 
     export default{
         name:'Mypage',
         data(){
             return{
-                memId: [],
                 memName: [],
                 memPassword: [],
                 memEmail: [],
+                memPhone: [],
                 currentMember: {},
                 isModalVisible: false,
                 isEditing: false,
                 member: [],
                 memberQRImg:null,
+
+                // 정보 수정 시 
+                passwordError: false,
+                phoneError: false,
+                phonePattern: /^010-\d{4}-\d{4}$/,
+                emailError: false,
+                emailPattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
             };
+        },
+        watch: {
+            'currentMember.memPassword': {
+                handler(newValue) {
+                    if (newValue && this.currentMember.memPassword2) {
+                        this.passwordError = newValue !== this.currentMember.memPassword2;
+                    }
+                },
+                immediate: true
+            },
+            'currentMember.memPassword2': {
+                handler(newValue) {
+                    if (newValue && this.currentMember.memPassword) {
+                        this.passwordError = newValue !== this.currentMember.memPassword;
+                    }
+                },
+                immediate: true
+            },
+            'currentMember.memPhone': {
+                handler(newValue) {
+                    if (newValue) {
+                        this.phoneError = !this.phonePattern.test(newValue);
+                    }
+                },
+                immediate: true
+            },
+            'currentMember.memEmail': {
+                handler(newValue) {
+                    if (newValue) {
+                        this.emailError = !this.emailPattern.test(newValue);
+                    }
+                },
+                immediate: true
+            },
         },
         methods:{
             getDefaultMember(){
                 return{
                     memName: '',
-                    memId: '',
                     memPassword: '',
                     memEmail: '',
+                    memPhone: '',
                 };
             },
             handleSubmit(){
                 this.updateMember();
             },
             async updateMember(){
+                // 비밀번호 check
+                if (this.passwordError) return;
+
+                // 전화번호 check 
+                if (this.phoneError) return;
+
+                // 이메일 check
+                if (this.emailError) return;
+
                 try{
-                    await axios.put(BASEURL+`/${this.memId}`, this.currentMember);
+                    await this.$axios.put(MEMBER_BASEURL, this.currentMember);
                     this.member = this.currentMember;
                     this.closeModal();
                 }catch(error){
@@ -108,7 +166,7 @@
                 const userInput = prompt('탈퇴하시려면 이메일을 입력해주세요.');
                 if(userInput && userInput === this.member.memEmail){
                     try{
-                        await axios.delete(BASEURL+`/${memId}`, {withCredentials: true});
+                        await this.$axios.delete(MEMBER_BASEURL);
 
                         //로그아웃 처리
                         localStorage.removeItem("isLoggedIn");
@@ -129,8 +187,7 @@
             },
             async fetchQRImage() {
                 try {
-                    const response = await axios.get(QR_API, {
-                        params: { memId: this.memId },
+                    const response = await this.$axios.get(QR_BASEURL, {
                         responseType: 'blob', // 이미지 데이터로 받아오기
                     });
 
@@ -145,7 +202,7 @@
 
             async getMemberQRImage() {
                 try {
-                    const response = await axios.get(`${QR_BASEURL}?memId=${this.memId}`, {
+                    const response = await this.$axios.get(QR_BASEURL, {
                         responseType: 'blob' // ✅ 이미지 요청 시 blob 타입으로 변환
                     });
 
@@ -165,14 +222,13 @@
 
         async mounted() {
             try {
-                const response = await axios.get(BASEURL + "/me", { withCredentials: true });
+                const response = await this.$axios.get(`${MEMBER_BASEURL}/me`);
 
                 this.member = response.data;
                 this.memId = response.data.memId;
 
                 // ✅ QR 이미지 가져오기
                 this.getMemberQRImage();
-
             } catch (error) {
                 console.log("에러 메시지: ", error);
             }
@@ -250,4 +306,23 @@
         justify-content: flex-end;
         gap:10px;
     }
+
+    .error-border {
+        border: 2px solid #ff4444;
+        animation: shake 0.5s;
+    }
+
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(5px); }
+        75% { transform: translateX(-5px); }
+    }
+
+    .error-message {
+        color: #ff4444;
+        font-size: 0.9em;
+        margin-top: 5px;
+        display: block;
+    }
+
 </style>

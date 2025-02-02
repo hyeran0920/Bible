@@ -14,9 +14,10 @@ import org.springframework.stereotype.Service;
 import com.library.bible.exception.CustomException;
 import com.library.bible.exception.ExceptionCode;
 import com.library.bible.member.model.Member;
-import com.library.bible.member.model.Role;
-import com.library.bible.member.model.RoleName;
 import com.library.bible.member.repository.IMemberRepository;
+import com.library.bible.memberetc.model.Role;
+import com.library.bible.memberetc.model.RoleName;
+import com.library.bible.memberetc.service.IMemberEtcService;
 import com.library.bible.upload.service.UploadService;
 
 import jakarta.transaction.Transactional;
@@ -26,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MemberService implements IMemberService{
 	private final IMemberRepository memberRepository;
+	private final IMemberEtcService memberEtcService;
     private final BCryptPasswordEncoder passwordEncoder;
     private final UploadService uploadService;
     
@@ -81,10 +83,8 @@ public class MemberService implements IMemberService{
 		member.setRoles(roles);
 
 		// role 저장
-        if (member.getRoles() != null && !member.getRoles().isEmpty()) {
-        	int roleResult = memberRepository.insertMemberRoles(member);
-        	if(roleResult < 1) throw new CustomException(ExceptionCode.ROLE_INSERT_FAIL);
-        }
+        if (member.getRoles() != null && !member.getRoles().isEmpty())
+        	memberEtcService.insertMemberRoles(member);
 
         return member;
     }
@@ -99,10 +99,10 @@ public class MemberService implements IMemberService{
 		memberRepository.updateMember(member);
 		
 		// role 수정
-        if (member.getRoles() != null && !member.getRoles().isEmpty()) {
-        	memberRepository.deleteRoles(member.getMemId()); // 이전에 저장된 role 제거
-        	memberRepository.insertMemberRoles(member); // role 추가
-        }
+//        if (member.getRoles() != null && !member.getRoles().isEmpty()) {
+//        	memberRepository.deleteRoles(member.getMemId()); // 이전에 저장된 role 제거
+//        	memberRepository.insertMemberRoles(member); // role 추가
+//        }
         
         return member;
 	}
@@ -115,20 +115,8 @@ public class MemberService implements IMemberService{
 		    @CacheEvict(value = "roleCache", key = "#memId")   // 역할 캐시도 삭제
 		})
 	public void deleteMember(int memId) {
-		memberRepository.deleteRoles(memId);
+		memberEtcService.deleteRoles(memId);
 		memberRepository.deleteMember(memId);
 		uploadService.deleteMemberQRImage(memId);
-	}
-
-	@Override
-	public Role insertRole(Role role) {
-		memberRepository.insertRole(role);
-		return role;
-	}
-
-	@Override
-	@Cacheable(value="role", key="#memId")
-	public List<Role> selectRolesByMemId(int memId) {
-		return memberRepository.selectRolesByMemId(memId);
 	}
 }

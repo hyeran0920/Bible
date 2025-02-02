@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.library.bible.book.service.IBookService;
+import com.library.bible.member.model.Member;
+import com.library.bible.resolver.AuthMember;
 import com.library.bible.upload.service.IUploadService;
 
 @RestController
@@ -50,11 +52,15 @@ public class UploadController {
         return getDeleteResponse(uploadService.deleteBookQRImage(bookId), "Book QR image", bookId);
     }
 
+//    @DeleteMapping("/member-qr-image")
+//    public ResponseEntity<String> deleteMemberQRImage(@RequestParam("memId") int memId) {
+//        return getDeleteResponse(uploadService.deleteMemberQRImage(memId), "Member QR image", memId);
+//    }
+//    
     @DeleteMapping("/member-qr-image")
-    public ResponseEntity<String> deleteMemberQRImage(@RequestParam("memId") int memId) {
-        return getDeleteResponse(uploadService.deleteMemberQRImage(memId), "Member QR image", memId);
+    public ResponseEntity<String> deleteMemberQRImageByToken(@AuthMember Member member) {
+        return getDeleteResponse(uploadService.deleteMemberQRImage(member.getMemId()), "Member QR image", member.getMemId());
     }
-
 
     private ResponseEntity<String> getDeleteResponse(boolean success, String type, int id) {
         if (success) {
@@ -95,19 +101,30 @@ public class UploadController {
     }
 
 
+//    @GetMapping("/member-qr-image")
+//    public ResponseEntity<byte[]> getMemberQRImage(@RequestParam("memId") int memId) {
+//        byte[] imageBytes = uploadService.getMemberQRImage(memId);
+//
+//        if (imageBytes != null) {
+//            return ResponseEntity.ok()
+//                    .header("Content-Type", "image/jpeg")
+//                    .body(imageBytes);
+//        } else {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+//        }
+//    }
+    
     @GetMapping("/member-qr-image")
-    public ResponseEntity<byte[]> getMemberQRImage(@RequestParam("memId") int memId) {
-        byte[] imageBytes = uploadService.getMemberQRImage(memId);
-
-        if (imageBytes != null) {
-            return ResponseEntity.ok()
-                    .header("Content-Type", "image/jpeg")
-                    .body(imageBytes);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+    public ResponseEntity<byte[]> getMemberQRImageByToken(@AuthMember Member member) {
+    	byte[] imageBytes = uploadService.getMemberQRImage(member.getMemId());
+    	
+    	if (imageBytes != null) {
+    		return ResponseEntity.ok()
+    				.header("Content-Type", "image/jpeg")
+    				.body(imageBytes);
+    	} else {
+    		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    	}
     }
-    
-    
     
 }

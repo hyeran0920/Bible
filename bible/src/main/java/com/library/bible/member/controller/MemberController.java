@@ -7,8 +7,6 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +22,8 @@ import com.library.bible.member.model.Member;
 import com.library.bible.member.service.IMemberService;
 import com.library.bible.resolver.AuthMember;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -35,21 +35,21 @@ public class MemberController {
 	
 	// 일반 사용자 생성
 	@PostMapping("/user")
-	public ResponseEntity<MemberResponseDto> insertMember(@RequestBody @Validated Member member) {
+	public ResponseEntity<MemberResponseDto> insertMember(@RequestBody @Valid Member member) {
 		memberService.insertMember(member, "user");
 		return ResponseEntity.status(HttpStatus.CREATED).body(memberMapper.memberToMemberResponseDto(member));
 	}	
 	
 	// 관리자 생성
 	@PostMapping("/admin")
-	public ResponseEntity<MemberResponseDto> insertAdminMember(@RequestBody @Validated Member member) {
+	public ResponseEntity<MemberResponseDto> insertAdminMember(@RequestBody @Valid Member member) {
 		memberService.insertMember(member, "admin");
 		return ResponseEntity.status(HttpStatus.CREATED).body(memberMapper.memberToMemberResponseDto(member));
 	}
 	
 	// 사용자 단일 조회
 	@GetMapping("/{mem-id}")
-	public ResponseEntity<MemberResponseDto> selectMember(@PathVariable("mem-id") int memId) {
+	public ResponseEntity<MemberResponseDto> selectMember(@PathVariable("mem-id") @Positive int memId) {
 		Member member = memberService.selectMember(memId);
 		return ResponseEntity.ok(memberMapper.memberToMemberResponseDto(member));
 	}
@@ -70,15 +70,27 @@ public class MemberController {
 	
 	// 사용자 정보 변경(update)
 	@PutMapping("/{memid}")
-	public ResponseEntity<MemberResponseDto> updateMember(@RequestBody Member member){
+	public ResponseEntity<MemberResponseDto> updateMember(@RequestBody @Valid Member member){
 		memberService.updateMember(member);
 		return ResponseEntity.ok(memberMapper.memberToMemberResponseDto(member));
+	}
+
+	@PutMapping()
+	public ResponseEntity<MemberResponseDto> updateMember(@RequestBody @Valid Member updateMember, @AuthMember Member member){
+		updateMember.setMemId(member.getMemId());
+		memberService.updateMember(updateMember);
+		return ResponseEntity.ok(memberMapper.memberToMemberResponseDto(updateMember));
 	}
 	
 	// 사용자 정보 삭제(delete)
 	@DeleteMapping("/{memid}")
-	public void deleteMember(@PathVariable int memid) {
+	public void deleteMember(@PathVariable @Positive int memid) {
 		memberService.deleteMember(memid);
+	}
+
+	@DeleteMapping
+	public void deleteMemberByToken(@AuthMember Member member) {
+		memberService.deleteMember(member.getMemId());
 	}
 	
 	@GetMapping("/admin-page")
@@ -94,6 +106,4 @@ public class MemberController {
 
 	    return ResponseEntity.ok(response); // JSON 형태로 응답
 	}
-
-
 }

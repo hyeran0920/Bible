@@ -79,13 +79,22 @@
 	</select>
 	
 	<insert id="insertBook" parameterType="com.library.bible.book.model.Book">
-	    INSERT INTO BOOK 
+	    <!-- book_id를 먼저 가져오기 (자동증가) -->
+	    <selectKey keyProperty="bookId" resultType="int" order="BEFORE">
+	        SELECT book_seq.NEXTVAL FROM dual
+	    </selectKey>
+	
+	    <!-- BOOK 테이블에 데이터 삽입 -->
+	    INSERT INTO book 
 	        (book_id, book_title, book_author, book_publisher, book_release_date, 
 	         book_category, book_price, book_stock, book_img, book_detail)
 	    VALUES 
 	        (#{bookId}, #{bookTitle}, #{bookAuthor}, #{bookPublisher}, #{bookReleaseDate}, 
 	         #{bookCategory}, #{bookPrice}, #{bookStock}, #{bookImg}, #{bookDetail})
 	</insert>
+
+
+    
 	
 	<update id="updateBook" parameterType="com.library.bible.book.model.Book">
 	    UPDATE BOOK

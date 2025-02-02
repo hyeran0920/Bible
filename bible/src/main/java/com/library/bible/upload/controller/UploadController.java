@@ -52,11 +52,6 @@ public class UploadController {
         return getDeleteResponse(uploadService.deleteBookQRImage(bookId), "Book QR image", bookId);
     }
 
-//    @DeleteMapping("/member-qr-image")
-//    public ResponseEntity<String> deleteMemberQRImage(@RequestParam("memId") int memId) {
-//        return getDeleteResponse(uploadService.deleteMemberQRImage(memId), "Member QR image", memId);
-//    }
-//    
     @DeleteMapping("/member-qr-image")
     public ResponseEntity<String> deleteMemberQRImageByToken(@AuthMember Member member) {
         return getDeleteResponse(uploadService.deleteMemberQRImage(member.getMemId()), "Member QR image", member.getMemId());
@@ -89,7 +84,8 @@ public class UploadController {
     //GET IMG/////////////////////////////////////////////////////////
     @GetMapping("/book-image")
     public ResponseEntity<byte[]> getBookImage(@RequestParam("bookid") int bookId) {
-        byte[] imageBytes = uploadService.getBookImage(bookId);
+        System.out.println("here is get obok img");
+    	byte[] imageBytes = uploadService.getBookImage(bookId);
 
         if (imageBytes != null) {
             return ResponseEntity.ok()
@@ -101,18 +97,6 @@ public class UploadController {
     }
 
 
-//    @GetMapping("/member-qr-image")
-//    public ResponseEntity<byte[]> getMemberQRImage(@RequestParam("memId") int memId) {
-//        byte[] imageBytes = uploadService.getMemberQRImage(memId);
-//
-//        if (imageBytes != null) {
-//            return ResponseEntity.ok()
-//                    .header("Content-Type", "image/jpeg")
-//                    .body(imageBytes);
-//        } else {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-//        }
-//    }
     
     @GetMapping("/member-qr-image")
     public ResponseEntity<byte[]> getMemberQRImageByToken(@AuthMember Member member) {

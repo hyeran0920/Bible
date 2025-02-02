@@ -1,24 +1,24 @@
 package com.library.bible.book.controller;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.google.zxing.WriterException;
 import com.library.bible.book.model.Book;
 import com.library.bible.book.service.IBookService;
-import com.library.bible.qr.QRCodeGenerator;
 
 @RestController
 @RequestMapping("/api/books")
@@ -52,37 +52,36 @@ public class BookController {
 	
 	//INSERT, UPDATE, DELETE
 	@PostMapping
-	public Book insertBook(@RequestBody Book book) {
+	public ResponseEntity<?> insertBook(
+			@RequestPart("book") Book book,
+	        @RequestPart(value = "file", required = false) MultipartFile file) {
 
 		try {
-
-			//create qr
-            String data = "Book ID: " + book.getBookId() + ", Title: " + book.getBookTitle();
-            String filePath = "uploads/book-qr/" + book.getBookId() + ".png";
-            QRCodeGenerator.generateQRCode(data, filePath);
-            
-            // QR 코드 생성 후 Base64 URL 반환
-            //String qrCodeUrl = QRCodeGenerator.generateQRCodeURL(data);
-            //System.out.println("QR Code URL: " + qrCodeUrl);
-            
-            
-            //add book
-			bookService.insertBook(book); 
-            
-            return book;
-        } catch (WriterException | IOException e) {
-            System.out.println("Error - book qr generating");
-        	e.printStackTrace();
-            return null;
-        }
+			bookService.insertBook(book,file); 
+			return ResponseEntity.ok().body("Book inserted successfully with book ID: " + book.getBookId());
+		}catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error inserting book: " + e.getMessage());
+	    }
+	    
 	}
 	
 	
 	
 	@PutMapping
-	public void updateBook(@RequestBody Book book) {
-		bookService.updateBook(book);
+	public ResponseEntity<?> updateBook(
+	        @RequestPart("book") Book book,
+	        @RequestPart(value = "file", required = false) MultipartFile file) {
+	    
+	    try {
+	        Book updatedBook=bookService.updateBook(book, file);
+	        return ResponseEntity.ok(updatedBook);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	        		.body("Error updating book: " + e.getMessage());
+	    }
 	}
+
 	
 	@DeleteMapping
 	public void deleteBook(int bookid, String author) {

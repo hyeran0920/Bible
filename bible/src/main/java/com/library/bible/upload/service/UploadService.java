@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.google.zxing.WriterException;
+import com.library.bible.book.model.Book;
 import com.library.bible.member.model.Member;
 import com.library.bible.qr.QRCodeGenerator;
 
@@ -80,18 +81,36 @@ public class UploadService implements IUploadService {
             return false;
         }
     }
+    
+    @Override
+    public boolean createBookQRImage(Book book, int bookId) {
 
+    	try {
+        	//create qr
+            String data = "Book ID: " + bookId + ", Title: " + book.getBookTitle();
+            String filePath = "uploads/book-qr/" + bookId + ".jpg";
+            QRCodeGenerator.generateQRCode(data, filePath);
+            return true;
+        } catch (WriterException | IOException e) {
+            log.error("Error generating QR code for book ID: {}", bookId, e);
+            return false;
+        }
+
+    }
+    
+    
     
     
     //INSERT BOOK IMG1!!!!!
     @Override
     public boolean uploadBookImage(int bookId, MultipartFile file) {
-        try {
+    	try {
+        	
             String originalFileName = file.getOriginalFilename();
             String fileExtension = originalFileName.substring(originalFileName.lastIndexOf(".")); // 확장자 추출
             String fileName = bookId + fileExtension;
             Path filePath = Paths.get(BOOK_IMAGE_DIR, fileName);
-
+            
             Files.createDirectories(filePath.getParent()); // 디렉토리 생성 (없을 경우)
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
@@ -101,6 +120,7 @@ public class UploadService implements IUploadService {
             log.error("Failed to upload book image for book ID: {}", bookId, e);
             return false;
         }
+
     }
 
 

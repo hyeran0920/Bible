@@ -10,6 +10,13 @@
             <label class="info">이메일:</label><span>{{ member.memEmail }}</span>
             <label class="info">비밀번호:</label><span>********</span>
             <label class="info">전화번호:</label><span>{{ member.memPhone}}</span>
+
+            <!--QR IMG-->
+            <label class="info">QR:</label>
+            <div class="qrContainer">
+                <img v-if="memberQRImg":src="memberQRImg" alt="Member QR Code" class="qr-image" />
+                <span v-else>QR 코드 없음..담당자에게 문의</span>
+            </div>
         </div>
         <div class="memberInfoBtn">
             <button @click="openModal(true, member)" type="button" class="btn btn-secondary">정보 수정</button>
@@ -58,6 +65,7 @@
 <script>
     import axios from 'axios';
     const BASEURL = "http://localhost:8080/api/members";
+    const QR_BASEURL="http://localhost:8080/api/uploads/member-qr-image";
 
     export default{
         name:'Mypage',
@@ -71,6 +79,7 @@
                 isModalVisible: false,
                 isEditing: false,
                 member: [],
+                memberQRImg:null,
 
                 // 정보 수정 시 
                 passwordError: false,
@@ -175,17 +184,52 @@
                 }else{
                     alert('이메일이 맞지 않습니다. 다시 한번 확인해주세요.')
                 }
-            }
-        },
-        async mounted(){
-            try {
-                const response = await axios.get(BASEURL + "/me", {
-                    withCredentials: true // 쿠키 포함
-                });
-                this.currentMember = response.data;
-                this.member = response.data;
+            },
+            async fetchQRImage() {
+                try {
+                    const response = await axios.get(QR_API, {
+                        params: { memId: this.memId },
+                        responseType: 'blob', // 이미지 데이터로 받아오기
+                    });
 
+                    if (response.data) {
+                        this.qrImageUrl = URL.createObjectURL(response.data);
+                    }
+                } catch (error) {
+                    console.warn("QR 이미지가 존재하지 않음:", error);
+                }
+            },
+
+
+            async getMemberQRImage() {
+                try {
+                    const response = await axios.get(`${QR_BASEURL}?memId=${this.memId}`, {
+                        responseType: 'blob' // ✅ 이미지 요청 시 blob 타입으로 변환
+                    });
+
+                    if (response.status === 200) {
+                        this.memberQRImg = URL.createObjectURL(response.data);
+                    } else {
+                        this.memberQRImg = "";
+                    }
+                } catch (error) {
+                    console.error("Error fetching QR image: ", error);
+                    this.memberQRImg = ""; // QR 이미지 없음
+                }
+            },
+
+        },
+
+
+        async mounted() {
+            try {
+                const response = await axios.get(BASEURL + "/me", { withCredentials: true });
+
+                this.member = response.data;
                 this.memId = response.data.memId;
+
+                // ✅ QR 이미지 가져오기
+                this.getMemberQRImage();
             } catch (error) {
                 console.log("에러 메시지: ", error);
             }

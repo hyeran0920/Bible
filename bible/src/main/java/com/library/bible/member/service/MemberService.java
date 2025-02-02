@@ -18,6 +18,7 @@ import com.library.bible.member.model.Role;
 import com.library.bible.member.model.RoleName;
 import com.library.bible.member.repository.IMemberRepository;
 import com.library.bible.memberetc.service.IMemberEtcService;
+import com.library.bible.upload.service.UploadService;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,8 @@ public class MemberService implements IMemberService{
 	private final IMemberRepository memberRepository;
 	private final IMemberEtcService memberEtcService;
     private final BCryptPasswordEncoder passwordEncoder;
-
+    private final UploadService uploadService;
+    
 	@Override
 	@Cacheable(value="member", key="#memId")
 	public Member selectMember(int memId) {
@@ -59,12 +61,21 @@ public class MemberService implements IMemberService{
 			// role 이외의 컬럼 저장
 			member.setMemPassword(passwordEncoder.encode(member.getMemPassword())); // 비밀번호 암호화
 			int memberResult = memberRepository.insertMember(member);
-			// member 생성 실패
+			
+			// member 삽입 실패시 예외
 			if(memberResult != 1) throw new CustomException(ExceptionCode.MEMBER_INSERT_FAIL);
+			
+			//QR이미지 생성 실패시 예외
+			if (!uploadService.createMemberQRImage(member)) {
+                throw new CustomException(ExceptionCode.QR_IMAGE_CREATION_FAIL);
+            }
+			
 		} catch (DuplicateKeyException e) {
 	        throw new CustomException(ExceptionCode.DUPLICATE_EMAIL);
 	    }
-
+		
+		//군데 아래 얘네는 try catch구문에 안넣어도돼?-윤지
+		
 		// member 권한 설정
 		List<Role> roles = new ArrayList<>();
 		roles.add(new Role(member.getMemId(), RoleName.ROLE_USER));
@@ -106,5 +117,6 @@ public class MemberService implements IMemberService{
 	public void deleteMember(int memId) {
 		memberEtcService.deleteRoles(memId);
 		memberRepository.deleteMember(memId);
+		uploadService.deleteMemberQRImage(memId);
 	}
 }

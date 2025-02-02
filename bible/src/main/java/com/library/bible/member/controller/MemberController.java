@@ -48,16 +48,14 @@ public class MemberController {
 	}
 	
 	// 사용자 단일 조회
-	@GetMapping("/{mem-id}")
-	public ResponseEntity<MemberResponseDto> selectMember(@PathVariable("mem-id") @Positive int memId) {
+	@GetMapping("/{memId}")
+	public ResponseEntity<MemberResponseDto> selectMember(@PathVariable("memId") @Positive int memId) {
 		Member member = memberService.selectMember(memId);
 		return ResponseEntity.ok(memberMapper.memberToMemberResponseDto(member));
 	}
 	
 	@GetMapping("/me")
 	public ResponseEntity<MemberResponseDto> getMyInfo(@AuthMember Member member) {
-		System.out.println(member);
-
 	    return ResponseEntity.ok(memberMapper.memberToMemberResponseDto(member));
 	} 
 
@@ -69,13 +67,14 @@ public class MemberController {
 	}
 	
 	// 사용자 정보 변경(update)
-	@PutMapping("/{memid}")
-	public ResponseEntity<MemberResponseDto> updateMember(@RequestBody @Valid Member member){
+	@PutMapping("/{memId}")
+	public ResponseEntity<MemberResponseDto> updateMember(@RequestBody @Valid Member member, @PathVariable int memId){
+		member.setMemId(memId);
 		memberService.updateMember(member);
 		return ResponseEntity.ok(memberMapper.memberToMemberResponseDto(member));
 	}
 
-	@PutMapping()
+	@PutMapping("/me")
 	public ResponseEntity<MemberResponseDto> updateMember(@RequestBody @Valid Member updateMember, @AuthMember Member member){
 		updateMember.setMemId(member.getMemId());
 		memberService.updateMember(updateMember);
@@ -88,7 +87,7 @@ public class MemberController {
 		memberService.deleteMember(memid);
 	}
 
-	@DeleteMapping
+	@DeleteMapping("/me")
 	public void deleteMemberByToken(@AuthMember Member member) {
 		memberService.deleteMember(member.getMemId());
 	}

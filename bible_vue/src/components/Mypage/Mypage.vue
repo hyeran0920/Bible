@@ -7,9 +7,8 @@
         <h3>내 정보</h3>
         <div class="memberInfo">
             <label class="info">이름: </label><span>{{ member.memName }}</span>
-            <label class="info">아이디:</label><span>{{ member.memId }}</span>
-            <label class="info">비밀번호:</label><span>{{ member.memPassword || '********'}}</span>
             <label class="info">이메일:</label><span>{{ member.memEmail }}</span>
+            <label class="info">비밀번호:</label><span>********</span>
             <label class="info">전화번호:</label><span>{{ member.memPhone}}</span>
         </div>
         <div class="memberInfoBtn">
@@ -28,20 +27,24 @@
                     <input v-model="currentMember.memName" type="text" id="memName" required/>
                 </div>
                 <div class="form-group">
-                    <label for="memId">아이디: </label>
-                    <input v-model="currentMember.memId" type="text" id="memId" required/>
+                    <label for="memEmail">이메일: </label>
+                    <input v-model="currentMember.memEmail" type="email" id="memEmail" placeholder="bible@gmail.com" :class="{ 'error-border': emailError }"  required/>
+                    <span v-if="emailError" class="error-message">유효한 이메일 형식이 아닙니다</span>
                 </div>
+
                 <div class="form-group">
                     <label for="memPassword">비밀번호: </label>
-                    <input v-model="currentMember.memPassword" type="password" id="memPassword" required/>
+                    <input v-model="currentMember.memPassword" type="password" id="memPassword" :class="{ 'error-border': passwordError }" required/>
                 </div>
                 <div class="form-group">
-                    <label for="memEmail">이메일: </label>
-                    <input v-model="currentMember.memEmail" type="text" id="memEmail" required/>
+                    <label for="memPassword2">비밀번호 확인: </label>
+                    <input v-model="currentMember.memPassword2" type="password" id="memPassword2" :class="{ 'error-border': passwordError }" required />
+                    <span v-if="passwordError" class="error-message">비밀번호가 일치하지 않습니다!</span>
                 </div>
                 <div class="form-group">
                     <label for="memPhone">전화번호: </label>
-                    <input v-model="currentMember.memPhone" type="text" id="memPhone" required/>
+                    <input v-model="currentMember.memPhone" type="tel" id="memPhone" pattern="^010-\d{4}-\d{4}$" placeholder="010-1234-5678" :class="{ 'error-border': phoneError }" maxlength="13" required />
+                    <span v-if="phoneError" class="error-message">010-XXXX-XXXX 형식입니다.</span>
                 </div>
                 <div class="modal-actions">
                     <button type="submit" class="btn-primary">저장하기</button>
@@ -60,7 +63,6 @@
         name:'Mypage',
         data(){
             return{
-                memId: [],
                 memName: [],
                 memPassword: [],
                 memEmail: [],
@@ -69,13 +71,53 @@
                 isModalVisible: false,
                 isEditing: false,
                 member: [],
+
+                // 정보 수정 시 
+                passwordError: false,
+                phoneError: false,
+                phonePattern: /^010-\d{4}-\d{4}$/,
+                emailError: false,
+                emailPattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
             };
+        },
+        watch: {
+            'currentMember.memPassword': {
+                handler(newValue) {
+                    if (newValue && this.currentMember.memPassword2) {
+                        this.passwordError = newValue !== this.currentMember.memPassword2;
+                    }
+                },
+                immediate: true
+            },
+            'currentMember.memPassword2': {
+                handler(newValue) {
+                    if (newValue && this.currentMember.memPassword) {
+                        this.passwordError = newValue !== this.currentMember.memPassword;
+                    }
+                },
+                immediate: true
+            },
+            'currentMember.memPhone': {
+                handler(newValue) {
+                    if (newValue) {
+                        this.phoneError = !this.phonePattern.test(newValue);
+                    }
+                },
+                immediate: true
+            },
+            'currentMember.memEmail': {
+                handler(newValue) {
+                    if (newValue) {
+                        this.emailError = !this.emailPattern.test(newValue);
+                    }
+                },
+                immediate: true
+            },
         },
         methods:{
             getDefaultMember(){
                 return{
                     memName: '',
-                    memId: '',
                     memPassword: '',
                     memEmail: '',
                     memPhone: '',
@@ -85,6 +127,15 @@
                 this.updateMember();
             },
             async updateMember(){
+                // 비밀번호 check
+                if (this.passwordError) return;
+
+                // 전화번호 check 
+                if (this.phoneError) return;
+
+                // 이메일 check
+                if (this.emailError) return;
+
                 try{
                     await axios.put(BASEURL+`/${this.memId}`, this.currentMember);
                     this.member = this.currentMember;
@@ -135,7 +186,6 @@
                 this.member = response.data;
 
                 this.memId = response.data.memId;
-                console.log("data: ", this.memId);
             } catch (error) {
                 console.log("에러 메시지: ", error);
             }
@@ -213,4 +263,23 @@
         justify-content: flex-end;
         gap:10px;
     }
+
+    .error-border {
+        border: 2px solid #ff4444;
+        animation: shake 0.5s;
+    }
+
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(5px); }
+        75% { transform: translateX(-5px); }
+    }
+
+    .error-message {
+        color: #ff4444;
+        font-size: 0.9em;
+        margin-top: 5px;
+        display: block;
+    }
+
 </style>

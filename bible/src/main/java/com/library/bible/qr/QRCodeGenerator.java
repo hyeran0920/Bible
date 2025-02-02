@@ -1,8 +1,14 @@
 package com.library.bible.qr;
 
+
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.util.Base64;
+
+import javax.imageio.ImageIO;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
@@ -29,5 +35,20 @@ public class QRCodeGenerator {
         MatrixToImageWriter.writeToPath(bitMatrix, "PNG", path);
         
         System.out.println("generateQRCode = "+path);
+    }
+	
+	//QR 이미지를 Base64 문자열로 반환
+	public static String generateQRCodeURL(String data) throws WriterException, IOException {
+        QRCodeWriter qrCodeWriter = new QRCodeWriter();
+        BitMatrix bitMatrix = qrCodeWriter.encode(data, BarcodeFormat.QR_CODE, 50, 50);
+        
+        BufferedImage qrImage = MatrixToImageWriter.toBufferedImage(bitMatrix);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        ImageIO.write(qrImage, "PNG", outputStream);
+
+        byte[] qrBytes = outputStream.toByteArray();
+        String base64QRCode = Base64.getEncoder().encodeToString(qrBytes);
+
+        return "data:image/png;base64," + base64QRCode;
     }
 }

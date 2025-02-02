@@ -40,9 +40,9 @@ public class BookService implements IBookService {
     }
 
     @Override
-    @Cacheable(value = "books", key = "#bookid")
-    public Map<String, Object> getBookInfoMap(int bookid) {
-        return bookRepository.getBookInfoMap(bookid);
+    @Cacheable(value = "books", key = "#bookId")
+    public Map<String, Object> getBookInfoMap(int bookId) {
+        return bookRepository.getBookInfoMap(bookId);
     }
 
     @Override
@@ -52,35 +52,35 @@ public class BookService implements IBookService {
     }
 
     @Override
-    @Cacheable(value = "books", key = "#bookid")
-    public Book getBookInfo(int bookid) {
-        return bookRepository.getBookInfo(bookid);
+    @Cacheable(value = "books", key = "#bookId")
+    public Book getBookInfo(int bookId) {
+        return bookRepository.getBookInfo(bookId);
     }
 
     // UPDATE, INSERT, DELETE
     @Override
-    @CachePut(value = "books", key = "#book.bookid")
+    @CachePut(value = "books", key = "#book.bookId")
     public void updateBook(Book book) {
         bookRepository.updateBook(book);
     }
 
     @Override
-    @CachePut(value = "books", key = "#book.bookid")
+    @CachePut(value = "books", key = "#book.bookId")
     public void insertBook(Book book) {
         bookRepository.insertBook(book);
     }
 
     @Override
     @Transactional("transactionManager")
-    @CacheEvict(value = "books", key = "#bookid")
-    public int deleteBook(int bookid, String author) {
-        return bookRepository.deleteBook(bookid, author);
+    @CacheEvict(value = "books", allEntries = true, beforeInvocation = true)
+    public int deleteBook(int bookId, String author) {
+        return bookRepository.deleteBook(bookId, author);
     }
 
     @Override
-    @CacheEvict(value = "books", key = "#bookid")
-    public void deleteBook(int bookid) {
-        bookRepository.deleteBook(bookid);
+    @CacheEvict(value = "books", allEntries = true, beforeInvocation = true)
+    public void deleteBook(int bookId) {
+        bookRepository.deleteBook(bookId);
     }
 
     // GET Authors, Publishers, Categories
@@ -101,13 +101,13 @@ public class BookService implements IBookService {
     }
 
     @Override
-    @Cacheable(value = "booksByCategory", key = "#category")
+    //@Cacheable(value = "booksByCategory", key = "#category")
     public List<Map<String, Object>> getBooksByCategory(String category) {
         return bookRepository.getBooksByCategory(category);
     }
 
     @Override
-    @Cacheable(value = "searchResults", key = "#keyword")
+    //@Cacheable(value = "searchResults", key = "#keyword")
     public List<Map<String, Object>> searchBooks(String keyword) {
         return bookRepository.searchBooks(keyword);
     }

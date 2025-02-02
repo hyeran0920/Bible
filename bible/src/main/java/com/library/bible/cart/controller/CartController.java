@@ -37,6 +37,7 @@ public class CartController {
         return ResponseEntity.ok(cartList);
     }
     
+    
     // 특정 장바구니 조회 (Cart ID)
     @GetMapping("/{cartId}")
     public ResponseEntity<Cart> getCart(@PathVariable int cartId) {
@@ -46,14 +47,14 @@ public class CartController {
 
     // 장바구니에 책 추가
     @PostMapping("/add")
-    public ResponseEntity<String> addCart(@RequestBody Map<String, Integer> request) {
+    public ResponseEntity<String> addCart(@AuthMember Member member, @RequestBody Map<String, Integer> request) {
         int bookId = request.get("bookId");
-        int memId = request.get("memId");
         int bookCount = request.get("bookCount");
+        Integer memId = member.getMemId(); // 인증된 사용자 ID 가져오기
 
         // 이미 존재하는 책인지 확인
         int exists = cartService.isBookInCart(memId, bookId);
-        if (exists==1) {
+        if (exists == 1) {
             cartService.updateCartByBookId(bookId, memId, bookCount); // 수량 업데이트
             return ResponseEntity.ok("장바구니 항목이 업데이트되었습니다.");
         } else {
@@ -61,6 +62,7 @@ public class CartController {
             return ResponseEntity.ok("장바구니에 추가되었습니다.");
         }
     }
+
 
     // 장바구니 수량 업데이트 (cartId 기준)
     @PutMapping("/update")

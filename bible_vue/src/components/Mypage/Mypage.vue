@@ -63,8 +63,8 @@
 </template>
 
 <script>
-    import axios from 'axios';
-    const BASEURL = "http://localhost:8080/api/members";
+    // import axios from 'axios';
+    const MEMBER_BASEURL = "/members";
     const QR_BASEURL="http://localhost:8080/api/uploads/member-qr-image";
 
     export default{
@@ -146,7 +146,7 @@
                 if (this.emailError) return;
 
                 try{
-                    await axios.put(BASEURL+`/${this.memId}`, this.currentMember);
+                    await this.$axios.put(MEMBER_BASEURL, this.currentMember);
                     this.member = this.currentMember;
                     this.closeModal();
                 }catch(error){
@@ -166,7 +166,7 @@
                 const userInput = prompt('탈퇴하시려면 이메일을 입력해주세요.');
                 if(userInput && userInput === this.member.memEmail){
                     try{
-                        await axios.delete(BASEURL+`/${memId}`, {withCredentials: true});
+                        await this.$axios.delete(MEMBER_BASEURL);
 
                         //로그아웃 처리
                         localStorage.removeItem("isLoggedIn");
@@ -187,8 +187,7 @@
             },
             async fetchQRImage() {
                 try {
-                    const response = await axios.get(QR_API, {
-                        params: { memId: this.memId },
+                    const response = await this.$axios.get(QR_BASEURL, {
                         responseType: 'blob', // 이미지 데이터로 받아오기
                     });
 
@@ -203,7 +202,7 @@
 
             async getMemberQRImage() {
                 try {
-                    const response = await axios.get(`${QR_BASEURL}?memId=${this.memId}`, {
+                    const response = await this.$axios.get(QR_BASEURL, {
                         responseType: 'blob' // ✅ 이미지 요청 시 blob 타입으로 변환
                     });
 
@@ -223,7 +222,7 @@
 
         async mounted() {
             try {
-                const response = await axios.get(BASEURL + "/me", { withCredentials: true });
+                const response = await this.$axios.get(`${MEMBER_BASEURL}/me`);
 
                 this.member = response.data;
                 this.memId = response.data.memId;

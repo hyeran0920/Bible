@@ -12,4 +12,5 @@ public interface IRentService {
 	void insertRent(Rent rent);
 	void updateRent(Rent rent);
 	int deleteRent(int rentId);
+	int deleteRentByRentHistoryId(int rentHistoryId);
 }

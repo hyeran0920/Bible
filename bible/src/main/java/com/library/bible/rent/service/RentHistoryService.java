@@ -2,7 +2,6 @@ package com.library.bible.rent.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -15,12 +14,13 @@ import com.library.bible.rent.model.RentHistory;
 import com.library.bible.rent.repository.IRentHistoryRepository;
 
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class RentHistoryService implements IRentHistoryService {
-	
-	@Autowired
-	private IRentHistoryRepository rentHistoryRepository;
+	private final RentService rentService;
+	private final IRentHistoryRepository rentHistoryRepository;
 
 	@Override
 	@Cacheable(value="rentHistorys")
@@ -59,6 +59,10 @@ public class RentHistoryService implements IRentHistoryService {
 		@CacheEvict(value = "rentHistorys", allEntries = true)
 	})
 	public int deleteRentHistory(int rentHistoryId) {
+		// rent-history 삭제 전 rent들 삭제
+		rentService.deleteRentByRentHistoryId(rentHistoryId);
+		
+		// rent-history 삭제
 		int result = rentHistoryRepository.deleteRentHistory(rentHistoryId);
 		if(result == 0) throw new CustomException(ExceptionCode.RENT_HISTORY_DELETE_FAIL);
 		return result;

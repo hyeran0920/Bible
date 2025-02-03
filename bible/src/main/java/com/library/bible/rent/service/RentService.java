@@ -2,7 +2,6 @@ package com.library.bible.rent.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -15,12 +14,12 @@ import com.library.bible.rent.model.Rent;
 import com.library.bible.rent.repository.IRentRepository;
 
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class RentService implements IRentService {
-	
-	@Autowired
-	private IRentRepository rentRepository;
+	private final IRentRepository rentRepository;
 
 	@Override
 	@Cacheable(value="rents")
@@ -60,6 +59,14 @@ public class RentService implements IRentService {
 	})
 	public int deleteRent(int rentId) {
 		int result = rentRepository.deleteRent(rentId);
+		if(result == 0) throw new CustomException(ExceptionCode.RENT_DELETE_FAIL);
+		return result;
+	}
+
+	@Override
+	@Transactional
+	public int deleteRentByRentHistoryId(int rentHistoryId) {
+		int result = rentRepository.deleteRentByRentHistoryId(rentHistoryId);
 		if(result == 0) throw new CustomException(ExceptionCode.RENT_DELETE_FAIL);
 		return result;
 	}

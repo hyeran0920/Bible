@@ -19,4 +19,5 @@ public interface IRentRepository {
 	int insertRent(Rent rent);
 	int updateRent(Rent rent);
 	int deleteRent(int rentId);
+	int deleteRentByRentHistoryId(int rentHistoryId);
 }

@@ -62,5 +62,10 @@
 	<delete id="deleteRent">
 		DELETE FROM rent WHERE rent_id = #{rentId}
 	</delete>
+	
+	<!-- Rent History ID로 rent 삭제 -->
+	<delete id="deleteRentByRentHistoryId">
+		DELETE FROM rent WHERE rent_history_id = #{rentHistoryId}
+	</delete>
 
 </mapper>

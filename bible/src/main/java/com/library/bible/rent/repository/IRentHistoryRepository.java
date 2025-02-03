@@ -5,7 +5,10 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+import com.library.bible.rent.dto.RentHistoryResponse;
 import com.library.bible.rent.model.RentHistory;
+
+import io.lettuce.core.dynamic.annotation.Param;
 
 @Mapper
 @Repository
@@ -18,4 +21,16 @@ public interface IRentHistoryRepository {
 	int insertRentHistory(RentHistory rentHistory);
 	int updateRentHistory(RentHistory rentHistory);
 	int deleteRentHistory(int rentHistoryId);
+	
+	// RentHistoryRespone
+	List<RentHistoryResponse>selectRentHistoryResponses(
+			@Param("memId") int memId, 
+	        @Param("rentStatus") String rentStatus,
+            @Param("offset") int offset, 
+            @Param("limit") int limit
+    );
+	int countRentHistory(			
+			@Param("memId") int memId, 
+	        @Param("rentStatus") String rentStatus
+    );
 }

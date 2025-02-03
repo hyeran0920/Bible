@@ -11,6 +11,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.google.zxing.WriterException;
 import com.library.bible.book.model.Book;
+import com.library.bible.exception.CustomException;
+import com.library.bible.exception.ExceptionCode;
 import com.library.bible.member.model.Member;
 import com.library.bible.qr.QRCodeGenerator;
 
@@ -69,31 +71,28 @@ public class UploadService implements IUploadService {
     
     //CREATE MEMBER QR!!!!
     @Override
-    public boolean createMemberQRImage(Member member) {
+    public void createMemberQRImage(Member member) {
         try {
             String data = "Member ID: " + member.getMemId() + ", Email: " + member.getMemEmail();
             String filePath = MEMBER_QR_DIR + member.getMemId() + ".png";
             QRCodeGenerator.generateQRCode(data, filePath);
             log.info("Generated QR Code for member ID: {}", member.getMemId());
-            return true;
         } catch (WriterException | IOException e) {
             log.error("Error generating QR code for member ID: {}", member.getMemId(), e);
-            return false;
+            throw new CustomException(ExceptionCode.QR_IMAGE_CREATION_FAIL);
         }
     }
     
     @Override
-    public boolean createBookQRImage(Book book, int bookId) {
-
+    public void createBookQRImage(Book book, int bookId) {
     	try {
         	//create qr
             String data = "Book ID: " + bookId + ", Title: " + book.getBookTitle();
             String filePath = "uploads/book-qr/" + bookId + ".jpg";
             QRCodeGenerator.generateQRCode(data, filePath);
-            return true;
         } catch (WriterException | IOException e) {
             log.error("Error generating QR code for book ID: {}", bookId, e);
-            return false;
+            throw new CustomException(ExceptionCode.QR_IMAGE_CREATION_FAIL);
         }
 
     }

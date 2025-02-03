@@ -64,7 +64,7 @@
 
 <script>
     // import axios from 'axios';
-    const MEMBER_BASEURL = "/members";
+    const MEMBER_BASEURL = "/members/me";
     const QR_BASEURL="http://localhost:8080/api/uploads/member-qr-image";
 
     export default{
@@ -222,7 +222,7 @@
 
         async mounted() {
             try {
-                const response = await this.$axios.get(`${MEMBER_BASEURL}/me`);
+                const response = await this.$axios.get(MEMBER_BASEURL);
 
                 this.member = response.data;
                 this.memId = response.data.memId;

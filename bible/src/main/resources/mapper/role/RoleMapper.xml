@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.library.bible.memberetc.respository.IMemberEtcRepository">
+<mapper namespace="com.library.bible.role.respository.IRoleRepository">
     <!-- ResultMap 정의 -->
 	<resultMap id="roleResultMap" type="Role">
 	    <id property="memId" column="mem_id"/>
 	    <result property="roleName" column="role_name"/>
 	</resultMap>
 	
-    <!-- ID로 Role 조회 -->
+    <!-- member id로 Role 조회 -->
 	<select id="selectRolesByMemId" parameterType="int" resultMap="roleResultMap">
 	    SELECT 
 	        mem_id,
@@ -16,8 +16,8 @@
 	    FROM role
 	    WHERE mem_id = #{memId}
 	</select>
-
-	<!-- Role 등록 -->
+	
+	<!-- 여러 개의 Role 등록 -->
 	<insert id="insertMemberRoles" parameterType="Member">
 	    INSERT ALL
 	    <foreach collection="roles" item="role">

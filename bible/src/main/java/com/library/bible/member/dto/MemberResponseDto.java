@@ -2,7 +2,7 @@ package com.library.bible.member.dto;
 
 import java.util.List;
 
-import com.library.bible.memberetc.model.Role;
+import com.library.bible.role.model.Role;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;

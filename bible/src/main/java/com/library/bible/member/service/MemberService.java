@@ -98,7 +98,8 @@ public class MemberService implements IMemberService{
 	public Member updateMember(Member member) {
 		// role 이외의 컬럼 수정
 		member.setMemPassword(passwordEncoder.encode(member.getMemPassword())); // 비밀번호 암호화
-		memberRepository.updateMember(member);
+		int result = memberRepository.updateMember(member);
+		if(result == 0) throw new CustomException(ExceptionCode.MEMBER_UPDATE_FAIL);
 		
 		// role 수정
 //        if (member.getRoles() != null && !member.getRoles().isEmpty()) {

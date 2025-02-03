@@ -29,7 +29,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MemberService implements IMemberService{
 	private final IMemberRepository memberRepository;
-	private final IRoleService memberEtcService;
+	private final IRoleService roleService;
 	private final IMemberRentService memberRentService;
     private final BCryptPasswordEncoder passwordEncoder;
     private final UploadService uploadService;
@@ -83,7 +83,7 @@ public class MemberService implements IMemberService{
 
 		// role 저장
         if (member.getRoles() != null && !member.getRoles().isEmpty())
-        	memberEtcService.insertMemberRoles(member);
+        	roleService.insertMemberRoles(member);
         
         // member-rent 정보 자동 생성
         MemberRent memberRent = new MemberRent(member.getMemId(), 0, 't', null);
@@ -116,7 +116,8 @@ public class MemberService implements IMemberService{
 		    @CacheEvict(value = "roleCache", key = "#memId")   // 역할 캐시도 삭제
 		})
 	public void deleteMember(int memId) {
-		memberEtcService.deleteRoles(memId);
+		roleService.deleteRoles(memId);
+		memberRentService.deleteMemberRent(memId);
 		memberRepository.deleteMember(memId);
 		uploadService.deleteMemberQRImage(memId);
 	}

@@ -1,4 +1,4 @@
-package com.library.bible.address;
+package com.library.bible.address.controller;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;

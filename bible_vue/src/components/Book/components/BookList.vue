@@ -11,7 +11,6 @@
         <th>Category</th>
         <th>Price</th>
         <th>Stock</th>
-        <th v-if="userRole === 'admin'">Edit</th>
       </tr>
     </thead>
 
@@ -40,10 +39,7 @@
         <td>{{ book.bookCategory }}</td>
         <td>{{ book.bookPrice }}</td>
         <td>{{ book.bookStock }}</td>
-        <td v-if="userRole === 'admin'">
-          <button @click="openModal(true, book)">Edit</button>
-          <button @click="promptDelete(book.bookId, book.bookAuthor)">Delete</button>
-        </td>
+
       </tr>
     </tbody>
   </table>
@@ -53,9 +49,6 @@
 export default {
   props: {
     paginatedBooks: Array,
-    openModal: Function,
-    promptDelete: Function,
-    userRole: String,
   },
   methods:{
 

@@ -5,10 +5,6 @@
       <form @submit.prevent="handleSubmit">
         <!-- 기본 필드 -->
         <div class="form-group">
-          <label for="bookId">Book ID:</label>
-          <input v-model="currentBook.bookId" type="text" id="bookId" :disabled="isEditing" required />
-        </div>
-        <div class="form-group">
           <label for="bookTitle">Title:</label>
           <input v-model="currentBook.bookTitle" type="text" id="bookTitle" required />
         </div>
@@ -121,31 +117,14 @@ export default {
         this.previewImage = e.target.result;
       };
       reader.readAsDataURL(this.selectedFile);
+
+      //부모 컴포넌트로 선택한 파일전달!
+      this.$emit("image-selected",this.selectedFile);
     },
+
+    //SUBMIT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     async handleSubmit() {
-      if (this.selectedFile) {
-
-        // 선택된 파일이 있으면 업로드
-        const formData = new FormData();
-        formData.append('file', this.selectedFile);
-        formData.append('bookid', this.currentBook.bookId);
-
-
-        //Book Img Upload
-        try {
-          await fetch('http://localhost:8080/api/uploads/book-image', {
-            method: 'POST',
-            body: formData,
-          });
-        } catch (error) {
-          console.error('Image upload failed:', error);
-          alert('Image upload failed. Please try again.');
-          return;
-        }
-      }
-
-      // 부모 컴포넌트에 제출 이벤트 전달
-      this.$emit('handle-submit');
+      this.$emit('handle-submit'); // 부모 컴포넌트에 제출 이벤트 전달
     },
     closeModal() {
       this.$emit('close-modal'); // 부모 컴포넌트에 모달 닫기 이벤트 전달

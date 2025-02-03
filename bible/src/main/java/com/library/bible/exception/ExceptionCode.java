@@ -38,8 +38,11 @@ public enum ExceptionCode {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류가 발생했습니다."),
     INVALID_INPUT_VALUE(HttpStatus.BAD_REQUEST, "잘못된 입력값입니다."),
     METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "지원하지 않는 HTTP 메소드입니다."),
-    RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, "요청한 리소스를 찾을 수 없습니다.");
+    RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, "요청한 리소스를 찾을 수 없습니다."),
 
+    // QR 이미지 생성 에러
+	QR_IMAGE_CREATION_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "QR 이미지 생성 실패");
+	
     private final HttpStatus httpStatus;
     private final String message;
 }

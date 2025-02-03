@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.library.bible.book.service.IBookService;
+import com.library.bible.member.model.Member;
+import com.library.bible.resolver.AuthMember;
+import com.library.bible.upload.service.IUploadService;
 
 @RestController
 @RequestMapping("/api/uploads")
@@ -28,112 +31,84 @@ public class UploadController {
 
     private final String UPLOAD_DIR = "uploads/book-images/";
     private final String BOOK_QR_DIR="uploads/book-qr/";
+    private final String MEMBER_QR_DIR="uploads/member-qr/";
+    
+    
+    private final IUploadService uploadService;
 
-    //Get BookImg by bookId
-    @GetMapping("/book-image")
-    public ResponseEntity<byte[]> getBookImage(@RequestParam("bookid") int bookId) {
-        String fileName = bookId + ".jpg";
-        Path filePath = Paths.get(UPLOAD_DIR, fileName);
+    public UploadController(IUploadService uploadService) {
+        this.uploadService = uploadService;
+    }
 
-        try {
-            if (Files.exists(filePath)) {
-                // 파일 읽기
-                byte[] imageBytes = Files.readAllBytes(filePath);
-
-                // Content-Type 설정
-                return ResponseEntity.ok()
-                        .header("Content-Type", "image/jpeg")
-                        .body(imageBytes);
-            } else {
-                // 파일 없 404 반환
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            // 읽기 실패 500 반환
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+    //DELETE IMAGE////////////////////////////////////////////////////////////
+    @DeleteMapping("/book-image")
+    public ResponseEntity<String> deleteBookImage(@RequestParam("bookid") int bookId) {
+        return getDeleteResponse(uploadService.deleteBookImage(bookId), "Book image", bookId);
     }
 
 
-    //Upload Book img
+    @DeleteMapping("/book-qr-image")
+    public ResponseEntity<String> deleteBookQRImage(@RequestParam("bookid") int bookId) {
+        return getDeleteResponse(uploadService.deleteBookQRImage(bookId), "Book QR image", bookId);
+    }
+
+    @DeleteMapping("/member-qr-image")
+    public ResponseEntity<String> deleteMemberQRImageByToken(@AuthMember Member member) {
+        return getDeleteResponse(uploadService.deleteMemberQRImage(member.getMemId()), "Member QR image", member.getMemId());
+    }
+
+    private ResponseEntity<String> getDeleteResponse(boolean success, String type, int id) {
+        if (success) {
+            return ResponseEntity.ok(type + " deleted for ID: " + id);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(type + " not found for ID: " + id);
+        }
+    }
+    
+    
+    //INSERT BOOK IMG///////////////////////////////////////////////////////
     @PostMapping("/book-image")
     public ResponseEntity<String> uploadBookImage(
             @RequestParam("file") MultipartFile file,
-            @RequestParam("bookid") Integer bookId) throws IOException {
+            @RequestParam("bookid") int bookId) {
 
-        String originalFileName = file.getOriginalFilename();
-        String fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));//확장자 추출
-        String fileName = bookId + fileExtension;
-        Path filePath = Paths.get(UPLOAD_DIR, fileName);
-
-        // directort 없으면 생성
-        Files.createDirectories(filePath.getParent());
-
-        // Save file
-        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-
-        System.out.println("Added image to: " + UPLOAD_DIR + fileName);
-        return ResponseEntity.ok("/" + UPLOAD_DIR + fileName);
-    }
-
-
-    //Delete Book img
-    @DeleteMapping("/book-image")
-    public ResponseEntity<String> deleteBookImage(@RequestParam("bookid") int bookId) {
-        String[] possibleExtensions = {".jpg", ".png", ".jpeg"};
-        Path filePath = null;
-
-        for (String extension : possibleExtensions) {
-            filePath = Paths.get(UPLOAD_DIR, bookId + extension);
-            if (Files.exists(filePath)) {
-                break;
-            }
-            filePath = null;
-        }
-
-        try {
-            if (filePath != null) {
-                Files.delete(filePath);
-                System.out.println("Deleted image: " + filePath);
-                return ResponseEntity.ok().body("Image deleted for book ID: " + bookId);
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Image not found for book ID: " + bookId);
-            }
-        } catch (IOException e) {
-            System.err.println("Error deleting file: " + filePath);
+        boolean uploaded = uploadService.uploadBookImage(bookId, file);
+        if (uploaded) {
+            return ResponseEntity.ok("Book image uploaded successfully for book ID: " + bookId);
+        } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-            		.body("Error deleting image for book ID: " + bookId);
+                    .body("Failed to upload book image for book ID: " + bookId);
         }
     }
-    
-    
-    
-    //Delete QR img
-    @DeleteMapping("/book-qr-image")
-    public ResponseEntity<String> deleteQRImage(@RequestParam("bookid") int bookId) {
-        String[] possibleExtensions = {".jpg", ".png", ".jpeg"};
-        Path filePath = null;
 
-        for (String extension : possibleExtensions) {
-            filePath = Paths.get(BOOK_QR_DIR, bookId + extension);
-            if (Files.exists(filePath)) { break; }
-            filePath = null;
-        }
+    //GET IMG/////////////////////////////////////////////////////////
+    @GetMapping("/book-image")
+    public ResponseEntity<byte[]> getBookImage(@RequestParam("bookid") int bookId) {
+        System.out.println("here is get obok img");
+    	byte[] imageBytes = uploadService.getBookImage(bookId);
 
-        try {
-            if (filePath != null) {
-                Files.delete(filePath);
-                return ResponseEntity.ok().body("QR Image deleted for book ID: " + bookId);
-            } else {
-            	//there is no qr img
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("QR img not found - book ID: " + bookId);
-            }
-        } catch (IOException e) {
-        	//error
-            System.err.println("Error deleting file: " + filePath);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-            		.body("Error deleting QR img - book ID: " + bookId);
+        if (imageBytes != null) {
+            return ResponseEntity.ok()
+                    .header("Content-Type", "image/jpeg")
+                    .body(imageBytes);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
+
+
+    
+    @GetMapping("/member-qr-image")
+    public ResponseEntity<byte[]> getMemberQRImageByToken(@AuthMember Member member) {
+    	byte[] imageBytes = uploadService.getMemberQRImage(member.getMemId());
+    	
+    	if (imageBytes != null) {
+    		return ResponseEntity.ok()
+    				.header("Content-Type", "image/jpeg")
+    				.body(imageBytes);
+    	} else {
+    		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    	}
+    }
+    
 }

@@ -1,10 +1,10 @@
 <template>
   <div class="container" id="app">
 
-    <SocketTest v-if="userRole === 'admin'" />
+    <!--<SocketTest v-if="userRole === 'admin'" />-->
 
     <h2>Book List</h2>
-    <img src=" data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyAQAAAAA2RLUcAAAAlElEQVR4XmP4DwYHGGhGf5B9ww6iv99u/Q6iv4RdFQfT0XehNC+Y/n6nFyz/QTQErP7/N3Ww/o9slvdB9N/fKsdB9FfZr+og+p9CB1j9p1DR9yD658+YdhD9jXHqcjBfRwms7ssthnKweV/V9SHmu7qD7bukng+WDzPwB9PR2fJgOvAzxD3XJoHN/SBqAlaP7i/a0ABrESWQeWG0cQAAAABJRU5ErkJggg==">
+    
     <!--ADD BOOK BTN-->
     <p v-if="userRole === 'admin'">
       <button @click="openModal(false)" class="add-book-button">Add Book</button>
@@ -19,8 +19,6 @@
       :paginatedBooks="paginatedBooks" 
       :openModal="openModal" 
       :promptDelete="promptDelete"
-      :bookImgDelete="bookImgDelete"
-      :getBookImageUrl="getBookImageUrl"
       :userRole="userRole"
     />
 
@@ -31,6 +29,7 @@
       :currentBook="currentBook" 
       @handle-submit="handleSubmit" 
       @close-modal="closeModal"
+      @image-selected="handleImageSelected"
     />
 
     <!-- Pagination Controls -->

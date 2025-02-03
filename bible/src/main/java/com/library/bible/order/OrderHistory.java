@@ -1,14 +1,17 @@
 package com.library.bible.order;
 
+import java.util.Date;
+
+import org.apache.ibatis.type.Alias;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
-
 @Getter
 @Setter
 @Builder
+@Alias("OrderHistory")
 public class OrderHistory {
     private Long orderHistoryId;
     private Long memId;

@@ -47,7 +47,7 @@ public class OrderService {
         }
     }
 
-    public List<OrderPageItemDTO> getOrdersByMemId(Long memId) {  // String → Long 변경
+    public List<OrderPageItemDTO> getOrdersByMemId(Long memId) { 
         return orderMapper.getOrdersByMemId(memId);
     }
     

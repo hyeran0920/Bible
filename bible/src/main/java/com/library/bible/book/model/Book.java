@@ -15,7 +15,9 @@ public class Book {
     private String bookReleaseDate;
     private String bookCategory;
     private int bookPrice;
-    private int bookStock;
     private String bookImg;
     private String bookDetail;
+    private int bookTotalStock;
+    private int bookRentStock;
+    private String bookLocation;
 }

@@ -39,7 +39,7 @@
           <td>{{ book.bookReleaseDate }}</td>
           <td>{{ book.bookCategory }}</td>
           <td>{{ book.bookPrice }}</td>
-          <td>{{ book.bookStock }}</td>
+          <td>{{ book.bookRentStock }}</td>
           <td v-if="userRole === 'admin'">
             <button @click="openModal(true, book)">Edit</button>
             <button @click="promptDelete(book.bookId, book.bookAuthor)">Delete</button>

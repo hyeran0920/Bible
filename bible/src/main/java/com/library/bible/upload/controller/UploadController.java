@@ -84,7 +84,7 @@ public class UploadController {
     //GET IMG/////////////////////////////////////////////////////////
     @GetMapping("/book-image")
     public ResponseEntity<byte[]> getBookImage(@RequestParam("bookid") int bookId) {
-        System.out.println("here is get obok img");
+        //System.out.println("here is get obok img");
     	byte[] imageBytes = uploadService.getBookImage(bookId);
 
         if (imageBytes != null) {

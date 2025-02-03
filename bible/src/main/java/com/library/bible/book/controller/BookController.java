@@ -1,5 +1,6 @@
 package com.library.bible.book.controller;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +20,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.library.bible.book.model.Book;
 import com.library.bible.book.service.IBookService;
+import com.library.bible.upload.ExcelService;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/api/books")
@@ -26,7 +30,7 @@ public class BookController {
 	
 	@Autowired
 	IBookService bookService;
-	
+
 	
 	//GET
 	@GetMapping
@@ -50,7 +54,7 @@ public class BookController {
 	
 	
 	
-	//INSERT, UPDATE, DELETE
+	//INSERT
 	@PostMapping
 	public ResponseEntity<?> insertBook(
 			@RequestPart("book") Book book,
@@ -62,11 +66,35 @@ public class BookController {
 		}catch (Exception e) {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error inserting book: " + e.getMessage());
 	    }
-	    
 	}
 	
 	
+	@PostMapping("/excel")
+	public ResponseEntity<String> insertBooksByExcel(@RequestParam("file") MultipartFile file) {
+
+        List<Book> books;
+		try {
+			System.out.println("insert book by excel="+file.getOriginalFilename());
+			books = ExcelService.parseExcelFile(file);
+			bookService.insertBooks(books);
+            return ResponseEntity.ok("Books uploaded (Excel) successfully!");
+		} catch (Exception e) {
+			 return ResponseEntity.badRequest().body("Error - Excel book upload : " + e.getMessage());
+		}
+        
+    }
 	
+	
+	//Download - excel
+    @GetMapping("/download-excel")
+    public void downloadExcel(HttpServletResponse response) throws IOException {
+        List<Book> books = bookService.getBookList();
+        ExcelService.generateExcelFile(books, response);
+    }
+    
+    
+	
+	//UPDATE
 	@PutMapping
 	public ResponseEntity<?> updateBook(
 	        @RequestPart("book") Book book,
@@ -83,10 +111,9 @@ public class BookController {
 	}
 
 	
+	//DELETE
 	@DeleteMapping
 	public void deleteBook(int bookid, String author) {
-		//System.out.println("delete book");
-		//bookService.deleteBook(bookid, author);
 		bookService.deleteBook(bookid);
 	}
 
@@ -107,7 +134,7 @@ public class BookController {
 	//CATEGORY
 	@GetMapping("/categories")
 	public List<Map<String, Object>> getAllCategory() {
-		System.out.println("bookCategory");
+		System.out.println("get book category");
 		return bookService.getAllCategory();
 	}
 	@GetMapping("/categories/{category}")

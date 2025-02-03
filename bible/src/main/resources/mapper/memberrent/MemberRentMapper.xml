@@ -25,10 +25,12 @@
 	<insert id="insertMemberRent" parameterType="MemberRent">
 	    INSERT INTO member_rent (
 	        mem_id,
+	        total_rent_count,
 	        rent_poss,
 	        rent_poss_date
 	    ) VALUES (
 	        #{memId},
+	        #{totalRentCount},
 	        #{rentPoss},
 	        #{rentPossDate}
 	    )

@@ -15,6 +15,7 @@ import com.library.bible.exception.CustomException;
 import com.library.bible.exception.ExceptionCode;
 import com.library.bible.member.model.Member;
 import com.library.bible.member.repository.IMemberRepository;
+import com.library.bible.memberrent.model.MemberRent;
 import com.library.bible.memberrent.service.IMemberRentService;
 import com.library.bible.role.model.Role;
 import com.library.bible.role.model.RoleName;
@@ -83,6 +84,10 @@ public class MemberService implements IMemberService{
 		// role 저장
         if (member.getRoles() != null && !member.getRoles().isEmpty())
         	memberEtcService.insertMemberRoles(member);
+        
+        // member-rent 정보 자동 생성
+        MemberRent memberRent = new MemberRent(member.getMemId(), 0, 't', null);
+        memberRentService.insertMemberRent(memberRent);
 
         return member;
     }

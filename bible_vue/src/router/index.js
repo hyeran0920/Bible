@@ -10,6 +10,7 @@ import AdminPage from "../components/Admin/AdminPage.vue";
 import Mypage from "../components/Mypage/Mypage.vue";
 import Cart from "../components/Cart/components/CartPage.vue";
 import Address from "../components/Order/ParentComponent.vue";
+import AddBookExcel from "../components/Admin/AdminAddBookExcel.vue";
 
 const routes = [
   { path: "/", name: "main", component: Main },
@@ -22,6 +23,7 @@ const routes = [
   { path: "/mypage", name: "Mypage", component: Mypage },
   { path: "/cart", name:"cart", component:Cart},
   { path: "/address", name:"address", component: Address },
+  { path: "/book/excel", name:"addBookExcel", component: AddBookExcel},
 
   { path: "/admin-page", name: "AdminPage",component: AdminPage, beforeEnter: (to, from, next) => {
       // "/admin"을 거치지 않고 접근하면 강제 이동

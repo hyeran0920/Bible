@@ -3,6 +3,14 @@
 
     <h2>Book List</h2>
     
+    <!--Add Book With Excel File-->
+    <p>
+      <router-link :to="'/book/excel'">
+        Upload/Download Book List with Excel File
+      </router-link>
+    </p>
+    
+
     <!--ADD BOOK BTN-->
     <p v-if="userRole === 'admin'">
       <button @click="openModal(false)" class="add-book-button">Add Book</button>
@@ -46,6 +54,7 @@ import BookModal from '../Book/components/BookModal.vue';
 import Pagination from '../Book/components/Pagination.vue';
 import BookSearch from '../Book/components/BookSearch.vue';
 import bookListLogic from '../Book/scripts/BookList.js';
+
 
 export default {
   components: {

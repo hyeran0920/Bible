@@ -15,9 +15,11 @@ import com.library.bible.exception.CustomException;
 import com.library.bible.exception.ExceptionCode;
 import com.library.bible.member.model.Member;
 import com.library.bible.member.repository.IMemberRepository;
-import com.library.bible.memberetc.model.Role;
-import com.library.bible.memberetc.model.RoleName;
-import com.library.bible.memberetc.service.IMemberEtcService;
+import com.library.bible.memberrent.model.MemberRent;
+import com.library.bible.memberrent.service.IMemberRentService;
+import com.library.bible.role.model.Role;
+import com.library.bible.role.model.RoleName;
+import com.library.bible.role.service.IRoleService;
 import com.library.bible.upload.service.UploadService;
 
 import jakarta.transaction.Transactional;
@@ -27,7 +29,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MemberService implements IMemberService{
 	private final IMemberRepository memberRepository;
-	private final IMemberEtcService memberEtcService;
+	private final IRoleService memberEtcService;
+	private final IMemberRentService memberRentService;
     private final BCryptPasswordEncoder passwordEncoder;
     private final UploadService uploadService;
     
@@ -53,6 +56,7 @@ public class MemberService implements IMemberService{
 		return memberRepository.selectAllMembers();
 	}
 
+	// 회원가입
 	@Override
 	@Transactional
 	@CacheEvict(value = "memberCache", allEntries = true)  // 모든 멤버 캐시 삭제
@@ -63,18 +67,13 @@ public class MemberService implements IMemberService{
 			int memberResult = memberRepository.insertMember(member);
 			
 			// member 삽입 실패시 예외
-			if(memberResult != 1) throw new CustomException(ExceptionCode.MEMBER_INSERT_FAIL);
-			
-			//QR이미지 생성 실패시 예외
-			if (!uploadService.createMemberQRImage(member)) {
-                throw new CustomException(ExceptionCode.QR_IMAGE_CREATION_FAIL);
-            }
-			
+			if(memberResult != 1) throw new CustomException(ExceptionCode.MEMBER_INSERT_FAIL);			
 		} catch (DuplicateKeyException e) {
 	        throw new CustomException(ExceptionCode.DUPLICATE_EMAIL);
 	    }
 		
-		//군데 아래 얘네는 try catch구문에 안넣어도돼?-윤지
+		//QR이미지 생성
+		uploadService.createMemberQRImage(member);
 		
 		// member 권한 설정
 		List<Role> roles = new ArrayList<>();
@@ -85,11 +84,14 @@ public class MemberService implements IMemberService{
 		// role 저장
         if (member.getRoles() != null && !member.getRoles().isEmpty())
         	memberEtcService.insertMemberRoles(member);
+        
+        // member-rent 정보 자동 생성
+        MemberRent memberRent = new MemberRent(member.getMemId(), 0, 't', null);
+        memberRentService.insertMemberRent(memberRent);
 
         return member;
     }
 
-	// TODO : 테스트 필요
 	@Override
 	@Transactional
 	@CachePut(value="member", key="#member.memId")
@@ -107,7 +109,6 @@ public class MemberService implements IMemberService{
         return member;
 	}
 
-	// TODO : 테스트 필요
 	@Override
 	@Transactional
 	@Caching(evict = {

@@ -11,6 +11,9 @@ import Mypage from "../components/Mypage/Mypage.vue";
 import Cart from "../components/Cart/components/CartPage.vue";
 import OrderPage from "../components/Order/OrderPage.vue";
 
+import Address from "../components/Order/ParentComponent.vue";
+
+
 const routes = [
   { path: "/", name: "main", component: Main },
   { path: "/book", name: "book-list", component: BookListMain },
@@ -21,7 +24,10 @@ const routes = [
   { path: "/", redirect: "/login" },
   { path: "/mypage", name: "Mypage", component: Mypage },
   { path: "/cart", name:"cart", component:Cart},
+
   { path: "/order", name: "OrderPage", component: OrderPage },
+
+  { path: "/address", name:"address", component: Address },
 
   { path: "/admin-page", name: "AdminPage",component: AdminPage, beforeEnter: (to, from, next) => {
       // "/admin"을 거치지 않고 접근하면 강제 이동

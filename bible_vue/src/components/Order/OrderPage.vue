@@ -44,7 +44,7 @@ import axios from "axios";
 export default {
 data() {
   return {
-    memId: localStorage.getItem("memId") || "guest",
+    memId: Number(localStorage.getItem("memId")) || 0, 
     books: [], // 서버에서 가져온 도서 목록
   };
 },
@@ -59,17 +59,25 @@ computed: {
 methods: {
   // 서버에서 도서 목록 불러오기
   async fetchBooks() {
-    try {
-      const response = await axios.get("http://localhost:8080/orders/all");
-      this.books = response.data.map(book => ({
-        ...book,
-        selected: false,  // 체크박스 상태 추가
-        bookCount: 1, // 기본 수량 설정
-      }));
-    } catch (error) {
-      console.error("도서 목록을 불러오는 중 오류 발생:", error);
+  try {
+    console.log("📡 [API 요청] 도서 목록 불러오기 시작...");
+    const response = await axios.get("http://localhost:8080/orders/all");
+
+    if (!response.data || response.data.length === 0) {
+      console.warn("⚠️ [경고] API 응답이 빈 배열입니다. 서버에서 데이터를 확인하세요.");
+    } else {
+      console.log("✅ [API 응답] 도서 목록:", response.data);
     }
-  },
+
+    this.books = response.data.map(book => ({
+      ...book,
+      selected: false,  // 체크박스 상태 추가
+      bookCount: 1, // 기본 수량 설정
+    }));
+  } catch (error) {
+    console.error("🚨 [API 오류] 도서 목록 불러오기 실패:", error);
+  }
+},
 
   async submitOrder() {
     const selectedBooks = this.books
@@ -86,13 +94,14 @@ methods: {
     }
 
     try {
+      const orderPageDTO = {
+        memId: this.memId, // 주문자 ID 추가
+        orders: selectedBooks,
+        totalPrice: this.totalOrderPrice
+      };
       const response = await axios.post(
         `http://localhost:8080/orders/place`,
-        {
-          memId: this.memId,
-          orders: selectedBooks,
-          totalPrice: this.totalOrderPrice
-        }
+        orderPageDTO
       );
       alert("주문 완료: 주문번호 " + response.data);
     } catch (error) {
@@ -124,3 +133,4 @@ input[type="number"] {
 width: 50px;
 }
 </style>
+카트에서 오더로 가져오고 오더에서 해결

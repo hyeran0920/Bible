@@ -86,9 +86,14 @@ public class UploadService implements IUploadService {
     @Override
     public void createBookQRImage(Book book, int bookId) {
     	try {
+    		System.out.println("book qr id="+bookId);
         	//create qr
-            String data = "Book ID: " + bookId + ", Title: " + book.getBookTitle();
-            String filePath = "uploads/book-qr/" + bookId + ".jpg";
+            String data = "Book ID: " + Integer.toString(bookId) + 
+            		", Title: " + book.getBookTitle() + 
+            		", Author: " + book.getBookAuthor() + 
+            		", Publisher: "+ book.getBookPublisher() +
+            		", Category: "+book.getBookCategory();
+            String filePath = BOOK_QR_DIR + Integer.toString(bookId) + ".png";
             QRCodeGenerator.generateQRCode(data, filePath);
         } catch (WriterException | IOException e) {
             log.error("Error generating QR code for book ID: {}", bookId, e);

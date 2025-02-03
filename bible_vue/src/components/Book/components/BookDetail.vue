@@ -7,7 +7,7 @@
     <p><strong>Release Date:</strong> {{ book.bookReleaseDate }}</p>
     <p><strong>Category:</strong> {{ book.bookCategory }}</p>
     <p><strong>Price:</strong> {{ book.bookPrice }}</p>
-    <p><strong>Stock:</strong> {{ book.bookStock }}</p>
+    <p><strong>Stock:</strong> {{ book.bookTotalStock }}</p>
     <p><strong>Details:</strong> {{ book.bookDetail }}</p>
   </div>
 

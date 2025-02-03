@@ -25,9 +25,11 @@
 	            TO_CHAR(book_release_date, 'YYYY-MM-DD') AS "bookReleaseDate",
 	            book_category    AS "bookCategory",
 	            book_price       AS "bookPrice",
-	            book_stock       AS "bookStock",
 	            book_img         AS "bookImg",
-	            book_detail      AS "bookDetail"
+	            book_detail      AS "bookDetail",
+	            book_total_stock AS "bookTotalStock",
+	            book_rent_stock  AS "bookRentStock",
+	            book_location 	 AS "bookLocation"
 	    FROM BOOK
 	</select>
 	
@@ -39,9 +41,11 @@
 	            TO_CHAR(book_release_date, 'YYYY-MM-DD') AS "bookReleaseDate",
 	            book_category    AS "bookCategory",
 	            book_price       AS "bookPrice",
-	            book_stock       AS "bookStock",
 	            book_img         AS "bookImg",
-	            book_detail      AS "bookDetail"
+	            book_detail      AS "bookDetail",
+	            book_total_stock AS "bookTotalStock",
+	            book_rent_stock  AS "bookRentStock",
+	            book_location 	 AS "bookLocation"
 	    FROM BOOK 
 	    WHERE book_id = #{bookId}
 	</select>
@@ -54,9 +58,11 @@
 	    <result column="book_release_date" property="bookReleaseDate" />
 	    <result column="book_category"    property="bookCategory" />
 	    <result column="book_price"       property="bookPrice" />
-	    <result column="book_stock"       property="bookStock" />
 	    <result column="book_img"         property="bookImg" />
 	    <result column="book_detail"      property="bookDetail" />
+	    <result column="book_total_stock" property="bookTotalStock"/>
+	    <result column="book_rent_stock"  property="bookRentStock"/>
+	    <result column="book_location"    property="bookLocation"/>
 	</resultMap>
 	
 	<select id="getBookList" resultMap="bookMap">
@@ -71,9 +77,11 @@
 	            book_release_date AS bookReleaseDate,
 	            book_category    AS bookCategory,
 	            book_price       AS bookPrice,
-	            book_stock       AS bookStock,
 	            book_img         AS bookImg,
-	            book_detail      AS bookDetail
+	            book_detail      AS bookDetail,
+	            book_total_stock AS "bookTotalStock",
+	            book_rent_stock  AS "bookRentStock",
+	            book_location 	 AS "bookLocation"
 	    FROM BOOK 
 	    WHERE book_id = #{bookId}
 	</select>
@@ -87,10 +95,12 @@
 	    <!-- BOOK 테이블에 데이터 삽입 -->
 	    INSERT INTO book 
 	        (book_id, book_title, book_author, book_publisher, book_release_date, 
-	         book_category, book_price, book_stock, book_img, book_detail)
+	         book_category, book_price, book_img, book_detail, 
+	         book_total_stock, book_rent_stock, book_location)
 	    VALUES 
 	        (#{bookId}, #{bookTitle}, #{bookAuthor}, #{bookPublisher}, #{bookReleaseDate}, 
-	         #{bookCategory}, #{bookPrice}, #{bookStock}, #{bookImg}, #{bookDetail})
+	         #{bookCategory}, #{bookPrice}, #{bookImg}, #{bookDetail}, 
+	         #{bookTotalStock}, #{bookRentStock}, #{bookLocation})
 	</insert>
 
 
@@ -104,8 +114,10 @@
 	        book_release_date = #{bookReleaseDate, jdbcType=DATE},
 	        book_category = #{bookCategory},
 	        book_price = #{bookPrice},
-	        book_stock = #{bookStock},
-	        book_detail = #{bookDetail}
+	        book_detail = #{bookDetail},
+	        book_total_stock=#{bookTotalStock},
+	        book_rent_stock=#{bookRentStock},
+	        book_location=#{bookLocation}
 	    WHERE book_id = #{bookId}
 	</update>
 
@@ -136,9 +148,11 @@
 	            TO_CHAR(book_release_date, 'YYYY-MM-DD') AS "bookReleaseDate",
 	            book_category    AS "bookCategory",
 	            book_price       AS "bookPrice",
-	            book_stock       AS "bookStock",
 	            book_img         AS "bookImg",
-	            book_detail      AS "bookDetail"
+	            book_detail      AS "bookDetail",
+	            book_total_stock AS "bookTotalStock",
+	            book_rent_stock  AS "bookRentStock",
+	            book_location 	 AS "bookLocation"
 	    FROM BOOK
 	    WHERE BOOK_CATEGORY=#{category}
 	</select>
@@ -152,9 +166,11 @@
 		            TO_CHAR(book_release_date, 'YYYY-MM-DD') AS "bookReleaseDate",
 		            book_category    AS "bookCategory",
 		            book_price       AS "bookPrice",
-		            book_stock       AS "bookStock",
 		            book_img         AS "bookImg",
-		            book_detail      AS "bookDetail"
+		            book_detail      AS "bookDetail",
+		            book_total_stock AS "bookTotalStock",
+		            book_rent_stock  AS "bookRentStock",
+		            book_location 	 AS "bookLocation"
 		    FROM BOOK
 		    WHERE 1=1
 		]]>

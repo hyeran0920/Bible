@@ -64,7 +64,8 @@ public class BookService implements IBookService {
 
     // UPDATE, INSERT, DELETE
     @Override
-    @CachePut(value = "books", key = "#book.bookId")
+    //@CacheEvict(value = "books", key = "#book.bookId")
+    @CacheEvict(value = "books", allEntries = true) // 모든 책 캐시 삭제 -> 최신 상태 유지
     public Book updateBook(Book book, MultipartFile file) {
         
     	//update book in database
@@ -84,6 +85,7 @@ public class BookService implements IBookService {
     	//insert book in database
     	bookRepository.insertBook(book);
     	int bookId=book.getBookId();
+    	System.out.println("bookid bookService="+bookId);
     	
     	//book QR img
     	uploadService.createBookQRImage(book,bookId);

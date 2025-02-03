@@ -107,6 +107,7 @@ public class BookController {
 	//CATEGORY
 	@GetMapping("/categories")
 	public List<Map<String, Object>> getAllCategory() {
+		System.out.println("bookCategory");
 		return bookService.getAllCategory();
 	}
 	@GetMapping("/categories/{category}")

@@ -28,11 +28,7 @@
           <label for="bookPrice">Price:</label>
           <input v-model="currentBook.bookPrice" type="number" id="bookPrice" required />
         </div>
-        <div class="form-group">
-          <label for="bookStock">Stock:</label>
-          <input v-model="currentBook.bookStock" type="number" id="bookStock" />
-        </div>
-
+        
         <!-- 이미지 업로드 -->
         <div class="form-group">
           <label for="bookImg">Img:</label>
@@ -49,6 +45,17 @@
         <div class="form-group">
           <label for="bookDetail">Detail:</label>
           <input v-model="currentBook.bookDetail" type="text" id="bookDetail" />
+        </div>
+
+        <!--책 총 수량-->
+        <div class="form-group">
+          <label for="bookTotalStock">bookTotalStock:</label>
+          <input v-model="currentBook.bookTotalStock" type="number" id="bookTotalStock" />
+        </div>
+
+        <div class="form-group">
+          <label for="bookLocation">bookLocation:</label>
+          <input v-model="currentBook.bookLocation" type="text" id="bookLocation"/>
         </div>
 
         <div class="modal-actions">

@@ -38,7 +38,7 @@
         <td>{{ book.bookReleaseDate }}</td>
         <td>{{ book.bookCategory }}</td>
         <td>{{ book.bookPrice }}</td>
-        <td>{{ book.bookStock }}</td>
+        <td>{{ book.bookTotalStock }}</td>
 
       </tr>
     </tbody>

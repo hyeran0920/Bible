@@ -45,9 +45,9 @@ export default {
         bookReleaseDate: '',
         bookCategory: '',
         bookPrice: 0,
-        bookStock: 0,
         bookImg: '',
         bookDetail: '',
+        bookRent
       };
     },
 
@@ -110,13 +110,19 @@ export default {
         });
 
         if (response.data) {
+          
           const updatedBook = response.data; // 서버에서 반환된 Book 객체
 
-          // books 목록에서 업데이트된 책 반영
+          // books 목록에서 업데이트된 책 반영 목록 전부다 update
           const index = this.books.findIndex((b) => b.bookId === this.currentBook.bookId);
           if (index !== -1) { 
             this.books.splice(index, 1, updatedBook); 
           }
+          //이거는 해당 id책만 update
+          this.books = this.books.map((b) => 
+            b.bookId === updatedBook.bookId ? updatedBook : b
+          );
+
         }
 
 

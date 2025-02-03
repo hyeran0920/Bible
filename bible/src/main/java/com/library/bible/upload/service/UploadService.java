@@ -32,7 +32,7 @@ public class UploadService implements IUploadService {
         String[] extensions = {".jpg", ".png", ".jpeg"};
 
         for (String extension : extensions) {
-            Path filePath = Paths.get(dir, id + extension);
+            Path filePath = Paths.get(dir, Integer.toString(id) + extension);
 
             if (Files.exists(filePath)) {
                 try {
@@ -46,7 +46,7 @@ public class UploadService implements IUploadService {
             }
         }
 
-        log.warn("No file found for ID: {} in directory: {}", id, dir);
+        log.warn("No file found for ID: {} in directory: {}", Integer.toString(id), dir);
         return false;
     }
 
@@ -73,10 +73,12 @@ public class UploadService implements IUploadService {
     @Override
     public void createMemberQRImage(Member member) {
         try {
-            String data = "Member ID: " + member.getMemId() + ", Email: " + member.getMemEmail();
-            String filePath = MEMBER_QR_DIR + member.getMemId() + ".png";
+        	String memId=Integer.toString(member.getMemId());
+        	
+            String data = "Member ID: " + memId + ", Email: " + member.getMemEmail();
+            String filePath = MEMBER_QR_DIR + memId + ".png";
             QRCodeGenerator.generateQRCode(data, filePath);
-            log.info("Generated QR Code for member ID: {}", member.getMemId());
+            log.info("Generated QR Code for member ID: {}", memId);
         } catch (WriterException | IOException e) {
             log.error("Error generating QR code for member ID: {}", member.getMemId(), e);
             throw new CustomException(ExceptionCode.QR_IMAGE_CREATION_FAIL);
@@ -112,7 +114,7 @@ public class UploadService implements IUploadService {
         	
             String originalFileName = file.getOriginalFilename();
             String fileExtension = originalFileName.substring(originalFileName.lastIndexOf(".")); // 확장자 추출
-            String fileName = bookId + fileExtension;
+            String fileName = Integer.toString(bookId) + fileExtension;
             Path filePath = Paths.get(BOOK_IMAGE_DIR, fileName);
             
             Files.createDirectories(filePath.getParent()); // 디렉토리 생성 (없을 경우)

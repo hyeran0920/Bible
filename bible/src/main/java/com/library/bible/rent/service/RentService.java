@@ -9,6 +9,8 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
+import com.library.bible.exception.CustomException;
+import com.library.bible.exception.ExceptionCode;
 import com.library.bible.rent.model.Rent;
 import com.library.bible.rent.repository.IRentRepository;
 
@@ -29,21 +31,25 @@ public class RentService implements IRentService {
 	@Override
 	@Cacheable(value="rent", key="#rentId")
 	public Rent selectRent(int rentId) {
-		return rentRepository.selectRent(rentId);
+		Rent rent = rentRepository.selectRent(rentId);
+		if(rent == null) throw new CustomException(ExceptionCode.RENT_NOT_FOUND);
+		return rent;
 	}
 
 	@Override
 	@Transactional
 	@CacheEvict(value = "rents", allEntries = true)
 	public void insertRent(Rent rent) {
-		rentRepository.insertRent(rent);
+		int result = rentRepository.insertRent(rent);
+		if(result == 0) throw new CustomException(ExceptionCode.RENT_INSERT_FAIL);
 	}
 
 	@Override
 	@Transactional
 	@CachePut(value = "rent", key = "#rent.rentId")
 	public void updateRent(Rent rent) {
-		rentRepository.updateRent(rent);
+		int result = rentRepository.updateRent(rent);
+		if(result == 0) throw new CustomException(ExceptionCode.RENT_UPDATE_FAIL);
 	}
 
 	@Override
@@ -53,8 +59,9 @@ public class RentService implements IRentService {
 		@CacheEvict(value = "rents", allEntries = true)
 	})
 	public int deleteRent(int rentId) {
-		return rentRepository.deleteRent(rentId);
-
+		int result = rentRepository.deleteRent(rentId);
+		if(result == 0) throw new CustomException(ExceptionCode.RENT_DELETE_FAIL);
+		return result;
 	}
 
 }

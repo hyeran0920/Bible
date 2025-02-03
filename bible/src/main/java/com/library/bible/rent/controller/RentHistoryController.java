@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/rent/history")
+@RequestMapping("/api/rent-histories")
 public class RentHistoryController {
 	private final IRentHistoryService rentHistoryService;
 	
@@ -39,9 +39,6 @@ public class RentHistoryController {
 	@GetMapping("{rentHistoryId}")
 	public ResponseEntity<RentHistory> selectRentHistory(@PathVariable int rentHistoryId){
 		RentHistory history = rentHistoryService.selectRentHistory(rentHistoryId);
-		if(history == null) {
-			return ResponseEntity.notFound().build();
-		}
 		return ResponseEntity.ok(history);
 	}
 	
@@ -55,10 +52,6 @@ public class RentHistoryController {
 	//대여 기록 수정
 	@PutMapping("{rentHistoryId}")
 	public ResponseEntity<RentHistory> updateRentHistory(@PathVariable int rentHistoryId, @RequestBody RentHistory rentHistory){
-		RentHistory existing = rentHistoryService.selectRentHistory(rentHistoryId);
-		if(existing == null) {
-			return ResponseEntity.notFound().build();
-		}
 		rentHistoryService.updateRentHistory(rentHistory);
 		return ResponseEntity.ok(rentHistory);
 	}

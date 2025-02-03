@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/rent")
+@RequestMapping("/api/rents")
 public class RentController {
 	
 	private final IRentService rentService;
@@ -43,9 +43,6 @@ public class RentController {
 	@GetMapping("{rentId}")
 	public ResponseEntity<Rent> selectRent(@PathVariable int rentId){
 		Rent rent =rentService.selectRent(rentId);
-		if(rent == null) {
-			return ResponseEntity.notFound().build();
-		}
 		return ResponseEntity.ok(rent);
 	}
 	
@@ -65,11 +62,6 @@ public class RentController {
 	//대여 수정
 	@PutMapping("{rentId}")
 	public ResponseEntity<Rent> updateRent(@PathVariable int rentId, @RequestBody Rent rent){
-		Rent existingRent = rentService.selectRent(rentId);
-		//기존 데이터 유무 판단
-		if(existingRent == null) {
-			return ResponseEntity.notFound().build();
-		}
 		rentService.updateRent(rent);
 		return ResponseEntity.ok(rent);
 	}

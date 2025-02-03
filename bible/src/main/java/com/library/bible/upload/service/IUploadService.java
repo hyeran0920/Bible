@@ -7,8 +7,8 @@ import com.library.bible.member.model.Member;
 
 public interface IUploadService {
     
-    boolean createMemberQRImage(Member member);
-    boolean createBookQRImage(Book book,int bookId);
+    void createMemberQRImage(Member member);
+    void createBookQRImage(Book book,int bookId);
     
     boolean deleteMemberQRImage(int memId);
     boolean deleteBookQRImage(int bookId);

@@ -20,6 +20,7 @@ import AdminMember from './AdminMember.vue';
 
 import AdminMain from './AdminMain.vue';
 import AdminProduct from './AdminProduct.vue';
+import AdminRental from './AdminRental.vue';
 
 export default {
   name: "AdminDashboard",
@@ -35,6 +36,7 @@ export default {
         case 'main': return AdminMain;
         case 'member': return AdminMember;
         case 'product': return AdminProduct;
+        case 'rental': return AdminRental;
         default: return AdminMain;
       }
     }

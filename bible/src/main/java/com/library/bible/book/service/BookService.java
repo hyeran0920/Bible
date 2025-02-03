@@ -84,6 +84,7 @@ public class BookService implements IBookService {
     	//insert book in database
     	bookRepository.insertBook(book);
     	int bookId=book.getBookId();
+    	System.out.println("bookid bookService="+bookId);
     	
     	//book QR img
     	uploadService.createBookQRImage(book,bookId);

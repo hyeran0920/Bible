@@ -1,52 +1,68 @@
 <template>
-  <div v-if="book" class="bookDetails">
-    <h2>{{ book.bookTitle }}</h2>
-    <img :src="getBookImageUrl(book.bookId)" :alt="book.bookTitle" width="100" height="auto" />
-    <p><strong>Author:</strong> {{ book.bookAuthor }}</p>
-    <p><strong>Publisher:</strong> {{ book.bookPublisher }}</p>
-    <p><strong>Release Date:</strong> {{ book.bookReleaseDate }}</p>
-    <p><strong>Category:</strong> {{ book.bookCategory }}</p>
-    <p><strong>Price:</strong> {{ book.bookPrice }}</p>
-    <p><strong>Stock:</strong> {{ book.bookTotalStock }}</p>
-    <p><strong>Details:</strong> {{ book.bookDetail }}</p>
+  <Header />
+  <div class="book-details-page">
+    <div v-if="book" class="book-details">
+      <div class="book-image">
+        <img :src="getBookImageUrl(book.bookId)" :alt="book.bookTitle" />
+      </div>
+      <div class="book-info">
+        <h1>{{ book.bookTitle }}</h1>
+        <p class="author">by {{ book.bookAuthor }}</p>
+        <div class="book-meta">
+          <p><strong>출판사:</strong> {{ book.bookPublisher }}</p>
+          <p><strong>출간일:</strong> {{ formatDate(book.bookReleaseDate) }}</p>
+          <p><strong>카테고리:</strong> {{ book.bookCategory }}</p>
+        </div>
+        <div class="book-price">
+          <p class="price">{{ formatPrice(book.bookPrice) }}원</p>
+          <p class="stock">재고: {{ book.bookTotalStock }}권</p>
+        </div>
+        <div class="cart-actions">
+          <div class="quantity-input">
+            <button @click="decreaseQuantity">-</button>
+            <input 
+              type="number" 
+              v-model="nowBookCount" 
+              min="1"
+              :max="book.bookTotalStock"
+            />
+            <button @click="increaseQuantity">+</button>
+          </div>
+          <button class="add-to-cart-btn" @click="addCart(book.bookId)">
+            장바구니에 추가
+          </button>
+        </div>
+        <div class="book-description">
+          <h2>책 소개</h2>
+          <p>{{ book.bookDetail }}</p>
+        </div>
+      </div>
+    </div>
   </div>
-
-  <!-- 수량 입력 -->
-  <div>
-    <input 
-      type="number" 
-      v-model="nowBookCount" 
-      class="nowCartBookCount"
-      min="1"
-    />
-  </div>
-
-  <!-- 장바구니 추가 버튼 -->
-  <div>
-    <button 
-      class="addCartBtn" 
-      @click="addCart(book.bookId)">
-      cart
-    </button>
-  </div>
+  <Footer />
 </template>
 
 <script>
 import axios from 'axios';
+import Footer from '../../MainPage/components/Footer.vue';
+import Header from '../../MainPage/components/Header.vue';
 
 export default {
   props: {
     bookId: 0,
   },
+  components: {
+    Footer,
+    Header
+  },
   data() {
     return {
-      book: null, // 책 정보 저장객체
+      book: null,
       nowBookCount: 1,
     };
   },
-
   async created() {
-    const bookId = this.$route.params.bookId || this.bookId; // URL에서 bookId 가져오기
+    const bookId = this.$route.params.bookId || this.bookId;
     try {
       const response = await axios.get(`http://localhost:8080/api/books/${bookId}`);
       this.book = response.data;
@@ -54,12 +70,10 @@ export default {
       console.error('Error fetching book details:', error);
     }
   },
-
   methods: {
     getBookImageUrl(bookId) {
       return `http://localhost:8080/api/uploads/book-image?bookid=${bookId}`;
     },
-
     addCart(bookid) {
       axios.post(`http://localhost:8080/api/carts`, {
         bookId: bookid,
@@ -73,6 +87,144 @@ export default {
         alert("장바구니 추가 실패");
       });
     },
+    formatPrice(price) {
+      return price.toLocaleString();
+    },
+    formatDate(date) {
+      return new Date(date).toLocaleDateString('ko-KR');
+    },
+    increaseQuantity() {
+      if (this.nowBookCount < this.book.bookTotalStock) {
+        this.nowBookCount++;
+      }
+    },
+    decreaseQuantity() {
+      if (this.nowBookCount > 1) {
+        this.nowBookCount--;
+      }
+    }
   },
 };
 </script>
+
+<style scoped>
+.book-details-page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.book-details {
+  display: flex;
+  gap: 30px;
+}
+
+.book-image {
+  flex: 0 0 300px;
+}
+
+.book-image img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.book-info {
+  flex: 1;
+}
+
+h1 {
+  font-size: 24px;
+  margin-bottom: 5px;
+}
+
+.author {
+  font-style: italic;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.book-meta {
+  margin-bottom: 20px;
+}
+
+.book-meta p {
+  margin: 5px 0;
+}
+
+.book-price {
+  margin-bottom: 20px;
+}
+
+.price {
+  font-size: 24px;
+  font-weight: bold;
+  color: #e53935;
+}
+
+.stock {
+  color: #4caf50;
+}
+
+.cart-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.quantity-input {
+  display: flex;
+  align-items: center;
+}
+
+.quantity-input input {
+  width: 50px;
+  text-align: center;
+  margin: 0 5px;
+  padding: 5px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.quantity-input button {
+  background-color: #f0f0f0;
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.add-to-cart-btn {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.book-description {
+  margin-top: 30px;
+}
+
+.book-description h2 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+@media (max-width: 768px) {
+  .book-details {
+    flex-direction: column;
+  }
+
+  .book-image {
+    flex: 0 0 auto;
+    margin-bottom: 20px;
+  }
+}
+</style>

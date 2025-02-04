@@ -39,7 +39,7 @@ public class ReservationController {
 	
 	//특정 예약 조회
 	@GetMapping("{reservId}")
-	public ResponseEntity<Reservation> selectReserv(@PathVariable int reservId){
+	public ResponseEntity<Reservation> selectReserv(@PathVariable long reservId){
 		Reservation reserv = reservService.selectReserv(reservId);
 		if(reserv == null) {
 			return ResponseEntity.notFound().build();
@@ -61,7 +61,7 @@ public class ReservationController {
 	
 	//예약 수정
 	@PutMapping("{reservId}")
-	public ResponseEntity<Reservation> updateReserv(@PathVariable int reservId, @RequestBody Reservation reservation){
+	public ResponseEntity<Reservation> updateReserv(@PathVariable long reservId, @RequestBody Reservation reservation){
 		Reservation existingReserv = reservService.selectReserv(reservId);
 		if(existingReserv == null) {
 			return ResponseEntity.noContent().build();
@@ -72,7 +72,7 @@ public class ReservationController {
 	
 	//예약 삭제
 	@DeleteMapping("{reservId}")
-	public void deleteReserv(@PathVariable int reservId) {
+	public void deleteReserv(@PathVariable long reservId) {
 		reservService.deleteReserv(reservId);
 	}
 }

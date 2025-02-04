@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Reservation {
-	private int reservId;
+	private long reservId;
 	private long memId;
-	private int bookId;
+	private long bookId;
 	private Date reservDate;
 }

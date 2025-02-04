@@ -95,10 +95,10 @@ public class RentController {
 		}
 	}
 	
-	// 대여 신청하기
+	// 1. 대여 신청하기
 	@PostMapping("/requests")
-	public ResponseEntity<List<RentResponse>> insertRents(@AuthMember Member member, @RequestBody RentRequest bookRequest) {
-		List<Rent> rentHistoryResponse = rentService.insertRents(member.getMemId(), bookRequest.getBooks(), RentStatus.REQUESTED);
+	public ResponseEntity<List<RentResponse>> insertRents(@AuthMember Member member, @RequestBody RentRequest request) {
+		List<Rent> rentHistoryResponse = rentService.insertRents(member.getMemId(), request.getBookIds(), RentStatus.REQUESTED);
 		List<RentResponse> responses = rentMapper.rentsToRentResponses(rentHistoryResponse);
 		return ResponseEntity.status(HttpStatus.CREATED).body(responses);
 	}
@@ -108,6 +108,22 @@ public class RentController {
 	public ResponseEntity<Rent> updateRent(@PathVariable long rentId, @RequestBody Rent rent){
 		rentService.updateRent(rent);
 		return ResponseEntity.ok(rent);
+	}
+	
+	// 2. 대여 신청 취소하기 - 사용자
+	@PutMapping("/cancels/me")
+	public ResponseEntity<List<RentResponse>> updateCancledRent(@AuthMember Member member, @RequestBody RentRequest request) {
+		List<Rent> rentHistoryResponse = rentService.updateCancledRent(member.getMemId(), request.getRentIds());
+		List<RentResponse> responses = rentMapper.rentsToRentResponses(rentHistoryResponse);
+		return ResponseEntity.ok(responses);		
+	}
+	
+	// 2. 대여 신청 취소하기 - 관리자
+	@PutMapping("/cancels")
+	public ResponseEntity<List<RentResponse>> updateCancledRent(@RequestParam long memId, @RequestBody RentRequest request) {
+		List<Rent> rentHistoryResponse = rentService.updateCancledRent(memId, request.getRentIds());
+		List<RentResponse> responses = rentMapper.rentsToRentResponses(rentHistoryResponse);
+		return ResponseEntity.ok(responses);
 	}
 	
 	// 대여 삭제

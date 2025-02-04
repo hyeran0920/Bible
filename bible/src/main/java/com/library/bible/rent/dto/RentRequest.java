@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RentRequest {
-	private List<Long> books;
+	private List<Long> bookIds;
+	private List<Long> rentIds;
 }

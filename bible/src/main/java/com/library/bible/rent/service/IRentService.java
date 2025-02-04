@@ -17,11 +17,12 @@ public interface IRentService {
 	PageResponse<RentPageResponse> selectRentResponses(long memId, Optional<RentStatus> rentStatus, PageRequest pageRequest);	
 
 	void insertRent(Rent rent);
-	List<Rent> insertRents(List<Rent>rent);
+	List<Rent> insertRents(List<Rent> rent);
 	List<Rent> insertRents(long membId, List<Long> books, RentStatus rentStatus);
 
 	void updateRent(Rent rent);
-	void updateCancledRent(long memId, List<Long> rentIds); // 대여신청 취소하기
+	void updateRents(List<Rent> rents);
+	List<Rent> updateCancledRent(long memId, List<Long> rentIds); // 대여신청 취소하기
 
 	int deleteRent(long rentId);
 }

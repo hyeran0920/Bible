@@ -18,8 +18,12 @@ public interface IBookService {
 	
 	List<Book> getBookList();
 	Book getBookInfo(int bookid);
+	
 	Book updateBook(Book book, MultipartFile file);
+	
 	void insertBook(Book book, MultipartFile file);
+	void insertBooks(List<Book> books);
+	
 	void deleteBook(int bookid);
 	int deleteBook(int bookid, String author);
 	
@@ -28,6 +32,7 @@ public interface IBookService {
 	List<Map<String, Object>> getAllPublisher();
 	List<Map<String, Object>> getAllCategory();
 	List<Map<String, Object>> searchBooks(String keyword);
+	
 	
 	
 }

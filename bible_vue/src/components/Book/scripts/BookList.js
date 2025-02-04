@@ -47,7 +47,8 @@ export default {
         bookPrice: 0,
         bookImg: '',
         bookDetail: '',
-        bookRent
+        bookTotalStock:0,
+        bookLocation:''
       };
     },
 

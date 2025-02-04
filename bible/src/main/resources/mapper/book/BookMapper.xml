@@ -137,7 +137,9 @@
 	</select>
 	
 	<select id="getAllCategory" resultType="hashmap">
-	    SELECT DISTINCT book_category AS "bookCategory" FROM BOOK
+	    SELECT DISTINCT book_category AS "bookCategory"
+	    FROM BOOK
+	    WHERE book_category IS NOT NULL
 	</select>
 	
 	<select id="getBooksByCategory" resultType="map">

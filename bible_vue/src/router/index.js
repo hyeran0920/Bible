@@ -12,6 +12,7 @@ import Cart from "../components/Cart/components/CartPage.vue";
 import OrderPage from "../components/Order/OrderPage.vue";
 
 import Address from "../components/Order/ParentComponent.vue";
+import AddBookExcel from "../components/Admin/AdminAddBookExcel.vue";
 
 
 const routes = [
@@ -28,6 +29,7 @@ const routes = [
   { path: "/order", name: "OrderPage", component: OrderPage },
 
   { path: "/address", name:"address", component: Address },
+  { path: "/book/excel", name:"addBookExcel", component: AddBookExcel},
 
   { path: "/admin-page", name: "AdminPage",component: AdminPage, beforeEnter: (to, from, next) => {
       // "/admin"을 거치지 않고 접근하면 강제 이동

@@ -17,7 +17,7 @@ public class MemberRentService implements IMemberRentService {
 
 	// MemberRent
 	@Override
-	public MemberRent selectMemberRentByMemId(int memId) {
+	public MemberRent selectMemberRentByMemId(long memId) {
         return memberRentRepository.selectMemberRentByMemId(memId);
 	}
 
@@ -39,7 +39,7 @@ public class MemberRentService implements IMemberRentService {
 
 	@Override
 	@Transactional
-	public void deleteMemberRent(int memId) {
+	public void deleteMemberRent(long memId) {
         int result = memberRentRepository.deleteMemberRent(memId);
         if(result == 0) throw new CustomException(ExceptionCode.MEMBER_RENT_DELETE_FAIL);
 	}

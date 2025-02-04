@@ -8,8 +8,8 @@ import com.library.bible.memberrent.model.MemberRent;
 @Mapper
 @Repository
 public interface IMemberRentRepository {
-    MemberRent selectMemberRentByMemId(int memId);
+    MemberRent selectMemberRentByMemId(long memId);
     int insertMemberRent(MemberRent memberRent);
     int updateMemberRent(MemberRent memberRent);
-    int deleteMemberRent(int memId);
+    int deleteMemberRent(long memId);
 }

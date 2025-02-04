@@ -11,7 +11,7 @@
 	</resultMap>
 
 	<!-- Member ID로 member_rent 조회 -->
-	<select id="selectMemberRentByMemId" parameterType="int" resultMap="memberRentResultMap">
+	<select id="selectMemberRentByMemId" parameterType="long" resultMap="memberRentResultMap">
 	    SELECT 
 	        mem_id,
 	        total_rent_count,
@@ -46,7 +46,7 @@
     </update>
 
 	<!-- MemberRent 삭제 -->
-	<delete id="deleteMemberRent" parameterType="int">
+	<delete id="deleteMemberRent" parameterType="long">
 	    DELETE FROM member_rent
 	    WHERE mem_id = #{memId}
 	</delete>

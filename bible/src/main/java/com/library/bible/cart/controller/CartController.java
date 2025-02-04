@@ -44,12 +44,14 @@ public class CartController {
     // 장바구니에 책 추가
     @PostMapping
     public ResponseEntity<String> addCart(@AuthMember Member member, @RequestBody CartRequest request) {
-        long bookId = request.getBookId();
+       
+    	long bookId = request.getBookId();
         int bookCount = request.getBookCount();
         long memId = member.getMemId(); // 인증된 사용자 ID 가져오기
-
+        
         // 이미 존재하는 책인지 확인
         int exists = cartService.isBookInCart(memId, bookId);
+       
         if (exists == 1) {
             cartService.updateCartByBookId(bookId, memId, bookCount); // 수량 업데이트
             return ResponseEntity.ok("장바구니 항목이 업데이트되었습니다.");
@@ -64,7 +66,7 @@ public class CartController {
     @PutMapping("/{cartId}")
     public ResponseEntity<String> updateCart(@RequestBody CartRequest request, @PathVariable long cartId) {
         int newCount = request.getBookCount();
-
+        System.out.println("newcount-"+newCount);
         cartService.updateCart(cartId, newCount);
         return ResponseEntity.ok("장바구니가 업데이트되었습니다.");
     }

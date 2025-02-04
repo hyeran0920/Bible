@@ -3,17 +3,21 @@ package com.library.bible.order.mapper;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
-import com.library.bible.order.OrderHistory;
-import com.library.bible.order.OrderPageItemDTO;
+import com.library.bible.order.dto.OrderPreviewDTO;
 
 @Mapper
 public interface OrderMapper {
 
-    void insertOrder(OrderPageItemDTO order);
+    
+    List<OrderPreviewDTO> findCartItemsByIds(@Param("cartIds") List<Integer> cartIds);
 
-    List<OrderPageItemDTO> getOrdersByMemId(Long memId); 
+    // 주문 테이블에 데이터 삽입
+    void insertOrder(@Param("cartIds") List<Integer> cartIds, @Param("orderHistoryId") Long orderHistoryId);
 
-    void insertOrderHistory(OrderHistory orderHistory);
+    // 주문 후 장바구니에서 해당 아이템 삭제
+    void deleteCartItems(@Param("cartIds") List<Integer> cartIds);
 }
 

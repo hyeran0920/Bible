@@ -16,5 +16,13 @@
 		<result property="OrderHistoryDetailAddress" column ="order_history_detail_address"/>
 	</resultMap>
 	
+	<insert id="insertOrderHistory" useGeneratedKeys="true" keyProperty="order_history_id">
+    	INSERT INTO order_history (mem_id, address_id, order_history_date, order_history_total_price, order_history_received_name, order_paymeny_method)
+    	VALUES (#{memId}, #{addressId}, NOW(), 0, #{receivedName}, #{paymentMethod})
+	</insert>
+
+	<select id="getLastInsertId" resultType="long">
+    	SELECT LAST_INSERT_ID()
+	</select>
 	
 </mapper>

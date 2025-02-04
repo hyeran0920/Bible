@@ -47,7 +47,7 @@ public class BookService implements IBookService {
 
     @Override
     @Cacheable(value = "books", key = "#bookId")
-    public Map<String, Object> getBookInfoMap(Long bookId) {
+    public Map<String, Object> getBookInfoMap(long bookId) {
         return bookRepository.getBookInfoMap(bookId);
     }
 
@@ -96,7 +96,7 @@ public class BookService implements IBookService {
             e.printStackTrace();
         }
     	
-    	Long bookId=book.getBookId();
+    	long bookId=book.getBookId();
 
     	//book QR img
     	uploadService.createBookQRImage(book,bookId);
@@ -121,13 +121,13 @@ public class BookService implements IBookService {
     @Override
     @Transactional("transactionManager")
     @CacheEvict(value = "books", allEntries = true, beforeInvocation = true)
-    public int deleteBook(Long bookId, String author) {
+    public int deleteBook(long bookId, String author) {
         return bookRepository.deleteBook(bookId, author);
     }
 
     @Override
     @CacheEvict(value = "books", allEntries = true, beforeInvocation = true)
-    public void deleteBook(Long bookId) {
+    public void deleteBook(long bookId) {
     	
     	//delete database
         bookRepository.deleteBook(bookId);

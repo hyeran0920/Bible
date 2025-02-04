@@ -40,7 +40,7 @@ public class BookController {
 	}
 	
 	@GetMapping("/{bookid}") 
-	public Map<String, Object> getBook(@PathVariable Long bookid) {
+	public Map<String, Object> getBook(@PathVariable long bookid) {
 		return bookService.getBookInfoMap(bookid);
 	}
 	
@@ -63,7 +63,7 @@ public class BookController {
 		try {
 			System.out.println("book controller - insert book");
 			bookService.insertBook(book,file); 
-			return ResponseEntity.ok().body("Book inserted successfully with book ID: " + Long.toString(book.getBookId()));
+			return ResponseEntity.ok().body("Book inserted successfully with book ID: " + String.valueOf(book.getBookId()));
 		}catch (Exception e) {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error inserting book: " + e.getMessage());
 	    }
@@ -114,7 +114,7 @@ public class BookController {
 	
 	//DELETE
 	@DeleteMapping
-	public void deleteBook(Long bookid, String author) {
+	public void deleteBook(long bookid, String author) {
 		bookService.deleteBook(bookid);
 	}
 

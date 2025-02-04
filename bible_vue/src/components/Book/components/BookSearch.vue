@@ -1,91 +1,171 @@
 <template>
-    <div class="book-search">
-
-        <!--category-->
-        <label for="category">Select Category:</label>
-        <select id="category" v-model="selectedCategory" @change="fetchBooksByCategory">
-            <option value="" disabled>Select a category</option>
-            <option value="All">All</option>
-            <option v-for="category in categories" :key="category" :value="category">
-                {{ category }}
-            </option>
+  <div class="book-search">
+    <div class="search-row">
+      <!-- Category -->
+      <div class="category">
+        <label for="category" class="label">Select Category:</label>
+        <select id="category" v-model="selectedCategory" @change="fetchBooksByCategory" class="select">
+          <option value="" disabled>Select a category</option>
+          <option value="All">All</option>
+          <option v-for="category in categories" :key="category" :value="category">
+            {{ category }}
+          </option>
         </select>
+      </div>
 
-        <!--search-->
-        <label for="search">Search:</label>
-        <input id="search" type="text" v-model="searchKeyword" placeholder="Search by title, author, or publisher"/>
-        <button @click="fetchSearchResults">Search</button>
+      <!-- Search -->
+      <div class="search">
+        <label for="search" class="label">Search:</label>
+        <input
+          id="search"
+          type="text"
+          v-model="searchKeyword"
+          placeholder="Search by title, author, or publisher"
+          class="input"
+        />
+        <button @click="fetchSearchResults" class="search-btn">Search</button>
+      </div>
     </div>
-  </template>
-  
-  <script>
-  import axios from "axios";
-  
-  export default {
-    name: "BookSearch",
-    data() {
-      return {
-        categories: [],
-        selectedCategory: "All",
-        searchKeyword: "", // 입력된 검색어
-      };
+  </div>
+</template>
+
+<script>
+import axios from "axios";
+
+export default {
+  name: "BookSearch",
+  data() {
+    return {
+      categories: [],
+      selectedCategory: "All",
+      searchKeyword: "", // 입력된 검색어
+    };
+  },
+  methods: {
+    // Category들 가져오기
+    async fetchCategories() {
+      try {
+        const response = await axios.get("http://localhost:8080/api/books/categories");
+        this.categories = response.data.map((cat) => cat.bookCategory);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
     },
-    methods: {
 
-      //Category들 가져오기
-      async fetchCategories() {
-        try {
-          const response = await axios.get("http://localhost:8080/api/books/categories");
-          this.categories = response.data.map((cat) => cat.bookCategory);
-        } catch (error) {
-          console.error("Error fetching categories:", error);
+    // Category에 해당하는 books 가져오기
+    async fetchBooksByCategory() {
+      try {
+        if (this.selectedCategory === "All") {
+          const response = await axios.get("http://localhost:8080/api/books");
+          this.$emit("update-books-list", response.data);
+        } else {
+          const response = await axios.get(
+            `http://localhost:8080/api/books/categories/${encodeURIComponent(this.selectedCategory)}`
+          );
+          this.$emit("update-books-list", response.data);
         }
-      },
-
-      //Category에 해당하는 books 가져오기
-      async fetchBooksByCategory() {
-        try {
-          // All books
-          if (this.selectedCategory === "All") {
-            const response = await axios.get("http://localhost:8080/api/books");
-            this.$emit("update-books-list", response.data);
-          } else {
-          //Filtering된 books
-            const response = await axios.get(
-              `http://localhost:8080/api/books/categories/${encodeURIComponent(this.selectedCategory)}`
-            );
-            this.$emit("update-books-list", response.data);
-          }
-        } catch (error) {
-          console.error("Error fetching books by category:", error);
-        }
-      },
-
-      //Search 키워드에 대한 books 가져오기
-      async fetchSearchResults() {
-        try {
-            //빈칸 입력시 모두 출력
-            if (!this.searchKeyword) {
-                const response = await axios.get("http://localhost:8080/api/books");
-                this.$emit("update-books-list", response.data);
-            }
-
-            //search
-            const response = await axios.get(
-            `http://localhost:8080/api/books/search`,
-            { params: { keyword: this.searchKeyword } }
-            );
-            this.$emit("update-books-list", response.data);
-
-        } catch (error) {
-            console.error("Error fetching search results:", error);
-        }
-      },
-
+      } catch (error) {
+        console.error("Error fetching books by category:", error);
+      }
     },
-    mounted() {
-      this.fetchCategories();
+
+    // Search 키워드에 대한 books 가져오기
+    async fetchSearchResults() {
+      try {
+        if (!this.searchKeyword) {
+          const response = await axios.get("http://localhost:8080/api/books");
+          this.$emit("update-books-list", response.data);
+        } else {
+          const response = await axios.get("http://localhost:8080/api/books/search", {
+            params: { keyword: this.searchKeyword },
+          });
+          this.$emit("update-books-list", response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching search results:", error);
+      }
     },
-  };
-  </script>
-  
+  },
+  mounted() {
+    this.fetchCategories();
+  },
+};
+</script>
+
+<style scoped>
+.book-search {
+  margin: 20px;
+}
+
+.search-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.category {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.search {
+  flex: 2;
+  text-align: right;
+  gap: 10px;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.select,
+.input {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  width: 50%;
+}
+
+.select:focus,
+.input:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.search-btn {
+  width: 50px;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.search-btn:hover {
+  background-color: #0056b3;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .search-row {
+    flex-direction: column;
+  }
+
+  .category,
+  .search {
+    width: 100%;
+  }
+
+  .search-btn {
+    padding: 6px 12px;
+  }
+}
+</style>

@@ -1,46 +1,64 @@
 <template>
+  <div>
+    <!-- Footer -->
     <footer class="footer">
       <div class="footer-content">
-        <p>© 2025 Your Website. All rights reserved.</p>
-        <div class="footer-links">
-          <a href="#">Privacy Policy</a>
-          <a href="#">Terms of Service</a>
-          <a href="#">Contact Us</a>
-        </div>
+        <div class="menu-icon" @click="toggleMenu">☰</div>
+        <div> <a href="/">
+            <img src="../../../assets/logo.png" alt="Logo" class="logo-img">
+          </a></div>
+        <div class="auth-icon" @click="toggleAuthMenu">👤</div>
       </div>
     </footer>
-  </template>
-  
-  <script>
-  export default {
-    name: 'Footer'
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'Footer',
+  methods: {
+    toggleMenu() {
+      // 메뉴 토글 로직
+    },
+    toggleAuthMenu() {
+      // 인증 메뉴 토글 로직
+    }
   }
-  </script>
-    <style scoped>
-    .footer {
-      background-color: #eee;
-      color: #333;
-      padding: 20px 0;
-      text-align: center;
-    }
-    
-    .footer-content {
-      max-width: 1280px;
-      margin: 0 auto;
-    }
-    
-    .footer-links {
-      margin-top: 10px;
-    }
-    
-    .footer-links a {
-      color: #333;
-      text-decoration: none;
-      margin: 0 10px;
-      font-size: 14px;
-    }
-    
-    .footer-links a:hover {
-      text-decoration: underline;
-    }
-    </style>
+}
+</script>
+<style scoped>
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  color: #333;
+  padding: 10px 0;
+  background-color: #fff;
+}
+
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.menu-icon,
+.auth-icon {
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.logo a {
+  font-size: 20px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #333;
+}
+
+.logo-img {
+  max-width: 40px;
+}
+</style>

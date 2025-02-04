@@ -1,31 +1,21 @@
 <template>
   <div class="book-list">
-    <div v-for="book in paginatedBooks" :key="book.bookId" class="book-item">
-      <router-link :to="'/book/' + book.bookId" class="book-image">
+    <div v-for="book in paginatedBooks" :key="book.bookId" class="book-item" @click="goToBookDetail(book.bookId)">
+      <div class="book-image">
         <img :src="getBookImageUrl(book.bookId)" :alt="book.bookTitle" />
-      </router-link>
+      </div>
       <div class="book-info">
-        <router-link :to="'/book/' + book.bookId" class="book-title"> 
-          {{ book.bookTitle }} 
-        </router-link>
-        <br/>
+        <h3 class="book-title">{{ book.bookTitle }}</h3>
         <p class="book-author">{{ book.bookAuthor }}</p>
         <p class="book-publisher">{{ book.bookPublisher }} · {{ book.bookReleaseDate }}</p>
-        <p class="book-category">{{ book.bookCategory }}</p>
-        <br/>
-        <br/>
-
+        <br>
+        <br>
         <p class="book-price">
-          <span class="discount" v-if="book.bookDiscount">{{ book.bookDiscount }}% </span>
-          <span class="final-price">{{ book.bookPrice }}원</span>
+          <span class="discount" v-if="book.bookDiscount">{{ $filters.numberWithCommas(book.bookDiscount) }}% </span>
+          <span class="final-price">{{ $filters.numberWithCommas(book.bookPrice) }}원</span>
         </p>
+
         <p class="book-rating" v-if="book.bookRating">⭐ {{ book.bookRating }}</p>
-        <div class="book-actions">
-          <br/>
-          <br/>
-          <button class="cart-btn">장바구니</button>
-          <button class="buy-btn">바로구매</button>
-        </div>
       </div>
     </div>
   </div>
@@ -40,6 +30,9 @@ export default {
     getBookImageUrl(bookId) {
       return `http://localhost:8080/api/uploads/book-image?bookid=${bookId}`;
     },
+    goToBookDetail(bookId) {
+      this.$router.push(`/book/${bookId}`);
+    }
   },
 };
 </script>
@@ -48,80 +41,90 @@ export default {
 .book-list {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 15px;
 }
 
 .book-item {
   display: flex;
+  align-items: flex-start;
   gap: 15px;
   padding: 15px;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.book-item:hover {
+  background-color: #f9f9f9;
 }
 
 .book-image img {
-  width: 200px;
+  width: 100px;
   height: auto;
+  object-fit: cover;
+  border-radius: 4px;
 }
 
 .book-info {
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  position: relative; /* 부모에 상대적인 위치 지정 */
-  padding: 10px;
 }
 
 .book-title {
-  font-size: 20px;
+  font-size: 16px;
   font-weight: bold;
-  text-decoration: none;
-  color: #333;
+  margin: 0 0 5px 0;
 }
 
 .book-author,
-.book-publisher,
-.book-category,
-.book-price,
-.book-rating {
+.book-publisher {
   font-size: 14px;
   color: #666;
+  margin: 3px 0;
+}
+
+.book-price {
+  font-size: 14px;
   margin: 5px 0;
 }
 
 .discount {
-  color: red;
+  color: #e74c3c;
   font-weight: bold;
+  margin-right: 5px;
 }
 
 .final-price {
-  font-size: 16px;
   font-weight: bold;
 }
 
-.book-actions {
-  display: flex;
-  flex-direction: column; /* 버튼을 위아래로 배치 */
-  gap: 10px;
-  position: absolute; /* 오른쪽에 고정 */
-  right: 0;
-  top: 10px; /* 위에서 10px 떨어지게 설정 */
+.book-rating {
+  font-size: 14px;
+  color: #f39c12;
 }
 
-.cart-btn,
-.buy-btn {
-  padding: 10px 30px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
+@media (max-width: 600px) {
+  .book-image img {
+    width: 150px;
+  }
 
-.cart-btn {
-  background-color: #999;
-  color: white;
-}
+  .book-title {
+    font-size: 18px;
+    color: #333;
+    margin-bottom : 15px; 
+  }
 
-.buy-btn {
-  background-color: blue;
-  color: white;
+  .book-author,
+  .book-publisher,
+  .book-rating {
+    font-size: 15px;
+    margin-top: 10px;
+  }
+  .book-price{
+    text-align: right;
+    padding-right: 30px;
+    color: #666;
+    font-size: 15px;
+  }
+
 }
 </style>

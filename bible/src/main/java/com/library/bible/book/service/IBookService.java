@@ -3,7 +3,6 @@ package com.library.bible.book.service;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.library.bible.book.model.Book;
@@ -17,9 +16,11 @@ public interface IBookService {
 	Map<String, Object> getBookInfoMap(long bookid);
 	
 	List<Book> getBookList();
-	Book getBookInfo(long bookid);
+	Book getBookInfo(Long bookid);
 	
 	Book updateBook(Book book, MultipartFile file);
+	void updateBookRentStock(Book book);
+	void updateBookRentStocks(List<Book> books);
 	
 	void insertBook(Book book, MultipartFile file);
 	void insertBooks(List<Book> books);

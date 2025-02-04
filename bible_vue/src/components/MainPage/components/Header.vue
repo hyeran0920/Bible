@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Header -->
-    <header class="header">
+    <header class="head">
       <div class="logo"><a href="/">Name</a></div>
       <div class="search-container">
         <input type="text" placeholder="Search..." class="search-input" />
@@ -63,7 +63,7 @@ body, ul, li {
 }
 
 /* Header */
-.header {
+.head {
   display: flex;
   justify-content: space-between;
   align-items: center;

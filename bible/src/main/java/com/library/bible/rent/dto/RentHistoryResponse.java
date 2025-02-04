@@ -1,6 +1,6 @@
 package com.library.bible.rent.dto;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -13,6 +13,6 @@ import lombok.NoArgsConstructor;
 public class RentHistoryResponse {
     private int rentHistoryId;
     private int memId;
-    private Date rentDate;
+    private Timestamp rentDate;
     private List<RentResponse> rents;
 }

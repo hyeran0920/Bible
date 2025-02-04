@@ -1,6 +1,6 @@
 package com.library.bible.rent.dto;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 import com.library.bible.rent.model.RentStatus;
 
@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class RentResponse {
     private int rentId;
     private int bookId;
-    private Date rentDueDate;
-    private Date rentFinishDate;
+    private Timestamp rentDueDate;
+    private Timestamp rentFinishDate;
     private RentStatus rentStatus;
 }

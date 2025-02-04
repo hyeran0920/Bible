@@ -1,6 +1,7 @@
 package com.library.bible.rent.model;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,7 +14,7 @@ public class Rent {
 	private int rentId;
 	private int bookId;
 	private int rentHistoryId;
-	private Date rentDueDate;
-	private Date rentFinishDate;
-	private String rentStatus;
+	private Timestamp rentDueDate;
+	private Timestamp rentFinishDate;
+	private RentStatus rentStatus;
 }

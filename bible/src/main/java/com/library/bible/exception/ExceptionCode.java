@@ -22,6 +22,13 @@ public enum ExceptionCode {
     ROLE_DELETE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "역할 삭제에 실패했습니다."),
     ROLE_NOT_FOUND(HttpStatus.NOT_FOUND, "역할을 찾을 수 없습니다."),
     
+    // Book 관련 에러 메시지
+    BOOK_INSERT_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "도서 등록에 실패했습니다."),
+    BOOK_UPDATE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "도서 수정에 실패했습니다."),
+    BOOK_DELETE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "도서 삭제에 실패했습니다."),
+    BOOK_NOT_FOUND(HttpStatus.NOT_FOUND, "도서를 찾을 수 없습니다."),
+
+    
     // Address 관련 에러
     ADDRESS_INSERT_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "주소 등록에 실패했습니다."),
     ADDRESS_UPDATE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "주소 수정에 실패했습니다."),

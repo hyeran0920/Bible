@@ -2,6 +2,7 @@ package com.library.bible.rent.model;
 
 public enum RentStatus {
     REQUESTED("대여신청"),
+    CANCLED("대여취소"),
     IN_USE("대여중"),
     RETURNED("반납");
 

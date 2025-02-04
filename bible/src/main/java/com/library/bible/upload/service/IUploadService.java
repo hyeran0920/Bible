@@ -8,16 +8,16 @@ import com.library.bible.member.model.Member;
 public interface IUploadService {
     
 	byte[] getMemberQRImage(long memId);
-    byte[] getBookImage(Long bookId);
-    byte[] getBookQRImage(Long bookId);
+    byte[] getBookImage(long bookId);
+    byte[] getBookQRImage(long bookId);
     
     boolean deleteMemberQRImage(long memId);
-    boolean deleteBookQRImage(Long bookId);
-    boolean deleteBookImage(Long bookId);
+    boolean deleteBookQRImage(long bookId);
+    boolean deleteBookImage(long bookId);
     
-	boolean uploadBookImage(Long bookId, MultipartFile file);
+	boolean uploadBookImage(long bookId, MultipartFile file);
     void createMemberQRImage(Member member);
-    void createBookQRImage(Book book,Long bookId);
+    void createBookQRImage(Book book,long bookId);
 
     
 }

@@ -14,18 +14,18 @@ public interface IBookService {
 	int getBookCount(int categoryid);
 	
 	List<Map<String, Object>> getBookListMap();
-	Map<String, Object> getBookInfoMap(Long bookid);
+	Map<String, Object> getBookInfoMap(long bookid);
 	
 	List<Book> getBookList();
-	Book getBookInfo(Long bookid);
+	Book getBookInfo(long bookid);
 	
 	Book updateBook(Book book, MultipartFile file);
 	
 	void insertBook(Book book, MultipartFile file);
 	void insertBooks(List<Book> books);
 	
-	void deleteBook(Long bookid);
-	int deleteBook(Long bookid, String author);
+	void deleteBook(long bookid);
+	int deleteBook(long bookid, String author);
 	
 	List<Map<String, Object>> getBooksByCategory(String category);
 	List<Map<String, Object>> getAllAuthor();

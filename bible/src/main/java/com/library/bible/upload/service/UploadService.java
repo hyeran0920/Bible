@@ -35,7 +35,7 @@ public class UploadService implements IUploadService {
      @return 이미지 바이트 배열 또는 null (이미지 없음)
      */
     
-    private byte[] getImageFromDirectory(String directory, Long id, String imageType) {
+    private byte[] getImageFromDirectory(String directory, long id, String imageType) {
         for (String extension : IMAGE_EXTENSIONS) {
             Path filePath = Paths.get(directory, id + extension);
 
@@ -56,7 +56,7 @@ public class UploadService implements IUploadService {
 
 
     @Override
-    public byte[] getBookImage(Long bookId) {
+    public byte[] getBookImage(long bookId) {
         return getImageFromDirectory(BOOK_IMAGE_DIR, bookId, "book");
     }
 
@@ -69,7 +69,7 @@ public class UploadService implements IUploadService {
 
 
 	@Override
-	public byte[] getBookQRImage(Long bookId) {
+	public byte[] getBookQRImage(long bookId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -80,11 +80,11 @@ public class UploadService implements IUploadService {
 	
 	
     //DELETE/////////////////////////////////////////////////////////////////////////////
-    private boolean deleteFile(String dir, Long id) {
+    private boolean deleteFile(String dir, long id) {
         String[] extensions = {".jpg", ".png", ".jpeg"};
 
         for (String extension : extensions) {
-            Path filePath = Paths.get(dir, Long.toString(id) + extension);
+            Path filePath = Paths.get(dir, String.valueOf(id) + extension);
 
             if (Files.exists(filePath)) {
                 try {
@@ -98,25 +98,24 @@ public class UploadService implements IUploadService {
             }
         }
 
-        log.warn("No file found for ID: {} in directory: {}", Long.toString(id), dir);
+        log.warn("No file found for ID: {} in directory: {}", String.valueOf(id), dir);
         return false;
     }
 
 
     @Override
     public boolean deleteMemberQRImage(long memId) {
-        return false;
-    	//return deleteFile(MEMBER_QR_DIR, memId);
+    	return deleteFile(MEMBER_QR_DIR, memId);
     }
 
 
     @Override
-    public boolean deleteBookQRImage(Long bookId) {
+    public boolean deleteBookQRImage(long bookId) {
         return deleteFile(BOOK_QR_DIR, bookId);
     }
 
     @Override
-    public boolean deleteBookImage(Long bookId) {
+    public boolean deleteBookImage(long bookId) {
         return deleteFile(BOOK_IMAGE_DIR, bookId);
     }
 
@@ -128,12 +127,12 @@ public class UploadService implements IUploadService {
     
     //INSERT///////////////////////////////////////////////////////////////////////////////////////
     @Override
-    public boolean uploadBookImage(Long bookId, MultipartFile file) {
+    public boolean uploadBookImage(long bookId, MultipartFile file) {
     	try {
         	
             String originalFileName = file.getOriginalFilename();
             String fileExtension = originalFileName.substring(originalFileName.lastIndexOf(".")); // 확장자 추출
-            String fileName = Long.toString(bookId) + fileExtension;
+            String fileName = String.valueOf(bookId) + fileExtension;
             Path filePath = Paths.get(BOOK_IMAGE_DIR, fileName);
             
             Files.createDirectories(filePath.getParent()); // 디렉토리 생성 (없을 경우)
@@ -153,7 +152,7 @@ public class UploadService implements IUploadService {
     @Override
     public void createMemberQRImage(Member member) {
         try {
-        	String memId=Long.toString(member.getMemId());
+        	String memId=String.valueOf(member.getMemId());
         	
             String data = "Member ID: " + memId + ", Email: " + member.getMemEmail();
             String filePath = MEMBER_QR_DIR + memId + ".png";
@@ -166,16 +165,16 @@ public class UploadService implements IUploadService {
     }
     
     @Override
-    public void createBookQRImage(Book book, Long bookId) {
+    public void createBookQRImage(Book book, long bookId) {
     	try {
     		//System.out.println("book qr id="+bookId);
         	//create qr
-            String data = "Book ID: " + Long.toString(bookId) + 
+            String data = "Book ID: " + String.valueOf(bookId) + 
             		", Title: " + book.getBookTitle() + 
             		", Author: " + book.getBookAuthor() + 
             		", Publisher: "+ book.getBookPublisher() +
             		", Category: "+book.getBookCategory();
-            String filePath = BOOK_QR_DIR + Long.toString(bookId) + ".png";
+            String filePath = BOOK_QR_DIR + String.valueOf(bookId) + ".png";
             QRCodeGenerator.generateQRCode(data, filePath);
         } catch (WriterException | IOException e) {
             log.error("Error generating QR code for book ID: {}", bookId, e);

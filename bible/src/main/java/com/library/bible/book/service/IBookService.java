@@ -16,6 +16,7 @@ public interface IBookService {
 	Map<String, Object> getBookInfoMap(long bookid);
 	
 	List<Book> getBookList();
+	List<Book> getBookListByRentIds(List<Long> rendIds);
 	Book getBookInfo(Long bookid);
 	
 	Book updateBook(Book book, MultipartFile file);

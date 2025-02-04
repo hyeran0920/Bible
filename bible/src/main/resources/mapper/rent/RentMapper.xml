@@ -27,6 +27,23 @@
 		FROM rent
 	</select>
 	
+	<!-- rentIds로 rents 조회 -->
+	<select id="selectRentsByRendIds"  resultMap="rentMap">
+		SELECT
+			rent_id,
+			book_id,
+			mem_id,
+			rent_date,
+			rent_due_date,
+			rent_finish_date,
+			rent_status
+		FROM rent
+	    WHERE rent_id IN
+	    <foreach collection="rentIds" item="rentId" open="(" separator="," close=")">
+	        #{rentId}
+	    </foreach>
+	</select>
+	
 	<!-- 특정 대여 조회 -->
 	<select id="selectRent" resultMap="rentMap">
 		SELECT
@@ -42,7 +59,7 @@
 	</select>
 	
 	<!-- 해당 사용자의 rent 기록 조회 -->
-	<select id="selectRentByMemIdAndRentStatus"  resultMap="rentMap">
+	<select id="selectRentsByMemIdAndRentStatus"  resultMap="rentMap">
         SELECT 
 			rent_date,
 			rent_id,

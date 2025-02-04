@@ -54,6 +54,9 @@ public enum ExceptionCode {
     OVERDUE_RENT(HttpStatus.BAD_REQUEST, "연체 중인 도서가 있어 대여가 불가능합니다."),
     EXCEEDED_RENT_LIMIT(HttpStatus.BAD_REQUEST, "대여 가능한 도서 수를 초과하였습니다."),
     ALREADY_RENTED(HttpStatus.BAD_REQUEST, "이미 대여 중인 도서입니다."),
+    NOT_RENT_REQUEST_CANCELD_STATE(HttpStatus.BAD_REQUEST, "대여 신청을 취소할 수 없는 상태입니다."),
+    RENT_ID_NOT_INPUT(HttpStatus.BAD_REQUEST, "상태를 변경할 대여 ID값을 입력해주세요."),
+    NOT_RENT_USER(HttpStatus.UNAUTHORIZED, "대여와 관련 없는 사람의 요청입니다."),    
     
 	// 인증/인가 관련 에러
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "로그인이 필요한 서비스입니다."),

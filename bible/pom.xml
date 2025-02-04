@@ -104,7 +104,52 @@
 			<scope>test</scope>
 		</dependency>
 		
-		
+		<!--POI================================================-->
+	    <!-- Apache POI (Excel .xls, .xlsx 지원) -->
+	        <!-- Apache POI Core -->
+	    <dependency>
+	        <groupId>org.apache.poi</groupId>
+	        <artifactId>poi</artifactId>
+	        <version>5.2.2</version>
+	    </dependency>
+	
+	    <!-- Apache POI OOXML -->
+	    <dependency>
+	        <groupId>org.apache.poi</groupId>
+	        <artifactId>poi-ooxml</artifactId>
+	        <version>5.2.2</version>
+	    </dependency>
+	
+	    <!-- Apache POI Scratchpad (필요한 경우) -->
+	    <dependency>
+	        <groupId>org.apache.poi</groupId>
+	        <artifactId>poi-scratchpad</artifactId>
+	        <version>5.2.3</version>
+	    </dependency>
+	
+	    <!-- OOXML Schemas -->
+	    <dependency>
+	        <groupId>org.apache.poi</groupId>
+	        <artifactId>poi-ooxml-schemas</artifactId>
+	        <version>4.1.2</version>
+	    </dependency>
+	
+	    <!-- XMLBeans (POI에서 필요) -->
+	    <dependency>
+	        <groupId>org.apache.xmlbeans</groupId>
+	        <artifactId>xmlbeans</artifactId>
+	        <version>5.2.2</version>
+	    </dependency>
+	
+	    <!-- Commons Collections (POI에서 필요) -->
+	    <dependency>
+	        <groupId>org.apache.commons</groupId>
+	        <artifactId>commons-collections4</artifactId>
+	        <version>4.4</version>
+	    </dependency>
+    
+    
+    
 		<!--QR-->
 		<dependency>
 		    <groupId>com.google.zxing</groupId>
@@ -160,6 +205,11 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-aop</artifactId>
 		</dependency>
+		
+		
+
+
+
 
 		<!-- Spring Boot Starter Validation -->
 		<dependency>

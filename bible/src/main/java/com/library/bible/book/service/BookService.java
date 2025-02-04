@@ -100,6 +100,17 @@ public class BookService implements IBookService {
         }
     }
 
+    
+
+    @Override
+    public void insertBooks(List<Book> books) {
+        for (Book book : books) {
+            insertBook(book,null);
+        }
+    }
+
+
+	
     @Override
     @Transactional("transactionManager")
     @CacheEvict(value = "books", allEntries = true, beforeInvocation = true)
@@ -134,8 +145,9 @@ public class BookService implements IBookService {
     }
 
     @Override
-    @Cacheable(value = "categories", key = "'all'")
+    //@Cacheable(value = "categories", key = "'all'")
     public List<Map<String, Object>> getAllCategory() {
+    	System.out.println("book service-category");
         return bookRepository.getAllCategory();
     }
 

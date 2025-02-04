@@ -1,7 +1,9 @@
 package com.library.bible.rent.controller;
 
-import java.util.List;
+import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -12,38 +14,66 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.library.bible.member.model.Member;
+import com.library.bible.pageresponse.PageResponse;
+import com.library.bible.rent.dto.BookRequest;
+import com.library.bible.rent.dto.RentHistoryResponse;
 import com.library.bible.rent.model.RentHistory;
+import com.library.bible.rent.model.RentStatus;
 import com.library.bible.rent.service.IRentHistoryService;
-
-import lombok.RequiredArgsConstructor;
+import com.library.bible.resolver.AuthMember;
 
 @RestController
-@RequiredArgsConstructor
-@RequestMapping("api/rent/history")
+@RequestMapping("/api/rent-histories")
 public class RentHistoryController {
-	private final IRentHistoryService rentHistoryService;
+	@Autowired
+	private IRentHistoryService rentHistoryService;
 	
-	//대여 기록 전제 조회
-	@GetMapping
-	public ResponseEntity<List<RentHistory>> selectAllRentHistory(){
-		List<RentHistory> historys = rentHistoryService.selectAllRentHistory();
-		if(historys.isEmpty()) {
-			return ResponseEntity.noContent().build();
-		}
-		return ResponseEntity.ok(historys);
+//	//대여 기록 전제 조회
+//	@GetMapping
+//	public ResponseEntity<List<RentHistory>> selectAllRentHistory(){
+//		List<RentHistory> historys = rentHistoryService.selectAllRentHistory();
+//		if(historys.isEmpty()) {
+//			return ResponseEntity.noContent().build();
+//		}
+//		return ResponseEntity.ok(historys);
+//	}
+//	
+//	//특정 대여 기록 조회
+//	@GetMapping("{rentHistoryId}")
+//	public ResponseEntity<RentHistory> selectRentHistory(@PathVariable int rentHistoryId){
+//		RentHistory history = rentHistoryService.selectRentHistory(rentHistoryId);
+//		return ResponseEntity.ok(history);
+//	}
+
+	// Rent의 rent_status값으로 조회 가능
+	// 현재 사용자의 대여 기록 조회
+	@GetMapping("/me/details")
+	public ResponseEntity<PageResponse<RentHistoryResponse>> selectRentHistoryResponse(
+			@AuthMember Member member,
+			@RequestParam(required = false) Optional<RentStatus> rentStatus,
+			@RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+		PageResponse<RentHistoryResponse> pageResponsees = 
+				rentHistoryService.selectRentHistoryResponses(member.getMemId(), rentStatus, PageRequest.of(page, size));
+		return ResponseEntity.ok(pageResponsees);
+	}
+
+	// 대여 기록 조회 - memId=0이면 모든 사용자 정보 조회
+	@GetMapping("/details")
+	public ResponseEntity<PageResponse<RentHistoryResponse>> selectRentHistoryResponse(
+			@RequestParam(defaultValue = "0") int memId,
+			@RequestParam(required = false) Optional<RentStatus> rentStatus,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size) {
+		PageResponse<RentHistoryResponse> pageResponsees = 
+				rentHistoryService.selectRentHistoryResponses(memId, rentStatus, PageRequest.of(page, size));
+		return ResponseEntity.ok(pageResponsees);
 	}
 	
-	//특정 대여 기록 조회
-	@GetMapping("{rentHistoryId}")
-	public ResponseEntity<RentHistory> selectRentHistory(@PathVariable int rentHistoryId){
-		RentHistory history = rentHistoryService.selectRentHistory(rentHistoryId);
-		if(history == null) {
-			return ResponseEntity.notFound().build();
-		}
-		return ResponseEntity.ok(history);
-	}
 	
 	//대여 기록 생성
 	@PostMapping
@@ -52,13 +82,16 @@ public class RentHistoryController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(history);
 	}
 	
+	// 대여 신청할 books id를 바탕으로 대여 기록 생성
+	@PostMapping("/request")
+	public ResponseEntity<RentHistoryResponse> insertRentHistoryByBooks(@AuthMember Member member, @RequestBody BookRequest bookRequest) {
+		RentHistoryResponse rentHistoryResponse = rentHistoryService.insertRentHistoryAndRent(member.getMemId(), bookRequest.getBooks(), RentStatus.REQUESTED);
+		return ResponseEntity.status(HttpStatus.CREATED).body(rentHistoryResponse);
+	}
+	
 	//대여 기록 수정
 	@PutMapping("{rentHistoryId}")
 	public ResponseEntity<RentHistory> updateRentHistory(@PathVariable int rentHistoryId, @RequestBody RentHistory rentHistory){
-		RentHistory existing = rentHistoryService.selectRentHistory(rentHistoryId);
-		if(existing == null) {
-			return ResponseEntity.notFound().build();
-		}
 		rentHistoryService.updateRentHistory(rentHistory);
 		return ResponseEntity.ok(rentHistory);
 	}

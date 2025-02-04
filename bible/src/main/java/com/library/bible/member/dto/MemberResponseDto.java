@@ -13,11 +13,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MemberResponseDto {
-	private int memId;
+	private long memId;
 	private String memName;
     @Valid
 	private String memEmail;
     @Valid
 	private String memPhone;
+	private String memQrPath; // QR 이미지 경로
     private List<Role> roles;
 }

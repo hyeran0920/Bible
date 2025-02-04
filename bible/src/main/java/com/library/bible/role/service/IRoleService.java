@@ -6,8 +6,8 @@ import com.library.bible.member.model.Member;
 import com.library.bible.role.model.Role;
 
 public interface IRoleService {
-    List<Role> selectRolesByMemId(int memId);
+    List<Role> selectRolesByMemId(long memId);
 	void insertMemberRoles(Member member);
     Role insertRole(Role role);
-    void deleteRoles(int memId);
+    void deleteRoles(long memId);
 }

@@ -87,7 +87,7 @@ export default {
   methods: {
     // 장바구니 목록을 백엔드에서 불러옴
     fetchCarts() {
-      axios.get('http://localhost:8080/api/carts/list', { withCredentials: true })
+      axios.get('http://localhost:8080/api/carts', { withCredentials: true })
         .then(response => {
           this.carts = response.data;
           // 각 cart 항목의 bookId로 책 정보 호출 (이미 저장된 book은 재호출하지 않음)
@@ -131,9 +131,8 @@ export default {
       let total = 0;
 
       // DB에 book count 업데이트
-      axios.put(`http://localhost:8080/api/carts/update`, {
-        cartId: cartId,
-        newCount: newCount
+      axios.put(`http://localhost:8080/api/carts/${cartId}`, {
+        bookCount: newCount
       })
       .then(response => {
         //cart update success
@@ -148,7 +147,7 @@ export default {
 
     // 장바구니 항목 삭제
     deleteCart(cartId) {
-      axios.delete(`http://localhost:8080/api/carts/delete/${cartId}`, { withCredentials: true })
+      axios.delete(`http://localhost:8080/api/carts/${cartId}`, { withCredentials: true })
         .then(response => {
           alert(response.data);
           // 로컬 데이터에서 삭제한 항목 제거

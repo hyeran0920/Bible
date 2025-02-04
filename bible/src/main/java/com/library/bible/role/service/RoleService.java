@@ -37,13 +37,13 @@ public class RoleService implements IRoleService {
 	
 	@Override
 	@Cacheable(value="role", key="#memId")
-	public List<Role> selectRolesByMemId(int memId) {
+	public List<Role> selectRolesByMemId(long memId) {
 		return roleRepository.selectRolesByMemId(memId);
 	}
 
 	@Override
 	@Transactional
-	public void deleteRoles(int memId) {
+	public void deleteRoles(long memId) {
 		int result = roleRepository.deleteRoles(memId);
 		if(result == 0) throw new CustomException(ExceptionCode.ROLE_DELETE_FAIL);
 	}

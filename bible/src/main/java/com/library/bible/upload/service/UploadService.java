@@ -27,117 +27,15 @@ public class UploadService implements IUploadService {
     private static final String BOOK_IMAGE_DIR = "uploads/book-images/";
     private static final String[] IMAGE_EXTENSIONS = {".jpg", ".png", ".jpeg"};
     
-    //DELETE FILE
-    private boolean deleteFile(String dir, int id) {
-        String[] extensions = {".jpg", ".png", ".jpeg"};
-
-        for (String extension : extensions) {
-            Path filePath = Paths.get(dir, Integer.toString(id) + extension);
-
-            if (Files.exists(filePath)) {
-                try {
-                    Files.delete(filePath);
-                    log.info("Deleted file: {}", filePath);
-                    return true;
-                } catch (IOException e) {
-                    log.error("Failed to delete file: {}", filePath, e);
-                    return false;
-                }
-            }
-        }
-
-        log.warn("No file found for ID: {} in directory: {}", Integer.toString(id), dir);
-        return false;
-    }
-
-
-    @Override
-    public boolean deleteMemberQRImage(int memId) {
-        return deleteFile(MEMBER_QR_DIR, memId);
-    }
-
-
-    @Override
-    public boolean deleteBookQRImage(int bookId) {
-        return deleteFile(BOOK_QR_DIR, bookId);
-    }
-
-    @Override
-    public boolean deleteBookImage(int bookId) {
-        return deleteFile(BOOK_IMAGE_DIR, bookId);
-    }
-
     
-    
-    //CREATE MEMBER QR!!!!
-    @Override
-    public void createMemberQRImage(Member member) {
-        try {
-        	String memId=Integer.toString(member.getMemId());
-        	
-            String data = "Member ID: " + memId + ", Email: " + member.getMemEmail();
-            String filePath = MEMBER_QR_DIR + memId + ".png";
-            QRCodeGenerator.generateQRCode(data, filePath);
-            log.info("Generated QR Code for member ID: {}", memId);
-        } catch (WriterException | IOException e) {
-            log.error("Error generating QR code for member ID: {}", member.getMemId(), e);
-            throw new CustomException(ExceptionCode.QR_IMAGE_CREATION_FAIL);
-        }
-    }
-    
-    @Override
-    public void createBookQRImage(Book book, int bookId) {
-    	try {
-    		System.out.println("book qr id="+bookId);
-        	//create qr
-            String data = "Book ID: " + Integer.toString(bookId) + 
-            		", Title: " + book.getBookTitle() + 
-            		", Author: " + book.getBookAuthor() + 
-            		", Publisher: "+ book.getBookPublisher() +
-            		", Category: "+book.getBookCategory();
-            String filePath = BOOK_QR_DIR + Integer.toString(bookId) + ".png";
-            QRCodeGenerator.generateQRCode(data, filePath);
-        } catch (WriterException | IOException e) {
-            log.error("Error generating QR code for book ID: {}", bookId, e);
-            throw new CustomException(ExceptionCode.QR_IMAGE_CREATION_FAIL);
-        }
-
-    }
-    
-    
-    
-    
-    //INSERT BOOK IMG1!!!!!
-    @Override
-    public boolean uploadBookImage(int bookId, MultipartFile file) {
-    	try {
-        	
-            String originalFileName = file.getOriginalFilename();
-            String fileExtension = originalFileName.substring(originalFileName.lastIndexOf(".")); // 확장자 추출
-            String fileName = Integer.toString(bookId) + fileExtension;
-            Path filePath = Paths.get(BOOK_IMAGE_DIR, fileName);
-            
-            Files.createDirectories(filePath.getParent()); // 디렉토리 생성 (없을 경우)
-            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-
-            log.info("Uploaded book image to: {}", filePath);
-            return true;
-        } catch (IOException e) {
-            log.error("Failed to upload book image for book ID: {}", bookId, e);
-            return false;
-        }
-
-    }
-
-
-    //GET IMG!!/////////////////////////////////////////////////////////////
+  //GET IMG!!//////////////////////////////////////////////////////////////////////////////
     /*
      @param directory 이미지가 저장된 디렉토리 경로
      @param id 이미지 파일명 (bookId 또는 memId)
      @return 이미지 바이트 배열 또는 null (이미지 없음)
      */
     
-    private byte[] getImageFromDirectory(String directory, int id, String imageType) {
+    private byte[] getImageFromDirectory(String directory, long id, String imageType) {
         for (String extension : IMAGE_EXTENSIONS) {
             Path filePath = Paths.get(directory, id + extension);
 
@@ -158,12 +56,134 @@ public class UploadService implements IUploadService {
 
 
     @Override
-    public byte[] getBookImage(int bookId) {
+    public byte[] getBookImage(long bookId) {
         return getImageFromDirectory(BOOK_IMAGE_DIR, bookId, "book");
     }
 
-    @Override
-    public byte[] getMemberQRImage(int memId) {
-        return getImageFromDirectory(MEMBER_QR_DIR, memId, "member QR");
+
+	@Override
+	public byte[] getMemberQRImage(long memId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public byte[] getBookQRImage(long bookId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
+	
+	
+	
+	
+    //DELETE/////////////////////////////////////////////////////////////////////////////
+    private boolean deleteFile(String dir, long id) {
+        String[] extensions = {".jpg", ".png", ".jpeg"};
+
+        for (String extension : extensions) {
+            Path filePath = Paths.get(dir, String.valueOf(id) + extension);
+
+            if (Files.exists(filePath)) {
+                try {
+                    Files.delete(filePath);
+                    log.info("Deleted file: {}", filePath);
+                    return true;
+                } catch (IOException e) {
+                    log.error("Failed to delete file: {}", filePath, e);
+                    return false;
+                }
+            }
+        }
+
+        log.warn("No file found for ID: {} in directory: {}", String.valueOf(id), dir);
+        return false;
     }
+
+
+    @Override
+    public boolean deleteMemberQRImage(long memId) {
+    	return deleteFile(MEMBER_QR_DIR, memId);
+    }
+
+
+    @Override
+    public boolean deleteBookQRImage(long bookId) {
+        return deleteFile(BOOK_QR_DIR, bookId);
+    }
+
+    @Override
+    public boolean deleteBookImage(long bookId) {
+        return deleteFile(BOOK_IMAGE_DIR, bookId);
+    }
+
+    
+    
+    
+    
+    
+    
+    //INSERT///////////////////////////////////////////////////////////////////////////////////////
+    @Override
+    public boolean uploadBookImage(long bookId, MultipartFile file) {
+    	try {
+        	
+            String originalFileName = file.getOriginalFilename();
+            String fileExtension = originalFileName.substring(originalFileName.lastIndexOf(".")); // 확장자 추출
+            String fileName = String.valueOf(bookId) + fileExtension;
+            Path filePath = Paths.get(BOOK_IMAGE_DIR, fileName);
+            
+            Files.createDirectories(filePath.getParent()); // 디렉토리 생성 (없을 경우)
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            log.info("Uploaded book image to: {}", filePath);
+            return true;
+        } catch (IOException e) {
+            log.error("Failed to upload book image for book ID: {}", bookId, e);
+            return false;
+        }
+
+    }
+
+    
+  //CREATE QR///////////////////////////////////////
+    @Override
+    public void createMemberQRImage(Member member) {
+        try {
+        	String memId=String.valueOf(member.getMemId());
+        	
+            String data = "Member ID: " + memId + ", Email: " + member.getMemEmail();
+            String filePath = MEMBER_QR_DIR + memId + ".png";
+            QRCodeGenerator.generateQRCode(data, filePath);
+            log.info("Generated QR Code for member ID: {}", memId);
+        } catch (WriterException | IOException e) {
+            log.error("Error generating QR code for member ID: {}", member.getMemId(), e);
+            throw new CustomException(ExceptionCode.QR_IMAGE_CREATION_FAIL);
+        }
+    }
+    
+    @Override
+    public void createBookQRImage(Book book, long bookId) {
+    	try {
+    		//System.out.println("book qr id="+bookId);
+        	//create qr
+            String data = "Book ID: " + String.valueOf(bookId) + 
+            		", Title: " + book.getBookTitle() + 
+            		", Author: " + book.getBookAuthor() + 
+            		", Publisher: "+ book.getBookPublisher() +
+            		", Category: "+book.getBookCategory();
+            String filePath = BOOK_QR_DIR + String.valueOf(bookId) + ".png";
+            QRCodeGenerator.generateQRCode(data, filePath);
+        } catch (WriterException | IOException e) {
+            log.error("Error generating QR code for book ID: {}", bookId, e);
+            throw new CustomException(ExceptionCode.QR_IMAGE_CREATION_FAIL);
+        }
+
+    }
+    
+    
+
+
 }

@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Member {
-	private int memId;
+	private long memId;
 	private String memName;
 	private String memPassword;
 	
@@ -24,5 +24,6 @@ public class Member {
 	@Pattern(regexp = "^010-\\d{4}-\\d{4}$", message = "전화번호 형식이 올바르지 않습니다. (010-XXXX-XXXX)")
 	private String memPhone;
 	
+	private String memQrPath; // QR 이미지 경로
     private List<Role> roles;
 }

@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Role {
-    private int memId;
+    private long memId;
     private RoleName roleName;
 }

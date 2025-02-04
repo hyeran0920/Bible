@@ -61,7 +61,7 @@ export default {
     },
 
     addCart(bookid) {
-      axios.post(`http://localhost:8080/api/carts/add`, {
+      axios.post(`http://localhost:8080/api/carts`, {
         bookId: bookid,
         bookCount: this.nowBookCount
       }, { withCredentials: true })

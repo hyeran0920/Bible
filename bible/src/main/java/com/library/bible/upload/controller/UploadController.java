@@ -42,13 +42,13 @@ public class UploadController {
 
     //DELETE IMAGE////////////////////////////////////////////////////////////
     @DeleteMapping("/book-image")
-    public ResponseEntity<String> deleteBookImage(@RequestParam("bookid") Long bookId) {
+    public ResponseEntity<String> deleteBookImage(@RequestParam("bookid") long bookId) {
         return getDeleteResponse(uploadService.deleteBookImage(bookId), "Book image", bookId);
     }
 
 
     @DeleteMapping("/book-qr-image")
-    public ResponseEntity<String> deleteBookQRImage(@RequestParam("bookid") Long bookId) {
+    public ResponseEntity<String> deleteBookQRImage(@RequestParam("bookid") long bookId) {
         return getDeleteResponse(uploadService.deleteBookQRImage(bookId), "Book QR image", bookId);
     }
 
@@ -59,7 +59,7 @@ public class UploadController {
         //return getDeleteResponse(uploadService.deleteMemberQRImage(member.getMemId()), "Member QR image", member.getMemId());
     }
 
-    private ResponseEntity<String> getDeleteResponse(boolean success, String type, Long id) {
+    private ResponseEntity<String> getDeleteResponse(boolean success, String type, long id) {
         if (success) {
             return ResponseEntity.ok(type + " deleted for ID: " + id);
         } else {
@@ -72,7 +72,7 @@ public class UploadController {
     @PostMapping("/book-image")
     public ResponseEntity<String> uploadBookImage(
             @RequestParam("file") MultipartFile file,
-            @RequestParam("bookid") Long bookId) {
+            @RequestParam("bookid") long bookId) {
 
         boolean uploaded = uploadService.uploadBookImage(bookId, file);
         if (uploaded) {
@@ -85,7 +85,7 @@ public class UploadController {
 
     //GET IMG/////////////////////////////////////////////////////////
     @GetMapping("/book-image")
-    public ResponseEntity<byte[]> getBookImage(@RequestParam("bookid") Long bookId) {
+    public ResponseEntity<byte[]> getBookImage(@RequestParam("bookid") long bookId) {
         //System.out.println("here is get obok img");
     	byte[] imageBytes = uploadService.getBookImage(bookId);
 

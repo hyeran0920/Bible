@@ -9,7 +9,6 @@
 		<result property="memId" column="mem_id"/>
 		<result property="bookId" column="book_id"/>
 		<result property="reservDate" column="reserv_date"/>
-		<result property="reservStatus" column="reserv_status"/>
 	</resultMap>
 
 	<!-- 모든 예약 조회 -->
@@ -18,8 +17,7 @@
 			reserv_id,
 			mem_id,
 			book_id,
-			reserv_date,
-			reserv_status
+			reserv_date
 		FROM reservation
 	</select>
 	
@@ -29,8 +27,7 @@
 			reserv_id,
 			mem_id,
 			book_id,
-			reserv_date,
-			reserv_status
+			reserv_date
 		FROM reservation
 		WHERE reserv_id = #{reservId}
 	</select>
@@ -38,9 +35,9 @@
 	<!-- 예약 추가 -->
 	<insert id="insertReserv" parameterType="Reservation">
 		INSERT INTO reservation
-			(mem_id, book_id, reserv_date, reserv_status)
+			(mem_id, book_id, reserv_date)
 		VALUES
-			(#{memId}, #{bookId}, #{reservDate}, #{reservStatus})
+			(#{memId}, #{bookId}, #{reservDate})
 	</insert>
 	
 	<!-- 예약 수정 -->
@@ -49,8 +46,7 @@
 		SET
 			mem_id = #{memId},
 			book_id = #{bookId},
-			reserv_date = #{reservDate},
-			reserv_status = #{reservStatus}
+			reserv_date = #{reservDate}
 		WHERE reserv_id = #{reservId}
 	</update>
 	

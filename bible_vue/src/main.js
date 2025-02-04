@@ -16,5 +16,13 @@ const app = createApp(App);
 // Axios 전역 등록
 app.config.globalProperties.$axios = axios;
 
+// 전역 메소드로 numberWithCommas 추가
+app.config.globalProperties.$filters = {
+  numberWithCommas(value) {
+    if (!value) return ''
+    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+  }
+}
+
 // Vue 앱 시작
 app.use(store).use(router).mount('#app');

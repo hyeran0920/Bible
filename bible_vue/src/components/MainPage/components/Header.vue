@@ -2,28 +2,34 @@
   <div>
     <!-- Header -->
     <header class="head">
-      <div class="logo"><a href="/">Name</a></div>
+      <div class="logo">
+  <a href="/">
+    <img src="../../../assets/logo.png" alt="Logo" class="logo-img">
+  </a>
+</div>
       <div class="search-container">
-        <input type="text" placeholder="Search..." class="search-input" />
-        <button class="search-button">🔍</button>
+        <input type="text" v-model="searchQuery" placeholder="Search..." class="search-input" @keyup.enter="performSearch" />
+        <button class="search-button" @click="performSearch">🔍</button>
       </div>
-      <div class="auth-buttons">
+      <div class="auth-icon" @click="toggleAuthMenu">👤</div>
+    </header>
+
+    <!-- Auth menu -->
+    <div v-if="showAuthMenu" class="auth-menu">
       <template v-if="!isLoggedIn">
-        <button class="auth-button"><a href="/login">Login</a></button>
-        <button class="auth-button"><a href="/signUp">회원가입</a></button>
+        <a href="/login">Login</a>
+        <a href="/signUp">회원가입</a>
       </template>
       <template v-else>
-        <button class="auth-button"><a href="/cart">장바구니</a></button>
-        <button class="auth-button"><a href="/mypage">Mypage</a></button>
-        <button class="auth-button" @click="logout">Logout</button>
+        <a href="/cart">장바구니</a>
+        <a href="/mypage">Mypage</a>
+        <a href="#" @click="logout">Logout</a>
       </template>
     </div>
-    </header>
 
     <!-- Navigation -->
     <nav class="nav">
       <ul class="nav-links">
-        <li><a href="#">카테고리</a></li>
         <li><a href="/book">베스트셀러</a></li>
         <li><a href="#">추천도서</a></li>
         <li><a href="#">신간 도서</a></li>
@@ -36,19 +42,29 @@
 <script>
 export default {
   name: 'Header',
-  data(){
+  data() {
     return {
       isLoggedIn: false,
+      showAuthMenu: false,
+      searchQuery: '',
     };
   },
-  mounted(){
+  mounted() {
     this.isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
   },
   methods: {
+    toggleAuthMenu() {
+      this.showAuthMenu = !this.showAuthMenu;
+    },
     logout() {
-      localStorage.removeItem("isLoggedIn"); // 로그인 정보 삭제
+      localStorage.removeItem("isLoggedIn");
       this.isLoggedIn = false;
       alert("로그아웃 되었습니다.");
+    },
+    performSearch() {
+      // 여기에 검색 로직을 구현하세요
+      console.log('Searching for:', this.searchQuery);
+      // 예: this.$router.push({ path: '/search', query: { q: this.searchQuery } });
     }
   }
 }
@@ -67,62 +83,79 @@ body, ul, li {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 0;
-  border-bottom: 1px solid #ddd;
+  padding: 10px 15px 0 15px;
 }
 
 .logo {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: bold;
 }
 
+.auth-icon {
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* Search */
 .search-container {
   display: flex;
   align-items: center;
-  gap: 8px;
+  width: 40%;
+  position: relative;
 }
 
 .search-input {
-  padding: 8px;
+  width: 100%;
+  padding: 8px 30px 8px 12px;
   font-size: 16px;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 20px;
 }
 
 .search-button {
-  padding: 8px 16px;
-  font-size: 16px;
-  background-color: #007bff;
-  color: white;
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
   border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.auth-buttons {
-  display: flex;
-  gap: 8px;
-}
-
-.auth-button {
-  width: 80px;
-  padding: 8px;
   font-size: 16px;
-  border-radius: 4px;
-  background-color: white;
   cursor: pointer;
-  color: #000;
+}
+
+/* Auth menu */
+.auth-menu {
+  position: absolute;
+  right: 16px;
+  top: 60px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 8px 0;
+  z-index: 10;
+}
+
+.auth-menu a {
+  display: block;
+  padding: 8px 16px;
+  text-decoration: none;
+  color: #333;
 }
 
 /* Navigation */
 .nav {
-  padding: 16px 0;
-  border-bottom: 1px solid #ddd;
+  padding: 4px 0;
 }
 
 .nav-links {
   display: flex;
   justify-content: space-around;
+  flex-wrap: nowrap; /* 줄바꿈 방지 */
+  padding: 0 10px; 
+}
+.nav-links li {
+  flex-shrink: 0; /* 아이템 크기 유지 */
+  margin: 0 2px; /* 아이템 사이 간격 */
 }
 
 .nav-links a {
@@ -130,5 +163,31 @@ body, ul, li {
   color: #333;
   font-size: 16px;
   font-weight: 500;
+}
+/* 로고 스타일 */
+.logo-img {
+  max-width: 120px; /* 기본 크기 */
+  height: auto;
+  object-fit: contain;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .logo-img {
+    max-width: 40px;
+  }
+
+  .search-container {
+    width: 50%;
+  }
+
+  .nav-links {
+    justify-content: flex-start; /* 왼쪽 정렬 */
+  }
+  .nav-links li {
+    flex-basis: 22%;
+    text-align: center;
+    padding: 6px;
+  }
 }
 </style>

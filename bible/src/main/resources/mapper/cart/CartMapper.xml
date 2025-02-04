@@ -65,5 +65,13 @@
             #{id}
         </foreach>
     </select>
+    
+    <!-- 선택한 장바구니 아이템 조회 -->
+    <select id="getSelectedCarts" parameterType="list" resultType="com.library.bible.cart.model.Cart">
+        SELECT * FROM cart WHERE cart_id IN
+        <foreach item="cartId" collection="list" open="(" separator="," close=")">
+            #{cartId}
+        </foreach>
+    </select>
 
 </mapper>

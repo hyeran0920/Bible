@@ -1,10 +1,9 @@
 <template>
   <div>
     <h1>Order Page</h1>
-    <table v-if="carts.length > 0" border="1" cellspacing="0" cellpadding="5">
+    <table border="1" cellspacing="0" cellpadding="5">
       <thead>
         <tr>
-          <th>Cart ID</th>
           <th>Img</th>
           <th>Title</th>
           <th>Author</th>
@@ -14,106 +13,76 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="cart in selectedCarts" :key="cart.cartId">
-          <td>{{ cart.cartId }}</td>
+        <tr v-for="order in orders" :key="order.cartId">
           <td>
-            <img :src="getBookImageUrl(cart.bookId)" :alt="books[cart.bookId]?.bookTitle || '책 제목 없음'" width="100" height="auto" />
+            <img :src="getBookImageUrl(order.bookId)" width="100" height="auto" />
           </td>
-          <td>{{ books[cart.bookId]?.bookTitle || '제목 없음' }}</td>
-          <td>{{ books[cart.bookId]?.bookAuthor || '저자 없음' }}</td>
-          <td>{{ books[cart.bookId]?.bookPrice || 0 }}원</td>
-          <td>{{ cart.bookCount }}</td>
-          <td>{{ books[cart.bookId]?.bookPrice * cart.bookCount || 0 }}원</td>
+          <td>{{ order.bookTitle }}</td>
+          <td>{{ order.bookAuthor }}</td>
+          <td>{{ order.bookPrice }}원</td>
+          <td>{{ order.bookCount }}</td>
+          <td>{{ order.bookPrice * order.bookCount }}원</td>
         </tr>
       </tbody>
     </table>
-    
-    <div v-else>
-      <p>No items in the cart.</p>
-    </div>
 
     <div style="margin-top: 20px;">
-      <strong>Total Price: {{ totalPayPrice }}원</strong>
+      <strong>Total Payment: {{ totalPayPrice }}원</strong>
     </div>
 
-    <button @click="placeOrder">Place Order</button>
+    <button @click="confirmOrder">최종 결제</button>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
-  props: {
-    selectedCartIds: {
-      type: Array,
-      default: () => []
-    },
-    carts: {
-      type: Array,
-      default: () => []
-    },
-    books: {
-      type: Object,
-      default: () => ({})
-    }
+  data() {
+    return {
+      orders: [],      // 주문 목록
+      totalPayPrice: 0, // 총 가격
+    };
   },
-  computed: {
-    selectedCarts() {
-      if (!this.carts || !Array.isArray(this.carts)) {
-        return []; // carts가 undefined 또는 null이면 빈 배열 반환
-      }
-      return this.carts.filter(cart => this.selectedCartIds.includes(cart.cartId));
-    },
-    totalPayPrice() {
-      return this.selectedCarts.reduce((total, cart) => {
-        return total + (this.books[cart.bookId]?.bookPrice * cart.bookCount || 0);
-      }, 0);
-    }
+  mounted() {
+    this.fetchOrderData();
   },
   methods: {
-    placeOrder() {
-      if (!this.selectedCarts || this.selectedCarts.length === 0) {
-        alert('No items selected for order.');
-        return;
+    async fetchOrderData() {
+      const cartIds = this.$route.query.cartIds; // URL에서 cartId 목록 가져오기
+      if (!cartIds) return;
+
+      try {
+        // 백엔드에서 선택한 cartId에 해당하는 데이터 가져오기
+        const response = await axios.get(
+          `http://localhost:8080/api/orders/preview?cartIds=${cartIds}`
+        );
+        this.orders = response.data;
+        
+        // 총 가격 계산
+        this.totalPayPrice = this.orders.reduce(
+          (sum, order) => sum + order.bookPrice * order.bookCount,
+          0
+        );
+      } catch (error) {
+        console.error("주문 정보 불러오기 오류:", error);
       }
-      
-      const orderDetails = this.selectedCarts.map(cart => ({
-        cartId: cart.cartId,
-        bookId: cart.bookId,
-        bookCount: cart.bookCount,
-        totalPrice: this.books[cart.bookId]?.bookPrice * cart.bookCount || 0
-      }));
-      
-      axios.post('http://localhost:8080/api/orders', orderDetails, { withCredentials: true })
-        .then(response => {
-          alert('Order placed successfully!');
-          this.$emit('orderCompleted', this.selectedCartIds);
-        })
-        .catch(error => {
-          console.error('Error placing order:', error);
-        });
     },
+
+    async confirmOrder() {
+      try {
+        const cartIds = this.orders.map(order => order.cartId);
+        await axios.post("http://localhost:8080/api/orders/confirm", { cartIds });
+        alert("결제가 완료되었습니다.");
+        this.$router.push("/order-success"); // 결제 완료 페이지로 이동
+      } catch (error) {
+        console.error("결제 오류:", error);
+      }
+    },
+
     getBookImageUrl(bookId) {
       return `http://localhost:8080/api/uploads/book-image?bookid=${bookId}`;
     },
-  }
+  },
 };
 </script>
-
-<style scoped>
-table {
-  width: 100%;
-  text-align: center;
-}
-th, td {
-  padding: 10px;
-}
-
-button {
-  margin-top: 20px;
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
-}
-</style>

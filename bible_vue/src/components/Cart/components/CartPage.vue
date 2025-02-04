@@ -62,6 +62,10 @@
     <div style="margin-top: 20px;">
       <strong>Total Price: {{ totalPayPrice }}원 </strong>
     </div>
+    <!-- 구매 버튼 추가 -->
+    <div style="margin-top: 20px;">
+      <button @click="placeOrder" :disabled="selectedCartIds.length === 0">구매하기</button>
+    </div>
   </div>
 </template>
 
@@ -158,11 +162,26 @@ export default {
         });
     },
 
+    //(추가) 주문 요청 (선택한 장바구니 상품들)
+    placeOrder() {
+    if (this.selectedCartIds.length === 0) {
+      alert("주문할 상품을 선택해주세요.");
+      return;
+    }
+
+    // ✅ 백엔드에 데이터 전송 없이 order 페이지로 이동
+    this.$router.push({
+      path: "/order",
+      query: { cartIds: this.selectedCartIds.join(",") },
+    });
+  },
+    
+
     // Get Book Image URL
     getBookImageUrl(bookId) {
       return `http://localhost:8080/api/uploads/book-image?bookid=${bookId}`;
     },
-  },
+  }
 };
 </script>
 

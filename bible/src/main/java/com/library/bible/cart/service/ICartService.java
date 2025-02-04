@@ -15,10 +15,11 @@ public interface ICartService {
 	void updateCartByBookId(int bookId, int memId, int bookCount);
 	void deleteCart(int cartId);
 	void addCart(int bookId, int memId, int bookCount);
+	//구매 시 장바구니에서 삭제되는 deleteCarts
+	void deleteCarts(List<Integer> cartIds);
 	
 	//calculate selected prices
 	List<Integer> getSelectedCartPrices(List<Integer> cartId);
 	int getSelectedTotalPrice(List<Integer> cartId);
-	
-	
+	List<Cart> getSelectedCarts(List<Integer> cartIds);
 }

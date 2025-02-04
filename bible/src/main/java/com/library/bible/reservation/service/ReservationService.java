@@ -28,7 +28,7 @@ public class ReservationService implements IReservationService {
 
 	@Override
 	@Cacheable(value="reserv", key="#reservId")
-	public Reservation selectReserv(int reservId) {
+	public Reservation selectReserv(long reservId) {
 		return reservRepository.selectReserv(reservId);
 	}
 
@@ -41,7 +41,7 @@ public class ReservationService implements IReservationService {
 
 	@Override
 	@Transactional
-	@CachePut(value="reserv", key="#reservId")
+	@CachePut(value="reserv", key="#reservation.reservId")
 	public void updateReserv(Reservation reservation) {
 		reservRepository.updateReserv(reservation);
 	}
@@ -52,7 +52,7 @@ public class ReservationService implements IReservationService {
 		@CacheEvict(value="reserv", key="#reservId"),
 		@CacheEvict(value="reservs", allEntries=true)
 	})
-	public int deleteReserv(int reservId) {
+	public int deleteReserv(long reservId) {
 		return reservRepository.deleteReserv(reservId);
 	}
 

@@ -4,19 +4,8 @@
 
 	<select id="getBookCount" resultType="int">
 		SELECT COUNT(*) FROM BOOK
-		<!-- <choose>
-			<when test="_parameter == null"></when>
-			<when test="_parameter.containsKey('departmentId')">
-				WHERE department_id=#{departmentId}
-			</when>
-			<when test="_parameter.containsKey('jobId')">
-				WHERE job_id=#{jobId}
-			</when>
-			<otherwise></otherwise>
-		</choose>	 -->	
 	</select>
 
-	
 	<select id="getBookListMap" resultType="hashmap">
 	    SELECT  book_id          AS "bookId",
 	            book_title       AS "bookTitle",
@@ -25,15 +14,16 @@
 	            TO_CHAR(book_release_date, 'YYYY-MM-DD') AS "bookReleaseDate",
 	            book_category    AS "bookCategory",
 	            book_price       AS "bookPrice",
-	            book_img         AS "bookImg",
+	            book_img_path    AS "bookImgPath",
 	            book_detail      AS "bookDetail",
 	            book_total_stock AS "bookTotalStock",
 	            book_rent_stock  AS "bookRentStock",
-	            book_location 	 AS "bookLocation"
+	            book_location 	 AS "bookLocation",
+	            book_qr_path     AS "bookQrPath"
 	    FROM BOOK
 	</select>
-	
-	<select id="getBookInfoMap" parameterType="int" resultType="hashmap">
+
+	<select id="getBookInfoMap" parameterType="java.lang.Long" resultType="hashmap">
 	    SELECT  book_id          AS "bookId",
 	            book_title       AS "bookTitle",
 	            book_author      AS "bookAuthor",
@@ -41,15 +31,16 @@
 	            TO_CHAR(book_release_date, 'YYYY-MM-DD') AS "bookReleaseDate",
 	            book_category    AS "bookCategory",
 	            book_price       AS "bookPrice",
-	            book_img         AS "bookImg",
+	            book_img_path    AS "bookImgPath",
 	            book_detail      AS "bookDetail",
 	            book_total_stock AS "bookTotalStock",
 	            book_rent_stock  AS "bookRentStock",
-	            book_location 	 AS "bookLocation"
+	            book_location 	 AS "bookLocation",
+	            book_qr_path     AS "bookQrPath"
 	    FROM BOOK 
 	    WHERE book_id = #{bookId}
 	</select>
-	
+
 	<resultMap type="com.library.bible.book.model.Book" id="bookMap">
 	    <result column="book_id"          property="bookId" />
 	    <result column="book_title"       property="bookTitle" />
@@ -58,54 +49,36 @@
 	    <result column="book_release_date" property="bookReleaseDate" />
 	    <result column="book_category"    property="bookCategory" />
 	    <result column="book_price"       property="bookPrice" />
-	    <result column="book_img"         property="bookImg" />
+	    <result column="book_img_path"    property="bookImgPath" />
 	    <result column="book_detail"      property="bookDetail" />
 	    <result column="book_total_stock" property="bookTotalStock"/>
 	    <result column="book_rent_stock"  property="bookRentStock"/>
 	    <result column="book_location"    property="bookLocation"/>
+	    <result column="book_qr_path"     property="bookQrPath"/>
 	</resultMap>
-	
+
 	<select id="getBookList" resultMap="bookMap">
 	    SELECT * FROM BOOK
 	</select>
-	
-	<select id="getBookInfo" parameterType="int" resultType="com.library.bible.book.model.Book">
-	    SELECT  book_id          AS bookId,
-	            book_title       AS bookTitle,
-	            book_author      AS bookAuthor,
-	            book_publisher   AS bookPublisher,
-	            book_release_date AS bookReleaseDate,
-	            book_category    AS bookCategory,
-	            book_price       AS bookPrice,
-	            book_img         AS bookImg,
-	            book_detail      AS bookDetail,
-	            book_total_stock AS "bookTotalStock",
-	            book_rent_stock  AS "bookRentStock",
-	            book_location 	 AS "bookLocation"
-	    FROM BOOK 
-	    WHERE book_id = #{bookId}
-	</select>
-	
+
 	<insert id="insertBook" parameterType="com.library.bible.book.model.Book">
-	    <!-- book_id를 먼저 가져오기 (자동증가) -->
-	    <selectKey keyProperty="bookId" resultType="int" order="BEFORE">
+	    <selectKey keyProperty="bookId" resultType="java.lang.Long" order="BEFORE">
 	        SELECT book_seq.NEXTVAL FROM dual
 	    </selectKey>
 	
-	    <!-- BOOK 테이블에 데이터 삽입 -->
 	    INSERT INTO book 
 	        (book_id, book_title, book_author, book_publisher, book_release_date, 
-	         book_category, book_price, book_img, book_detail, 
-	         book_total_stock, book_rent_stock, book_location)
+	         book_category, book_price, book_img_path, book_detail, 
+	         book_total_stock, book_rent_stock, book_location, book_qr_path)
 	    VALUES 
-	        (#{bookId}, #{bookTitle}, #{bookAuthor}, #{bookPublisher}, #{bookReleaseDate}, 
-	         #{bookCategory}, #{bookPrice}, #{bookImg}, #{bookDetail}, 
-	         #{bookTotalStock}, #{bookRentStock}, #{bookLocation})
+	        (#{bookId}, #{bookTitle}, #{bookAuthor}, #{bookPublisher}, 
+	         #{bookReleaseDate, jdbcType=DATE}, #{bookCategory, jdbcType=VARCHAR}, #{bookPrice, jdbcType=NUMERIC}, 
+	         #{bookImgPath, jdbcType=VARCHAR}, #{bookDetail, jdbcType=VARCHAR}, 
+	         #{bookTotalStock, jdbcType=NUMERIC}, #{bookRentStock, jdbcType=NUMERIC}, 
+	         #{bookLocation, jdbcType=VARCHAR}, #{bookQrPath, jdbcType=VARCHAR})
 	</insert>
 
 
-    
-	
 	<update id="updateBook" parameterType="com.library.bible.book.model.Book">
 	    UPDATE BOOK
 	    SET book_title = #{bookTitle},
@@ -114,34 +87,48 @@
 	        book_release_date = #{bookReleaseDate, jdbcType=DATE},
 	        book_category = #{bookCategory},
 	        book_price = #{bookPrice},
+	        book_img_path = #{bookImgPath},
 	        book_detail = #{bookDetail},
 	        book_total_stock=#{bookTotalStock},
 	        book_rent_stock=#{bookRentStock},
-	        book_location=#{bookLocation}
+	        book_location=#{bookLocation},
+	        book_qr_path=#{bookQrPath}
 	    WHERE book_id = #{bookId}
 	</update>
-
 	
+	<update id="updateBookImgPath" parameterType="map">
+	    UPDATE BOOK
+	    SET book_img_path = #{bookImgPath}
+	    WHERE book_id = #{bookId}
+	</update>
+	
+	<update id="updateBookQrPath" parameterType="map">
+	    UPDATE BOOK
+	    SET book_qr_path = #{bookQrPath}
+	    WHERE book_id = #{bookId}
+	</update>
+	
+	
+
 	<delete id="deleteBook">
 	    DELETE FROM BOOK 
 	    WHERE book_id = #{param1}
-	    <!-- WHERE book_id = #{param1} AND book_author = #{param2} -->
 	</delete>
-	
+
 	<select id="getAllAuthor" resultType="hashmap">
 	    SELECT DISTINCT book_author AS "bookAuthor" FROM BOOK
 	</select>
-	
+
 	<select id="getAllPublisher" resultType="hashmap">
 	    SELECT DISTINCT book_publisher AS "bookPublisher" FROM BOOK
 	</select>
-	
+
 	<select id="getAllCategory" resultType="hashmap">
 	    SELECT DISTINCT book_category AS "bookCategory"
 	    FROM BOOK
 	    WHERE book_category IS NOT NULL
 	</select>
-	
+
 	<select id="getBooksByCategory" resultType="map">
 		SELECT  book_id          AS "bookId",
 	            book_title       AS "bookTitle",
@@ -150,11 +137,12 @@
 	            TO_CHAR(book_release_date, 'YYYY-MM-DD') AS "bookReleaseDate",
 	            book_category    AS "bookCategory",
 	            book_price       AS "bookPrice",
-	            book_img         AS "bookImg",
+	            book_img_path    AS "bookImgPath",
 	            book_detail      AS "bookDetail",
 	            book_total_stock AS "bookTotalStock",
 	            book_rent_stock  AS "bookRentStock",
-	            book_location 	 AS "bookLocation"
+	            book_location 	 AS "bookLocation",
+	            book_qr_path     AS "bookQrPath"
 	    FROM BOOK
 	    WHERE BOOK_CATEGORY=#{category}
 	</select>
@@ -168,11 +156,12 @@
 		            TO_CHAR(book_release_date, 'YYYY-MM-DD') AS "bookReleaseDate",
 		            book_category    AS "bookCategory",
 		            book_price       AS "bookPrice",
-		            book_img         AS "bookImg",
+		            book_img_path    AS "bookImgPath",
 		            book_detail      AS "bookDetail",
 		            book_total_stock AS "bookTotalStock",
 		            book_rent_stock  AS "bookRentStock",
-		            book_location 	 AS "bookLocation"
+		            book_location 	 AS "bookLocation",
+		            book_qr_path     AS "bookQrPath"
 		    FROM BOOK
 		    WHERE 1=1
 		]]>
@@ -185,6 +174,4 @@
 		</if>
 	</select>
 
-
-	
 </mapper>

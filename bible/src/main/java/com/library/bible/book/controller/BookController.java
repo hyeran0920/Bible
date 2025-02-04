@@ -40,13 +40,13 @@ public class BookController {
 	}
 	
 	@GetMapping("/{bookid}") 
-	public Map<String, Object> getBook(@PathVariable int bookid) {
+	public Map<String, Object> getBook(@PathVariable Long bookid) {
 		return bookService.getBookInfoMap(bookid);
 	}
 	
 	
 	//SEARCH
-	 @GetMapping("/search")
+	@GetMapping("/search")
     public List<Map<String, Object>> searchBooks(@RequestParam String keyword) {
         System.out.println("Keyword received: " + keyword);
         return bookService.searchBooks(keyword);
@@ -61,8 +61,9 @@ public class BookController {
 	        @RequestPart(value = "file", required = false) MultipartFile file) {
 
 		try {
+			System.out.println("book controller - insert book");
 			bookService.insertBook(book,file); 
-			return ResponseEntity.ok().body("Book inserted successfully with book ID: " + book.getBookId());
+			return ResponseEntity.ok().body("Book inserted successfully with book ID: " + Long.toString(book.getBookId()));
 		}catch (Exception e) {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error inserting book: " + e.getMessage());
 	    }
@@ -113,7 +114,7 @@ public class BookController {
 	
 	//DELETE
 	@DeleteMapping
-	public void deleteBook(int bookid, String author) {
+	public void deleteBook(Long bookid, String author) {
 		bookService.deleteBook(bookid);
 	}
 

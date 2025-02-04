@@ -46,7 +46,7 @@ public class BookService implements IBookService {
 
     @Override
     @Cacheable(value = "books", key = "#bookId")
-    public Map<String, Object> getBookInfoMap(int bookId) {
+    public Map<String, Object> getBookInfoMap(Long bookId) {
         return bookRepository.getBookInfoMap(bookId);
     }
 
@@ -58,7 +58,7 @@ public class BookService implements IBookService {
 
     @Override
     @Cacheable(value = "books", key = "#bookId")
-    public Book getBookInfo(int bookId) {
+    public Book getBookInfo(Long bookId) {
         return bookRepository.getBookInfo(bookId);
     }
 
@@ -82,11 +82,19 @@ public class BookService implements IBookService {
     //@CachePut(value = "books", key = "#book.bookId")
     public void insertBook(Book book, MultipartFile file) {
     	
-    	//insert book in database
-    	bookRepository.insertBook(book);
-    	int bookId=book.getBookId();
-    	System.out.println("bookid bookService="+bookId);
+    	System.out.println("book insert - bookService=");
     	
+    	//insert book in database
+    	try {
+            bookRepository.insertBook(book);
+            System.out.println("Book inserted successfully: " );
+        } catch (Exception e) {
+            System.err.println("Error inserting book: " + e.getMessage());
+            e.printStackTrace();
+        }
+    	
+    	Long bookId=book.getBookId();
+
     	//book QR img
     	uploadService.createBookQRImage(book,bookId);
     	
@@ -110,13 +118,13 @@ public class BookService implements IBookService {
     @Override
     @Transactional("transactionManager")
     @CacheEvict(value = "books", allEntries = true, beforeInvocation = true)
-    public int deleteBook(int bookId, String author) {
+    public int deleteBook(Long bookId, String author) {
         return bookRepository.deleteBook(bookId, author);
     }
 
     @Override
     @CacheEvict(value = "books", allEntries = true, beforeInvocation = true)
-    public void deleteBook(int bookId) {
+    public void deleteBook(Long bookId) {
     	
     	//delete database
         bookRepository.deleteBook(bookId);

@@ -16,56 +16,56 @@ public class CartService implements ICartService{
 	
 	//GET CART
 	@Override
-	public List<Cart> getAllCarts(int memId) {
+	public List<Cart> getAllCarts(long memId) {
 		return cartRepos.getAllCarts(memId);
 	}
 
 	@Override
-	public Cart getCart(int cartId) {
+	public Cart getCart(long cartId) {
 		return cartRepos.getCart(cartId);
 	}
 	
 	@Override
-	public int isBookInCart(int memId, int bookId) {
+	public int isBookInCart(long memId, long bookId) {
 	    return cartRepos.isBookInCart(memId,bookId);
 	}
 
 	
 	//UPDATE, INSERT, DELETE
 	@Override
-	public void updateCart(int cartId, int newCount) {
+	public void updateCart(long cartId, int newCount) {
 		cartRepos.updateCart(cartId, newCount);
 	}
 	@Override
-	public void updateCartByBookId(int bookId, int memId, int bookCount) {
+	public void updateCartByBookId(long bookId, long memId, int bookCount) {
 		cartRepos.updateCartByBookId(bookId, memId, bookCount);
 		
 	}
 	
 	
 	@Override
-	public void deleteCart(int cartId) {
+	public void deleteCart(long cartId) {
 		cartRepos.deleteCart(cartId);
 	}
 
 	@Override
-	public void addCart(int bookId, int memId,int bookCount) {
+	public void addCart(long bookId, long memId,int bookCount) {
 		cartRepos.addCart(bookId,memId, bookCount);
 	}
 	
 	//GET PRICES
 	@Override
-	public List<Integer> getSelectedCartPrices(List<Integer> cartId) {
+	public List<Long> getSelectedCartPrices(List<Long> cartId) {
 		return cartRepos.getSelectedCartPrices(cartId);
 	}
 
 	@Override
-	public int getSelectedTotalPrice(List<Integer> cartId) {
+	public long getSelectedTotalPrice(List<Long> cartId) {
 	    int sum = 0;
-	    List<Integer> prices = cartRepos.getSelectedCartPrices(cartId);
+	    List<Long> prices = cartRepos.getSelectedCartPrices(cartId);
 
 	    if (prices != null) {
-	        for (Integer price : prices) {
+	        for (long price : prices) {
 	            sum += price;
 	        }
 	    }

@@ -8,10 +8,10 @@
 		<id property="rentId" column="rent_id"/>
 		<result property="bookId" column="book_id"/>
 		<result property="memId" column="mem_id"/>
+		<result property="rentDate" column="rent_date"/>
 		<result property="rentDueDate" column="rent_due_date"/>
 		<result property="rentFinishDate" column="rent_finish_date"/>
 		<result property="rentStatus" column="rent_status"/>
-		<result property="rentDate" column="rent_date"/>
 	</resultMap>
 	
 	<!-- 모든 대여 조회 -->
@@ -20,10 +20,10 @@
 			rent_id,
 			book_id,
 			mem_id,
+			rent_date,
 			rent_due_date,
 			rent_finish_date,
-			rent_status,
-			rent_date
+			rent_status
 		FROM rent
 	</select>
 	
@@ -33,10 +33,10 @@
 			rent_id,
 			book_id,
 			mem_id,
+			rent_date,
 			rent_due_date,
 			rent_finish_date,
-			rent_status,
-			rent_date
+			rent_status
 		FROM rent
 		WHERE rent_id = #{rentId}
 	</select>
@@ -44,20 +44,11 @@
 	<!-- 대여 추가 -->
 	<insert id="insertRent" parameterType="Rent" useGeneratedKeys="true" keyProperty="rentId" keyColumn="rent_id">
 	    INSERT INTO rent 
-	        (book_id, mem_id, rent_due_date, rent_finish_date, rent_status, rent_date)
+	        (book_id, mem_id, rent_date, rent_due_date, rent_finish_date, rent_status)
 	    VALUES 
-	        (#{bookId}, #{rentHistoryId}, SYSDATE+7 #{rentFinishDate}, #{rentStatus}, #{rentDate})
+	        (#{bookId}, #{memId}, #{rentDate}, #{rentDueDate}, #{rentFinishDate}, #{rentStatus})
 	</insert>
-
-	<!-- 여러 개의 대여를 한 번에 추가 -->	
-	<insert id="insertRents" parameterType="list" >
-	    INSERT INTO rent (book_id, rent_history_id, rent_due_date, rent_finish_date, rent_status)
-        <foreach collection="list" item="rent" separator="UNION ALL">
-            SELECT #{rent.bookId}, #{rent.rentHistoryId}, SYSDATE + 7, #{rent.rentFinishDate}, #{rent.rentStatus} 
-            FROM DUAL
-        </foreach>
-	</insert>
-	
+		
 	<!-- 대여 수정 -->
 	<update id="updateRent" parameterType="Rent">
 		UPDATE rent
@@ -66,8 +57,7 @@
 			mem_id = #{memId},
 			rent_due_date = #{rentDueDate},
 			rent_finish_date = #{rentFinishDate},
-			rent_status = #{rentStatus},
-			rent_date = #{rentDate}
+			rent_status = #{rentStatus}
 		WHERE rent_id = #{rentId}
 	</update>
 	
@@ -76,9 +66,51 @@
 		DELETE FROM rent WHERE rent_id = #{rentId}
 	</delete>
 	
-	<!-- Rent History ID로 rent 삭제 -->
-	<delete id="deleteRentByRentHistoryId">
-		DELETE FROM rent WHERE rent_history_id = #{rentHistoryId}
-	</delete>
+	<!-- ResultMap 정의 -->
+	<resultMap id="rentPageResponseMap" type="RentPageResponse">
+	    <result property="rentDate" column="rent_date"/>
+	    <collection property="rents" ofType="RentDetailResponse">
+	        <id property="rentId" column="rent_id"/>
+	        <result property="bookId" column="book_id"/>
+	        <result property="rentDueDate" column="rent_due_date"/>
+	        <result property="rentFinishDate" column="rent_finish_date"/>
+	        <result property="rentStatus" column="rent_status"/>
+	    </collection>
+	</resultMap>
 
+	 <!-- 페이징 처리된 대여 이력 조회 -->
+    <select id="selectRentResponses" resultMap="rentPageResponseMap">
+        SELECT 
+			rent_date,
+			rent_id,
+			book_id,
+			rent_due_date,
+			rent_finish_date,
+			rent_status
+        FROM rent
+    	<where>
+	        <if test="memId != 0">
+	            mem_id = #{memId}
+	        </if>
+	        <if test="rentStatus != null">
+	            AND rent_status = #{rentStatus}
+	        </if>
+	    </where>
+        ORDER BY rent_date DESC, rent_id ASC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+	<!-- 전체 카운트 조회 -->
+    <select id="countRent" resultType="int">
+        SELECT COUNT(*)
+        FROM rent
+	    <where>
+	        <if test="memId != 0">
+	            mem_id = #{memId}
+	        </if>
+	        <if test="rentStatus != null">
+	            AND rent_status = #{rentStatus}
+	        </if>
+	    </where>
+    </select>
 </mapper>

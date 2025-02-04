@@ -16,7 +16,7 @@ public interface IRentRepository {
 	
 	//Get all rent list
 	List<Rent> selectAllRent();
-	List<Rent> selectRentByMemIdAndRentStatus(		
+	List<Rent> selectRentsByMemIdAndRentStatus(		
 		@Param("memId") long memId, 
 		@Param("rentStatus") String rentStatus);
 	Rent selectRent(long rentId);

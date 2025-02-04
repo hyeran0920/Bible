@@ -42,7 +42,7 @@
 	</select>
 	
 	<!-- 해당 사용자의 rent 기록 조회 -->
-	<select id="selectRentByMemIdAndRentStatus"  resultMap="rentMap">
+	<select id="selectRentsByMemIdAndRentStatus"  resultMap="rentMap">
         SELECT 
 			rent_date,
 			rent_id,

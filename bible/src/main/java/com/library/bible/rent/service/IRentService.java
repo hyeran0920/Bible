@@ -21,6 +21,7 @@ public interface IRentService {
 	List<Rent> insertRents(long membId, List<Long> books, RentStatus rentStatus);
 
 	void updateRent(Rent rent);
+	void updateCancledRent(long memId, List<Long> rentIds); // 대여신청 취소하기
 
 	int deleteRent(long rentId);
 }

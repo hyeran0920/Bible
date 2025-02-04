@@ -91,12 +91,13 @@ public class RentService implements IRentService {
 		return rents;
 	}
 	
-	// 책 ID로 rent 생성하기
+	// 책 ID로 rent 생성하기 -> 대여 신청하기 or 대여하기
 	@Override
 	@Transactional
+	@CacheEvict(value = "rents", allEntries = true)
 	public List<Rent> insertRents(long memId, List<Long> bookIds, RentStatus rentStatus) {
 		// 현재 사용자가 대여 중인 rents 조회
-		List<Rent> currentRents = rentRepository.selectRentByMemIdAndRentStatus(memId, rentStatus.toString());
+		List<Rent> currentRents = rentRepository.selectRentsByMemIdAndRentStatus(memId, rentStatus.toString());
 		
 		// 현재 사용자의 대여 정보 확인
 		MemberRent memberRent = memberRentService.selectMemberRentByMemId(memId);

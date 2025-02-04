@@ -49,12 +49,12 @@ public enum ExceptionCode {
     RENT_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 대여 중인 도서입니다."),
     RENT_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "대여 가능 권수를 초과했습니다."),
 
-    // 대여 이력 관련 에러
-    RENT_HISTORY_INSERT_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "대여 이력 등록에 실패했습니다."),
-    RENT_HISTORY_UPDATE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "대여 이력 수정에 실패했습니다."),
-    RENT_HISTORY_DELETE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "대여 이력 삭제에 실패했습니다."),
-    RENT_HISTORY_NOT_FOUND(HttpStatus.NOT_FOUND, "대여 이력을 찾을 수 없습니다."),
-
+    // 대여 관련 에러
+    NO_AVAILABLE_BOOK(HttpStatus.BAD_REQUEST, "현재 대여 가능한 도서가 없습니다."),
+    OVERDUE_RENT(HttpStatus.BAD_REQUEST, "연체 중인 도서가 있어 대여가 불가능합니다."),
+    EXCEEDED_RENT_LIMIT(HttpStatus.BAD_REQUEST, "대여 가능한 도서 수를 초과하였습니다."),
+    ALREADY_RENTED(HttpStatus.BAD_REQUEST, "이미 대여 중인 도서입니다."),
+    
 	// 인증/인가 관련 에러
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "로그인이 필요한 서비스입니다."),
     FORBIDDEN(HttpStatus.FORBIDDEN, "해당 리소스에 대한 접근 권한이 없습니다."),

@@ -17,7 +17,10 @@ import com.library.bible.book.model.Book;
 import com.library.bible.book.service.IBookService;
 import com.library.bible.exception.CustomException;
 import com.library.bible.exception.ExceptionCode;
+import com.library.bible.memberrent.model.MemberRent;
+import com.library.bible.memberrent.service.IMemberRentService;
 import com.library.bible.pageresponse.PageResponse;
+import com.library.bible.rent.config.CheckRentAbout;
 import com.library.bible.rent.dto.RentPageResponse;
 import com.library.bible.rent.model.Rent;
 import com.library.bible.rent.model.RentStatus;
@@ -30,6 +33,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RentService implements IRentService {
 	private final IBookService bookService;
+	private final IMemberRentService memberRentService;
 	private final IRentRepository rentRepository;
 
 	@Override
@@ -90,12 +94,28 @@ public class RentService implements IRentService {
 	// 책 ID로 rent 생성하기
 	@Override
 	@Transactional
-	public List<Rent> insertRents(long memId, List<Long> books, RentStatus rentStatus) {
+	public List<Rent> insertRents(long memId, List<Long> bookIds, RentStatus rentStatus) {
+		// 현재 사용자가 대여 중인 rents 조회
+		List<Rent> currentRents = rentRepository.selectRentByMemIdAndRentStatus(memId, rentStatus.toString());
+		
+		// 현재 사용자의 대여 정보 확인
+		MemberRent memberRent = memberRentService.selectMemberRentByMemId(memId);
+		
+		// 사용자가 대여 중인 도서 수 업데이트
+		memberRent.setTotalRentCount(memberRent.getTotalRentCount() + bookIds.size());
+		
 		// rent 생성
 		List<Rent> rents = new ArrayList<>();
-		for(Long bookId : books) {
+		List<Book> books = new ArrayList<>();
+
+		for(Long bookId : bookIds) {
 			// 실제 존재하는 책인지 확인
-			bookService.getBookInfo(bookId);
+			Book book = bookService.getBookInfo(bookId);
+			book.setBookRentStock(book.getBookRentStock()+1); // 대여 중인 도서개수 추가
+			books.add(book);
+			
+			// 현재 도서가 대여 가능한지 확인
+			CheckRentAbout.checkRentBookPossible(book, memberRent, currentRents);
 
 			// 시간
 			Timestamp rentDate = new Timestamp(System.currentTimeMillis());
@@ -112,7 +132,13 @@ public class RentService implements IRentService {
 
 			// 생성한 rent 저장
 			this.insertRent(rent);
-		}		
+		}
+		
+		// 대여 정보 변경사항 반영
+		memberRentService.updateMemberRent(memberRent);
+
+		// 도서 업데이트
+		bookService.updateBookRentStocks(books);
 		
 		return rents;
 	}

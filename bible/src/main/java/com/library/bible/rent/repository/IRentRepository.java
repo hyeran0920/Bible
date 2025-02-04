@@ -16,9 +16,12 @@ public interface IRentRepository {
 	
 	//Get all rent list
 	List<Rent> selectAllRent();
+	List<Rent> selectRentByMemIdAndRentStatus(		
+		@Param("memId") long memId, 
+		@Param("rentStatus") String rentStatus);
+	Rent selectRent(long rentId);
 	
 	//Rent table CRUD
-	Rent selectRent(long rentId);
 	int insertRent(Rent rent);
 	int updateRent(Rent rent);
 	int deleteRent(long rentId);

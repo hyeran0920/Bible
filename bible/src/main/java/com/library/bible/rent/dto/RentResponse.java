@@ -14,7 +14,8 @@ import lombok.NoArgsConstructor;
 public class RentResponse {
     private int rentId;
     private int bookId;
-    private Timestamp rentDueDate;
-    private Timestamp rentFinishDate;
+    private Timestamp rentDate; 		// 대여일
+    private Timestamp rentDueDate;		// 반납 예정일
+    private Timestamp rentFinishDate;	// 반납일
     private RentStatus rentStatus;
 }

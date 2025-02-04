@@ -106,7 +106,7 @@
 		
 		<!--POI================================================-->
 	    <!-- Apache POI (Excel .xls, .xlsx 지원) -->
-	        <!-- Apache POI Core -->
+	    <!-- Apache POI Core -->
 	    <dependency>
 	        <groupId>org.apache.poi</groupId>
 	        <artifactId>poi</artifactId>
@@ -148,8 +148,17 @@
 	        <version>4.4</version>
 	    </dependency>
     
-    
-    
+    	<!--====================================================-->
+    	
+    	
+    	<!--SMS - coolsm-->
+    	<dependency>
+            <groupId>net.nurigo</groupId>
+            <artifactId>sdk</artifactId>
+            <version>4.2.7</version>
+        </dependency>
+        
+        
 		<!--QR-->
 		<dependency>
 		    <groupId>com.google.zxing</groupId>
@@ -162,11 +171,13 @@
 		    <version>3.5.1</version>
 		</dependency>
 		
+		
 		<!--Web Socket-->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-websocket</artifactId>
 		</dependency>
+		
 		
 		<!-- JWT -->
 		<!-- https://mvnrepository.com/artifact/com.auth0/java-jwt -->
@@ -175,6 +186,7 @@
 			<artifactId>java-jwt</artifactId>
 			<version>4.4.0</version>
 		</dependency>
+		
 		
 	    <!-- MapStruct -->
 		<dependency>
@@ -188,17 +200,20 @@
 		    <version>1.5.1.Final</version>
 		</dependency>
 		
+		
 		<!-- Gson -->
 		<dependency>
 		    <groupId>com.google.code.gson</groupId>
 		    <artifactId>gson</artifactId>
 	    </dependency>
 	    
+	    
 	    <!--Redis - caching-->
 	    <dependency>
 		    <groupId>org.springframework.boot</groupId>
 		    <artifactId>spring-boot-starter-data-redis</artifactId>
 		</dependency>
+		
 		
 		<!-- AOP -->
 		<dependency>

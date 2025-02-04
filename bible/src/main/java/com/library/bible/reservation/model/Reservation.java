@@ -11,8 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Reservation {
 	private int reservId;
-	private int memId;
+	private long memId;
 	private int bookId;
 	private Date reservDate;
-	private String reservStatus;
 }

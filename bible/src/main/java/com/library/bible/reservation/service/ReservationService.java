@@ -41,7 +41,7 @@ public class ReservationService implements IReservationService {
 
 	@Override
 	@Transactional
-	@CachePut(value="reserv", key="#reservId")
+	@CachePut(value="reserv", key="#reservation.reservId")
 	public void updateReserv(Reservation reservation) {
 		reservRepository.updateReserv(reservation);
 	}

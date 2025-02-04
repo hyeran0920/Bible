@@ -70,7 +70,7 @@
             mem_password,
             mem_email,
             mem_phone,
-            mem_qr_path,
+            mem_qr_path
         ) VALUES (
             #{memName},
             #{memPassword},

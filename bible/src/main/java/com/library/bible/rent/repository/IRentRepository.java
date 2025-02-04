@@ -15,10 +15,10 @@ public interface IRentRepository {
 	List<Rent> selectAllRent();
 	
 	//Rent table CRUD
-	Rent selectRent(int rentId);
+	Rent selectRent(long rentId);
 	int insertRent(Rent rent);
 	int insertRents(List<Rent> rents);
 	int updateRent(Rent rent);
-	int deleteRent(int rentId);
+	int deleteRent(long rentId);
 	int deleteRentByRentHistoryId(int rentHistoryId);
 }

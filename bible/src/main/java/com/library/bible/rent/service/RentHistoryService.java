@@ -78,7 +78,7 @@ public class RentHistoryService implements IRentHistoryService {
 			
 			Rent rent = new Rent();
 			rent.setBookId(bookId);
-			rent.setRentHistoryId(rentHistory.getRentHistoryId());
+//			rent.setRentHistoryId(rentHistory.getRentHistoryId());
 			rent.setRentStatus(rentStatus);			
 			rents.add(rent);
 		}

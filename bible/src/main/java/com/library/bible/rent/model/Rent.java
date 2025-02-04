@@ -1,6 +1,5 @@
 package com.library.bible.rent.model;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 
 import lombok.AllArgsConstructor;
@@ -11,9 +10,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Rent {
-	private int rentId;
-	private int bookId;
-	private int rentHistoryId;
+	private long rentId;
+	private long bookId;
+	private long memId;
+	private Timestamp rentDate;
 	private Timestamp rentDueDate;
 	private Timestamp rentFinishDate;
 	private RentStatus rentStatus;

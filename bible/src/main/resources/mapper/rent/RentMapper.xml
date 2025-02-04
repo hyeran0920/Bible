@@ -7,10 +7,11 @@
 	<resultMap id="rentMap" type="Rent">
 		<id property="rentId" column="rent_id"/>
 		<result property="bookId" column="book_id"/>
-		<result property="rentHistoryId" column="rent_history_id"/>
+		<result property="memId" column="mem_id"/>
 		<result property="rentDueDate" column="rent_due_date"/>
 		<result property="rentFinishDate" column="rent_finish_date"/>
 		<result property="rentStatus" column="rent_status"/>
+		<result property="rentDate" column="rent_date"/>
 	</resultMap>
 	
 	<!-- 모든 대여 조회 -->
@@ -18,10 +19,11 @@
 		SELECT
 			rent_id,
 			book_id,
-			rent_history_id,
+			mem_id,
 			rent_due_date,
 			rent_finish_date,
-			rent_status
+			rent_status,
+			rent_date
 		FROM rent
 	</select>
 	
@@ -30,10 +32,11 @@
 		SELECT
 			rent_id,
 			book_id,
-			rent_history_id,
+			mem_id,
 			rent_due_date,
 			rent_finish_date,
-			rent_status
+			rent_status,
+			rent_date
 		FROM rent
 		WHERE rent_id = #{rentId}
 	</select>
@@ -41,9 +44,9 @@
 	<!-- 대여 추가 -->
 	<insert id="insertRent" parameterType="Rent" useGeneratedKeys="true" keyProperty="rentId" keyColumn="rent_id">
 	    INSERT INTO rent 
-	        (book_id, rent_history_id, rent_due_date, rent_finish_date, rent_status)
+	        (book_id, mem_id, rent_due_date, rent_finish_date, rent_status, rent_date)
 	    VALUES 
-	        (#{bookId}, #{rentHistoryId}, SYSDATE+7 #{rentFinishDate}, #{rentStatus})
+	        (#{bookId}, #{rentHistoryId}, SYSDATE+7 #{rentFinishDate}, #{rentStatus}, #{rentDate})
 	</insert>
 
 	<!-- 여러 개의 대여를 한 번에 추가 -->	
@@ -60,10 +63,11 @@
 		UPDATE rent
 		SET
 			book_id = #{bookId},
-			rent_history_id = #{rentHistoryId},
+			mem_id = #{memId},
 			rent_due_date = #{rentDueDate},
 			rent_finish_date = #{rentFinishDate},
-			rent_status = #{rentStatus}
+			rent_status = #{rentStatus},
+			rent_date = #{rentDate}
 		WHERE rent_id = #{rentId}
 	</update>
 	

@@ -41,7 +41,7 @@ public class RentController {
 	
 	//특정 대여 조회
 	@GetMapping("{rentId}")
-	public ResponseEntity<Rent> selectRent(@PathVariable int rentId){
+	public ResponseEntity<Rent> selectRent(@PathVariable long rentId){
 		Rent rent =rentService.selectRent(rentId);
 		return ResponseEntity.ok(rent);
 	}
@@ -61,14 +61,14 @@ public class RentController {
 	
 	//대여 수정
 	@PutMapping("{rentId}")
-	public ResponseEntity<Rent> updateRent(@PathVariable int rentId, @RequestBody Rent rent){
+	public ResponseEntity<Rent> updateRent(@PathVariable long rentId, @RequestBody Rent rent){
 		rentService.updateRent(rent);
 		return ResponseEntity.ok(rent);
 	}
 	
 	// 대여 삭제
 	@DeleteMapping("{rentId}")
-	public void deleteRent(@PathVariable int rentId) {
+	public void deleteRent(@PathVariable long rentId) {
 		rentService.deleteRent(rentId);
 	}
 }

@@ -29,7 +29,7 @@ public class RentService implements IRentService {
 
 	@Override
 	@Cacheable(value="rent", key="#rentId")
-	public Rent selectRent(int rentId) {
+	public Rent selectRent(long rentId) {
 		Rent rent = rentRepository.selectRent(rentId);
 		if(rent == null) throw new CustomException(ExceptionCode.RENT_NOT_FOUND);
 		return rent;
@@ -65,7 +65,7 @@ public class RentService implements IRentService {
 		@CacheEvict(value = "rent", key = "#rentId"),
 		@CacheEvict(value = "rents", allEntries = true)
 	})
-	public int deleteRent(int rentId) {
+	public int deleteRent(long rentId) {
 		int result = rentRepository.deleteRent(rentId);
 		if(result == 0) throw new CustomException(ExceptionCode.RENT_DELETE_FAIL);
 		return result;

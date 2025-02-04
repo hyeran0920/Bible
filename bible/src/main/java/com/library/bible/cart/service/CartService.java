@@ -1,5 +1,6 @@
 package com.library.bible.cart.service;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,9 +73,21 @@ public class CartService implements ICartService{
 	    return sum;
 	}
 
+	// *선택한 장바구니 아이템 조회*
+	@Override
+	public List<Cart> getSelectedCarts(List<Integer> cartIds) {
+	    if (cartIds == null || cartIds.isEmpty()) {
+	        return Collections.emptyList();
+	    }
+	    return cartRepos.getSelectedCarts(cartIds);
+	}
+	//구매 시 장바구니에서 삭제
+	@Override
+	public void deleteCarts(List<Integer> cartIds) {
+	    if (cartIds != null && !cartIds.isEmpty()) {
+	        cartRepos.deleteCarts(cartIds);
+	    }
+	}
 	
-
-	
-
 
 }

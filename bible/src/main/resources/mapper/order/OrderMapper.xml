@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.library.bible.order.mapper.OrderMapper">
+
+    <!-- 장바구니 데이터 조회 -->
+    <select id="findCartItemsByIds" resultType="com.library.bible.order.dto.OrderPreviewDTO">
+        SELECT c.cart_id AS cartId, 
+           b.book_id AS bookId, 
+           b.book_title AS bookTitle, 
+           b.book_author AS bookAuthor, 
+           b.book_price AS bookPrice, 
+           c.BOOK_COUNT AS bookCount  
+    FROM cart c
+    JOIN book b ON c.book_id = b.book_id
+    WHERE c.cart_id IN 
+        <foreach item="cartId" collection="cartIds" open="(" separator="," close=")">
+            #{cartId}
+        </foreach>
+    </select>
+	
+	<!-- 주문 내역 생성  -->
+	<insert id ="insertOrderHistory" useGeneratedKeys="true" keyProperty="orderHistoryId">
+		INSERT INTO order_history (mem_id, address_id, order_history_date,
+									order_history_total_price, order_history_received_name, 
+                                   order_paymeny_method, order_payment_status)
+        VALUES (#{memId}, #{addressId}, SYSDATE, #{totalPrice}, #{receivedName}, #{paymentMethod}, 'f')
+	</insert> 
+	
+    <!-- 주문 데이터 삽입 -->
+    <insert id="insertOrder">
+        INSERT INTO orders (book_id, order_history_id, book_count, total_price)
+        SELECT c.book_id, #{orderHistoryId}, c.book_count, (c.book_count * b.book_price)
+        FROM cart c
+        JOIN book b ON c.book_id = b.book_id
+        WHERE c.cart_id IN
+        <foreach item="cartId" collection="cartIds" open="(" separator="," close=")">
+            #{cartId}
+        </foreach>
+    </insert>
+
+    <!-- 장바구니에서 주문한 항목 삭제 -->
+    <delete id="deleteCartItems">
+        DELETE FROM cart WHERE cart_id IN
+        <foreach item="cartId" collection="cartIds" open="(" separator="," close=")">
+            #{cartId}
+        </foreach>
+    </delete>
+
+</mapper>

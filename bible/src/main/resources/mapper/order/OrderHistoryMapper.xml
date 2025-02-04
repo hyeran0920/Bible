@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.library.bible.order.OrderHistory">
+	
+	<!-- Result Map -->
+	<resultMap id ="ordersMap" type ="OrderHistory">
+		<id property="orderHistoryId" column ="order_history_id"/>
+		<result property="memId" column ="mem_id"/>
+		<result property="orderHistoryDate" column ="order_history_date"/>
+		<result property="OrderHistoryTotalPrice" column ="order_history_total_price"/>
+		<result property="OrderHistoryReceivedName" column ="order_history_received_name"/>
+		<result property="OrderHistoryPostcode" column ="order_history_postcode"/>
+		<result property="OrderHistoryAddress" column ="order_history_address"/>	
+		<result property="OrderHistoryDetailAddress" column ="order_history_detail_address"/>
+	</resultMap>
+	
+	<insert id="insertOrderHistory" useGeneratedKeys="true" keyProperty="order_history_id">
+    	INSERT INTO order_history (mem_id, address_id, order_history_date, order_history_total_price, order_history_received_name, order_paymeny_method)
+    	VALUES (#{memId}, #{addressId}, NOW(), 0, #{receivedName}, #{paymentMethod})
+	</insert>
+
+	<select id="getLastInsertId" resultType="long">
+    	SELECT LAST_INSERT_ID()
+	</select>
+	
+</mapper>

@@ -9,6 +9,9 @@
         <result column="book_id" property="bookId"/>
         <result column="mem_id" property="memId"/>
         <result column="book_count" property="bookCount"/>
+        <result column="book_title" property="bookTitle"/>
+        <result column="book_author" property="bookAuthor"/>
+        <result column="book_price" property="bookPrice"/>
     </resultMap>
 
     <!-- 특정 회원(memId)의 전체 장바구니 목록 조회 -->
@@ -62,6 +65,14 @@
         SELECT book_price FROM book 
         WHERE book_id IN 
         <foreach item="id" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+    
+    <!-- 선택한 장바구니 아이템 조회 -->
+    <select id="getSelectedCarts" parameterType="list" resultType="com.library.bible.cart.model.Cart">
+        SELECT * FROM cart WHERE cart_id IN
+        <foreach item="id" collection="cartIds" open="(" separator="," close=")">
             #{id}
         </foreach>
     </select>

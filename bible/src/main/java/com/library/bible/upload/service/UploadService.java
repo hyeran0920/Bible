@@ -63,15 +63,13 @@ public class UploadService implements IUploadService {
 
 	@Override
 	public byte[] getMemberQRImage(long memId) {
-		// TODO Auto-generated method stub
-		return null;
+		return getImageFromDirectory(MEMBER_QR_DIR, memId,"member");
 	}
 
 
 	@Override
 	public byte[] getBookQRImage(long bookId) {
-		// TODO Auto-generated method stub
-		return null;
+		return getImageFromDirectory(BOOK_QR_DIR, bookId,"member");
 	}
 	
 	

@@ -57,6 +57,25 @@
 	    <result column="book_qr_path"     property="bookQrPath"/>
 	</resultMap>
 
+	
+	<select id="getBookInfo" parameterType="long" resultMap="bookMap">
+	    SELECT  book_id,
+	            book_title,
+	            book_author,
+	            book_publisher,
+	            book_release_date,
+	            book_category,
+	            book_price,
+	            book_img_path,
+	            book_detail,
+	            book_total_stock,
+	            book_rent_stock,
+	            book_location,
+	            book_qr_path
+       	FROM BOOK
+	    WHERE book_id = #{bookId}		
+	</select>
+
 	<select id="getBookList" resultMap="bookMap">
 	    SELECT * FROM BOOK
 	</select>
@@ -108,7 +127,11 @@
 	    WHERE book_id = #{bookId}
 	</update>
 	
-	
+	<update id="updateBookRentStock">
+	    UPDATE BOOK
+	    SET book_rent_stock = #{bookRentStock}
+	    WHERE book_id = #{bookId}
+	</update>
 
 	<delete id="deleteBook">
 	    DELETE FROM BOOK 

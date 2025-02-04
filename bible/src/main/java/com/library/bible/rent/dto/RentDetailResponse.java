@@ -11,10 +11,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RentResponse {
+public class RentDetailResponse {
     private int rentId;
     private int bookId;
-    private Timestamp rentDate; 		// 대여일
     private Timestamp rentDueDate;		// 반납 예정일
     private Timestamp rentFinishDate;	// 반납일
     private RentStatus rentStatus;

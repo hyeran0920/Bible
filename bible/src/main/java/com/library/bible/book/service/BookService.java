@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,8 +59,10 @@ public class BookService implements IBookService {
 
     @Override
     @Cacheable(value = "books", key = "#bookId")
-    public Book getBookInfo(long bookId) {
-        return bookRepository.getBookInfo(bookId);
+    public Book getBookInfo(Long bookId) {
+        Book book = bookRepository.getBookInfo(bookId);
+        if(book == null) throw new CustomException(ExceptionCode.BOOK_NOT_FOUND);
+        return book;
     }
 
     // UPDATE, INSERT, DELETE
@@ -78,6 +79,24 @@ public class BookService implements IBookService {
         	uploadService.uploadBookImage(book.getBookId(),file);
         }
     	return book;
+    }
+    
+    // 책 대여 중인 수량 변경
+    @Override
+    //@CacheEvict(value = "books", key = "#book.bookId")
+    @CacheEvict(value = "books", allEntries = true) // 모든 책 캐시 삭제 -> 최신 상태 유지
+    public void updateBookRentStock(Book book) {
+    	int result = bookRepository.updateBookRentStock(book);
+    	if(result == 0) throw new CustomException(ExceptionCode.BOOK_UPDATE_FAIL);
+    }
+
+    @Override
+    //@CacheEvict(value = "books", key = "#book.bookId")
+    @CacheEvict(value = "books", allEntries = true) // 모든 책 캐시 삭제 -> 최신 상태 유지
+    public void updateBookRentStocks(List<Book> books) {
+    	for(Book book : books) {
+    		this.updateBookRentStock(book);
+    	}
     }
 
     @Override

@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,11 +20,12 @@ public interface IBookRepository {
 	List<Map<String, Object>> getBookListMap();
 	Map<String, Object> getBookInfoMap(Long bookid);
 	List<Book> getBookList();
-	Book getBookInfo(Long bookid);
+	Book getBookInfo(long bookid);
 	
 	void updateBookImgPath(Long bookId, String bookImgPath);
 	void updateBookQrPath(Long bookId, String bookQrPath);
 	void updateBook(Book book);
+	int updateBookRentStock(Book book);
 	
 	void insertBook(Book book);
 	

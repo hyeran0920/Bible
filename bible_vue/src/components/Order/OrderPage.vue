@@ -1,136 +1,119 @@
 <template>
   <div>
-    <h2>주문 페이지</h2>
-
-    <!-- 도서 목록 테이블 -->
-    <table border="1">
+    <h1>Order Page</h1>
+    <table v-if="carts.length > 0" border="1" cellspacing="0" cellpadding="5">
       <thead>
         <tr>
-          <th>선택</th>
-          <th>도서 ID</th>
-          <th>제목</th>
-          <th>가격</th>
-          <th>수량</th>
-          <th>총 가격</th>
+          <th>Cart ID</th>
+          <th>Img</th>
+          <th>Title</th>
+          <th>Author</th>
+          <th>Price</th>
+          <th>Count</th>
+          <th>Total Price</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="book in books" :key="book.bookId">
+        <tr v-for="cart in selectedCarts" :key="cart.cartId">
+          <td>{{ cart.cartId }}</td>
           <td>
-            <input type="checkbox" v-model="book.selected" />
+            <img :src="getBookImageUrl(cart.bookId)" :alt="books[cart.bookId]?.bookTitle || '책 제목 없음'" width="100" height="auto" />
           </td>
-          <td>{{ book.bookId }}</td>
-          <td>{{ book.bookTitle }}</td>
-          <td>{{ book.bookPrice.toLocaleString() }} 원</td>
-          <td>
-            <input type="number" v-model="book.bookCount" min="1" />
-          </td>
-          <td>{{ (book.bookPrice * book.bookCount).toLocaleString() }} 원</td>
+          <td>{{ books[cart.bookId]?.bookTitle || '제목 없음' }}</td>
+          <td>{{ books[cart.bookId]?.bookAuthor || '저자 없음' }}</td>
+          <td>{{ books[cart.bookId]?.bookPrice || 0 }}원</td>
+          <td>{{ cart.bookCount }}</td>
+          <td>{{ books[cart.bookId]?.bookPrice * cart.bookCount || 0 }}원</td>
         </tr>
       </tbody>
     </table>
+    
+    <div v-else>
+      <p>No items in the cart.</p>
+    </div>
 
-    <h3>총 주문 금액: {{ totalOrderPrice.toLocaleString() }} 원</h3>
+    <div style="margin-top: 20px;">
+      <strong>Total Price: {{ totalPayPrice }}원</strong>
+    </div>
 
-    <button @click="submitOrder" style="background: blue; color: white; padding: 10px; border: none;">
-      주문하기
-    </button>
+    <button @click="placeOrder">Place Order</button>
   </div>
 </template>
 
 <script>
-import axios from "axios";
+import axios from 'axios';
 
 export default {
-data() {
-  return {
-    memId: Number(localStorage.getItem("memId")) || 0, 
-    books: [], // 서버에서 가져온 도서 목록
-  };
-},
-computed: {
-  // 선택된 도서의 총 주문 금액 계산
-  totalOrderPrice() {
-    return this.books
-      .filter(book => book.selected) // 선택된 책만 필터링
-      .reduce((total, book) => total + book.bookPrice * book.bookCount, 0);
-  },
-},
-methods: {
-  // 서버에서 도서 목록 불러오기
-  async fetchBooks() {
-  try {
-    console.log("📡 [API 요청] 도서 목록 불러오기 시작...");
-    const response = await axios.get("http://localhost:8080/orders/all");
-
-    if (!response.data || response.data.length === 0) {
-      console.warn("⚠️ [경고] API 응답이 빈 배열입니다. 서버에서 데이터를 확인하세요.");
-    } else {
-      console.log("✅ [API 응답] 도서 목록:", response.data);
+  props: {
+    selectedCartIds: {
+      type: Array,
+      default: () => []
+    },
+    carts: {
+      type: Array,
+      default: () => []
+    },
+    books: {
+      type: Object,
+      default: () => ({})
     }
-
-    this.books = response.data.map(book => ({
-      ...book,
-      selected: false,  // 체크박스 상태 추가
-      bookCount: 1, // 기본 수량 설정
-    }));
-  } catch (error) {
-    console.error("🚨 [API 오류] 도서 목록 불러오기 실패:", error);
-  }
-},
-
-  async submitOrder() {
-    const selectedBooks = this.books
-      .filter(book => book.selected)
-      .map(book => ({
-        bookId: book.bookId,
-        sellingPrice: book.bookPrice,
-        bookCount: book.bookCount,
+  },
+  computed: {
+    selectedCarts() {
+      if (!this.carts || !Array.isArray(this.carts)) {
+        return []; // carts가 undefined 또는 null이면 빈 배열 반환
+      }
+      return this.carts.filter(cart => this.selectedCartIds.includes(cart.cartId));
+    },
+    totalPayPrice() {
+      return this.selectedCarts.reduce((total, cart) => {
+        return total + (this.books[cart.bookId]?.bookPrice * cart.bookCount || 0);
+      }, 0);
+    }
+  },
+  methods: {
+    placeOrder() {
+      if (!this.selectedCarts || this.selectedCarts.length === 0) {
+        alert('No items selected for order.');
+        return;
+      }
+      
+      const orderDetails = this.selectedCarts.map(cart => ({
+        cartId: cart.cartId,
+        bookId: cart.bookId,
+        bookCount: cart.bookCount,
+        totalPrice: this.books[cart.bookId]?.bookPrice * cart.bookCount || 0
       }));
-
-    if (selectedBooks.length === 0) {
-      alert("주문할 도서를 선택하세요!");
-      return;
-    }
-
-    try {
-      const orderPageDTO = {
-        memId: this.memId, // 주문자 ID 추가
-        orders: selectedBooks,
-        totalPrice: this.totalOrderPrice
-      };
-      const response = await axios.post(
-        `http://localhost:8080/orders/place`,
-        orderPageDTO
-      );
-      alert("주문 완료: 주문번호 " + response.data);
-    } catch (error) {
-      console.error("주문 실패:", error);
-      alert("주문 실패");
-    }
-  },
-},
-mounted() {
-  this.fetchBooks();
-},
+      
+      axios.post('http://localhost:8080/api/orders', orderDetails, { withCredentials: true })
+        .then(response => {
+          alert('Order placed successfully!');
+          this.$emit('orderCompleted', this.selectedCartIds);
+        })
+        .catch(error => {
+          console.error('Error placing order:', error);
+        });
+    },
+    getBookImageUrl(bookId) {
+      return `http://localhost:8080/api/uploads/book-image?bookid=${bookId}`;
+    },
+  }
 };
 </script>
 
 <style scoped>
 table {
-width: 100%;
-margin: 20px 0;
-border-collapse: collapse;
+  width: 100%;
+  text-align: center;
 }
 th, td {
-padding: 10px;
-text-align: center;
+  padding: 10px;
 }
-th {
-background: lightgray;
-}
-input[type="number"] {
-width: 50px;
+
+button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
 }
 </style>
-카트에서 오더로 가져오고 오더에서 해결

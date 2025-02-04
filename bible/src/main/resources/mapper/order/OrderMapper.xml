@@ -25,10 +25,7 @@
     </select>
 
     <!-- 주문 내역 기록 -->
-    <insert id="insertOrderHistory" parameterType="OrderHistory">
-    	<!-- <selectKey keyProperty="orderHistoryId" resultType="long" order="BEFORE">
-       		SELECT order_history_seq.NEXTVAL FROM DUAL
-    	</selectKey> -->
+    <insert id="insertOrderHistory" parameterType="OrderHistory" useGeneratedKeys="true" keyProperty="orderHistoryId">
     	INSERT INTO order_history (mem_id, order_history_date, order_history_total_price, order_history_received_name, order_history_address)  
     	VALUES (#{memId}, SYSDATE, #{totalPrice}, #{receivedName}, #{address});
 	</insert>

@@ -27,9 +27,10 @@ public class OrderController {
     @Autowired
     private BookService bookService;
 
-    @PostMapping("/place")
-    public Long placeOrder(@RequestBody OrderPageDTO orderPage) {
-        return orderService.placeOrder(orderPage.toOrderHistory());
+    @PostMapping("/api/orders")
+    public ResponseEntity<String> placeOrder(@RequestBody OrderPageDTO orderPage) {
+        orderService.processOrder(orderPage.getMemId(), orderPage);
+        return ResponseEntity.ok("Order placed successfully!");
     }
 
     @GetMapping("/history/{memId}")

@@ -12,7 +12,7 @@
     </resultMap>
     
 	<!-- Member ID로 address 조회 -->
-	<select id="selectAddressesByMemId" parameterType="int" resultMap="addressResultMap">
+	<select id="selectAddressesByMemId" parameterType="long" resultMap="addressResultMap">
 	    SELECT 
 	        address_id,
 	        mem_id,
@@ -60,13 +60,13 @@
 	</update>
     
 	<!-- Member Id를 이용해 Address 삭제 -->
-	<delete id="deleteAddressesByMemId" parameterType="int">
+	<delete id="deleteAddressesByMemId" parameterType="long">
 	    DELETE FROM address
 	    WHERE mem_id = #{memId}
 	</delete>
 	
 	<!-- Address 삭제 -->
-	<delete id="deleteAddress" parameterType="int">
+	<delete id="deleteAddress" parameterType="long">
 	    DELETE FROM address
 	    WHERE address_id = #{addressId}
 	</delete>

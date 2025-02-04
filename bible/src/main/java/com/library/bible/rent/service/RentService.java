@@ -28,7 +28,7 @@ public class RentService implements IRentService {
 
 	@Override
 	@Cacheable(value="rent", key="#rentId")
-	public Rent selectRent(int rentId) {
+	public Rent selectRent(long rentId) {
 		return rentRepository.selectRent(rentId);
 	}
 
@@ -52,7 +52,7 @@ public class RentService implements IRentService {
 		@CacheEvict(value = "rent", key = "#rentId"),
 		@CacheEvict(value = "rents", allEntries = true)
 	})
-	public int deleteRent(int rentId) {
+	public int deleteRent(long rentId) {
 		return rentRepository.deleteRent(rentId);
 
 	}

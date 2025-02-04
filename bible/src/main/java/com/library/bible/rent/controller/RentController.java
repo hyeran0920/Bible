@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.library.bible.rent.model.Rent;
 import com.library.bible.rent.service.IRentService;
 
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -41,7 +42,7 @@ public class RentController {
 	
 	//특정 대여 조회
 	@GetMapping("{rentId}")
-	public ResponseEntity<Rent> selectRent(@PathVariable int rentId){
+	public ResponseEntity<Rent> selectRent(@PathVariable long rentId){
 		Rent rent =rentService.selectRent(rentId);
 		if(rent == null) {
 			return ResponseEntity.notFound().build();
@@ -64,19 +65,20 @@ public class RentController {
 	
 	//대여 수정
 	@PutMapping("{rentId}")
-	public ResponseEntity<Rent> updateRent(@PathVariable int rentId, @RequestBody Rent rent){
+	public ResponseEntity<Rent> updateRent(@PathVariable long rentId, @RequestBody Rent rent){
 		Rent existingRent = rentService.selectRent(rentId);
 		//기존 데이터 유무 판단
 		if(existingRent == null) {
 			return ResponseEntity.notFound().build();
 		}
+		rent.setRentId(rentId);
 		rentService.updateRent(rent);
 		return ResponseEntity.ok(rent);
 	}
 	
 	// 대여 삭제
 	@DeleteMapping("{rentId}")
-	public void deleteRent(@PathVariable int rentId) {
+	public void deleteRent(@PathVariable long rentId) {
 		rentService.deleteRent(rentId);
 	}
 }

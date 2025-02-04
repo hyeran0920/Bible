@@ -10,10 +10,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Rent {
-	private int rentId;
-	private int bookId;
-	private int rentHistoryId;
+	private long rentId;
+	private long bookId;
+	private long memId;
 	private Date rentDueDate;
 	private Date rentFinishDate;
 	private String rentStatus;
+	private Date rentDate;
 }

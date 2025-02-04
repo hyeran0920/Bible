@@ -20,6 +20,7 @@ public interface IBookRepository {
 	List<Map<String, Object>> getBookListMap();
 	Map<String, Object> getBookInfoMap(Long bookid);
 	List<Book> getBookList();
+	List<Book> getBookListByRentIds(List<Long> rentIds);
 	Book getBookInfo(long bookid);
 	
 	void updateBookImgPath(Long bookId, String bookImgPath);

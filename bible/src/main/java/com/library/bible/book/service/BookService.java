@@ -58,6 +58,11 @@ public class BookService implements IBookService {
     }
 
     @Override
+    public List<Book> getBookListByRentIds(List<Long> rentIds) {
+    	return bookRepository.getBookListByRentIds(rentIds);
+    }
+
+    @Override
     @Cacheable(value = "books", key = "#bookId")
     public Book getBookInfo(Long bookId) {
         Book book = bookRepository.getBookInfo(bookId);

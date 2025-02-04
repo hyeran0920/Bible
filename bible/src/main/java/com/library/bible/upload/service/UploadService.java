@@ -62,7 +62,7 @@ public class UploadService implements IUploadService {
 
 
 	@Override
-	public byte[] getMemberQRImage(int memId) {
+	public byte[] getMemberQRImage(long memId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -104,7 +104,7 @@ public class UploadService implements IUploadService {
 
 
     @Override
-    public boolean deleteMemberQRImage(int memId) {
+    public boolean deleteMemberQRImage(long memId) {
         return false;
     	//return deleteFile(MEMBER_QR_DIR, memId);
     }
@@ -153,7 +153,7 @@ public class UploadService implements IUploadService {
     @Override
     public void createMemberQRImage(Member member) {
         try {
-        	String memId=Integer.toString(member.getMemId());
+        	String memId=Long.toString(member.getMemId());
         	
             String data = "Member ID: " + memId + ", Email: " + member.getMemEmail();
             String filePath = MEMBER_QR_DIR + memId + ".png";

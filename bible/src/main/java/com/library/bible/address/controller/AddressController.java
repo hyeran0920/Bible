@@ -1,4 +1,4 @@
-package com.library.bible.address;
+package com.library.bible.address.controller;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,13 +36,13 @@ public class AddressController {
 	}
 
 	@GetMapping("/{memId}" + ADDRESS_PATH)
-	public ResponseEntity<List<Address>> selectAddresses(@PathVariable int memId) {
+	public ResponseEntity<List<Address>> selectAddresses(@PathVariable long memId) {
 		List<Address> addresses = addressService.selectAddressesByMemId(memId);
 		return ResponseEntity.ok(addresses);
 	}
 	
 	@GetMapping(ADDRESS_PATH + "/{addressId}")
-	public ResponseEntity<Address> selectAddress(@PathVariable int addressId) {
+	public ResponseEntity<Address> selectAddress(@PathVariable long addressId) {
 		Address address = addressService.seleAddress(addressId);
 		return ResponseEntity.ok(address);
 	}
@@ -55,14 +55,14 @@ public class AddressController {
 	}
 
 	@PostMapping("/{memId}" + ADDRESS_PATH)
-	public ResponseEntity<Address> insertAddressByMemId(@PathVariable int memId, @Valid @RequestBody Address address) {
+	public ResponseEntity<Address> insertAddressByMemId(@PathVariable long memId, @Valid @RequestBody Address address) {
 		address.setMemId(memId);
 		address = addressService.insertAddress(address);
 		return ResponseEntity.status(HttpStatus.CREATED).body(address);
 	}
 
 	@PutMapping(ADDRESS_PATH + "/{addressId}")
-	public ResponseEntity<Address> updateAddress(@PathVariable int addressId, @Valid @RequestBody Address address, @AuthMember Member member) {
+	public ResponseEntity<Address> updateAddress(@PathVariable long addressId, @Valid @RequestBody Address address, @AuthMember Member member) {
 		address.setMemId(member.getMemId());
 		address.setAddressId(addressId);
 		addressService.updateAddress(address);
@@ -77,13 +77,13 @@ public class AddressController {
 
 	
 	@DeleteMapping("/{memId}" + ADDRESS_PATH)
-	public ResponseEntity<?> deleteAddressByMemId(@PathVariable int memId) {
+	public ResponseEntity<?> deleteAddressByMemId(@PathVariable long memId) {
 		addressService.deleteAddressesByMemId(memId);
 		return ResponseEntity.noContent().build();
 	}
 
 	@DeleteMapping(ADDRESS_PATH + "/{addressId}")
-	public ResponseEntity<?> deleteAddress(@PathVariable int addressId) {
+	public ResponseEntity<?> deleteAddress(@PathVariable long addressId) {
 		addressService.deleteAddress(addressId);
 		return ResponseEntity.noContent().build();
 	}

@@ -31,7 +31,7 @@ public class MemberRentController {
 	}
 
 	@GetMapping("/{memId}" + MEMBER_RENT_PATH)
-	public ResponseEntity<MemberRent> selectMemberRent(@PathVariable int memId) {
+	public ResponseEntity<MemberRent> selectMemberRent(@PathVariable long memId) {
 		MemberRent memberRent = memberRentService.selectMemberRentByMemId(memId);
 		return ResponseEntity.ok(memberRent);
 	}
@@ -44,7 +44,7 @@ public class MemberRentController {
 	}
 
 	@PutMapping("/{memId}" + MEMBER_RENT_PATH)
-	public ResponseEntity<MemberRent> updateMemberRent(@PathVariable int memId, @Valid @RequestBody MemberRent memberRent) {
+	public ResponseEntity<MemberRent> updateMemberRent(@PathVariable long memId, @Valid @RequestBody MemberRent memberRent) {
 		memberRent.setMemId(memId);
 		memberRentService.updateMemberRent(memberRent);
 		return ResponseEntity.ok(memberRent);
@@ -58,7 +58,7 @@ public class MemberRentController {
 
 	
 	@DeleteMapping("/{memId}" + MEMBER_RENT_PATH)
-	public ResponseEntity<?> deleteAddressByMemId(@PathVariable int memId) {
+	public ResponseEntity<?> deleteAddressByMemId(@PathVariable long memId) {
 		memberRentService.deleteMemberRent(memId);
 		return ResponseEntity.noContent().build();
 	}

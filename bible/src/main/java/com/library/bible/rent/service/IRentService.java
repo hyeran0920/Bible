@@ -8,8 +8,11 @@ public interface IRentService {
 	
 	List<Rent> selectAllRent();
 	
-	Rent selectRent(int rentId);
+	Rent selectRent(long rentId);
 	void insertRent(Rent rent);
+	List<Rent> insertRents(List<Rent> rents);
 	void updateRent(Rent rent);
-	int deleteRent(int rentId);
+
+	int deleteRent(long rentId);
+	int deleteRentByRentHistoryId(int rentHistoryId);
 }

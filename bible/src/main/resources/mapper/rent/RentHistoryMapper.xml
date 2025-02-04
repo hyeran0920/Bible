@@ -30,11 +30,11 @@
 	</select>
 	
 	<!-- 대여 기록 추가 -->
-	<insert id="insertRentHistory" parameterType="RentHistory">
+	<insert id="insertRentHistory" parameterType="RentHistory" useGeneratedKeys="true" keyProperty="rentHistoryId" keyColumn="rent_history_id">
 	    INSERT INTO rent_history
 	        (mem_id, rent_date)
 	    VALUES 
-	        (#{memId}, #{rentDate})
+	        (#{memId}, CURRENT_DATE)
 	</insert>
 	
 	<!-- 대여 기록 수정 -->
@@ -51,4 +51,59 @@
 		DELETE FROM rent_history WHERE rent_history_id = #{rentHistoryId}
 	</delete>
 
+	<!-- ResultMap 정의 -->
+    <resultMap id="rentHistoryResultMap" type="RentHistoryResponse">	
+        <id property="rentHistoryId" column="rent_history_id"/>
+        <result property="memId" column="mem_id"/>
+        <result property="rentDate" column="rent_date"/>
+        <collection property="rents" ofType="RentResponse">
+            <id property="rentId" column="rent_id"/>
+            <result property="bookId" column="book_id"/>
+            <result property="rentDueDate" column="rent_due_date"/>
+            <result property="rentFinishDate" column="rent_finish_date"/>
+            <result property="rentStatus" column="rent_status"/>
+        </collection>
+    </resultMap>
+
+	 <!-- 페이징 처리된 대여 이력 조회 -->
+    <select id="selectRentHistoryResponses" resultMap="rentHistoryResultMap">
+        SELECT 
+            rh.rent_history_id,
+            rh.mem_id,
+            rh.rent_date,
+            r.rent_id,
+            r.book_id,
+            r.rent_due_date,
+            r.rent_finish_date,
+            r.rent_status
+        FROM rent_history rh
+        LEFT JOIN rent r ON rh.rent_history_id = r.rent_history_id
+    	<where>
+	        <if test="memId != 0">
+	            rh.mem_id = #{memId}
+	        </if>
+	        <if test="rentStatus != null">
+	            AND r.rent_status = #{rentStatus}
+	        </if>
+	    </where>
+        ORDER BY rh.rent_date DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <!-- 전체 카운트 조회 -->
+    <select id="countRentHistory" resultType="int">
+        SELECT COUNT(*)
+        FROM rent_history rh
+	   <if test="rentStatus != null">
+	        LEFT JOIN rent r ON rh.rent_history_id = r.rent_history_id
+	    </if>
+	    <where>
+	        <if test="memId != 0">
+	            rh.mem_id = #{memId}
+	        </if>
+	        <if test="rentStatus != null">
+	            AND r.rent_status = #{rentStatus}
+	        </if>
+	    </where>
+    </select>
 </mapper>

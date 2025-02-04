@@ -18,12 +18,12 @@ public class AddressService implements IAddressService {
 	private final IAddressRepository addressRepository;
 
 	@Override
-	public List<Address> selectAddressesByMemId(int memId) {
+	public List<Address> selectAddressesByMemId(long memId) {
 		return addressRepository.selectAddressesByMemId(memId);
 	}
 
 	@Override
-	public Address seleAddress(int addressId) {
+	public Address seleAddress(long addressId) {
         return addressRepository.seleAddress(addressId);
 	}
 
@@ -37,7 +37,7 @@ public class AddressService implements IAddressService {
 
 	@Override
 	@Transactional
-	public int updateAddress(Address address) {
+	public Address updateAddress(Address address) {
 		Address bAddress = this.seleAddress(address.getAddressId());
 		if(bAddress.getMemId() != address.getMemId())
 			throw new CustomException(ExceptionCode.FORBIDDEN);
@@ -48,18 +48,18 @@ public class AddressService implements IAddressService {
 		
         int result = addressRepository.updateAddress(address);
         if(result == 0) throw new CustomException(ExceptionCode.ADDRESS_UPDATE_FAIL);
-        return result;
+        return address;
 	}
 
 	@Override
 	@Transactional
-	public void deleteAddressesByMemId(int memId) {
+	public void deleteAddressesByMemId(long memId) {
         addressRepository.deleteAddressesByMemId(memId);
 	}
 
 	@Override
 	@Transactional
-	public void deleteAddress(int addressId) {
+	public void deleteAddress(long addressId) {
 		int result = addressRepository.deleteAddress(addressId);
         if(result == 0) throw new CustomException(ExceptionCode.ADDRESS_DELETE_FAIL);
 	}

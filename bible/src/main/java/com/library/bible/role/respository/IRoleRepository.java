@@ -11,8 +11,8 @@ import com.library.bible.role.model.Role;
 @Mapper
 @Repository
 public interface IRoleRepository {
-    List<Role> selectRolesByMemId(int memId);
+    List<Role> selectRolesByMemId(long memId);
     int insertMemberRoles(Member member); // member의 roles만 저장, 그 외의 컬럼은 저장하지 않음
     int insertRole(Role role);
-    int deleteRoles(int memId);
+    int deleteRoles(long memId);
 }

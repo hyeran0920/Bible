@@ -1,4 +1,6 @@
-package com.library.bible.role.model;
+package com.library.bible.rent.dto;
+
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +9,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Role {
-    private long memId;
-    private RoleName roleName;
+public class BookRequest {
+	private List<Integer> books;
 }

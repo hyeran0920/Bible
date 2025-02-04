@@ -11,18 +11,18 @@ import com.library.bible.cart.model.Cart;
 @Repository
 public interface ICartRepository {
 	//get cart info
-	List<Cart> getAllCarts(int memId);
-	Cart getCart(int cartId);
-	int isBookInCart(int memId, int bookId);
+	List<Cart> getAllCarts(long memId);
+	Cart getCart(long cartId);
+	int isBookInCart(long memId, long bookId);
 	
 	//update, delete, add
-	void updateCart(int cartId, int newCount);
-	void updateCartByBookId(int bookId, int memId, int bookCount);
-	void deleteCart(int cartId);
-	void addCart(int bookId,int memId, int bookCount);
+	void updateCart(long cartId, int newCount);
+	void updateCartByBookId(long bookId, long memId, int bookCount);
+	void deleteCart(long cartId);
+	void addCart(long bookId, long memId, int bookCount);
 	
 	//calculate selected prices
-	List<Integer> getSelectedCartPrices(List<Integer> cartId);
+	List<Long> getSelectedCartPrices(List<Long> cartId);
 	
 	
 }

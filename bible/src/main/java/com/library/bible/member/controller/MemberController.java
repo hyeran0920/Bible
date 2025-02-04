@@ -49,7 +49,7 @@ public class MemberController {
 	
 	// 사용자 단일 조회
 	@GetMapping("/{memId}")
-	public ResponseEntity<MemberResponseDto> selectMember(@PathVariable("memId") @Positive int memId) {
+	public ResponseEntity<MemberResponseDto> selectMember(@PathVariable("memId") @Positive long memId) {
 		Member member = memberService.selectMember(memId);
 		return ResponseEntity.ok(memberMapper.memberToMemberResponseDto(member));
 	}
@@ -68,7 +68,7 @@ public class MemberController {
 	
 	// 사용자 정보 변경(update)
 	@PutMapping("/{memId}")
-	public ResponseEntity<MemberResponseDto> updateMember(@RequestBody @Valid Member member, @PathVariable int memId){
+	public ResponseEntity<MemberResponseDto> updateMember(@RequestBody @Valid Member member, @PathVariable long memId){
 		member.setMemId(memId);
 		memberService.updateMember(member);
 		return ResponseEntity.ok(memberMapper.memberToMemberResponseDto(member));
@@ -83,7 +83,7 @@ public class MemberController {
 	
 	// 사용자 정보 삭제(delete)
 	@DeleteMapping("/{memid}")
-	public void deleteMember(@PathVariable @Positive int memid) {
+	public void deleteMember(@PathVariable @Positive long memid) {
 		memberService.deleteMember(memid);
 	}
 

@@ -10,7 +10,7 @@ import com.library.bible.member.model.Member;
 @Mapper
 @Repository
 public interface IMemberRepository {
-    Member selectMember(int memId);
+    Member selectMember(long memId);
     Member selectMemberByMemEmail(String memEmail);
     List<Member> selectAllMembers();
     
@@ -18,5 +18,5 @@ public interface IMemberRepository {
     int insertMember(Member member); // member의 roles를 제외한 컬럼만 저장
     
     int updateMember(Member member); // member의 roles를 제외한 컬럼만 수정 
-    void deleteMember(int memId);
+    void deleteMember(long memId);
 }

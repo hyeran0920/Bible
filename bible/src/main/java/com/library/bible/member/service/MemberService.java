@@ -25,13 +25,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MemberService implements IMemberService{
 	private final IMemberRepository memberRepository;
-	private final IRoleService memberEtcService;
+	private final IRoleService roleService;
 	private final IMemberRentService memberRentService;
     private final BCryptPasswordEncoder passwordEncoder;
     private final UploadService uploadService;
     
 	@Override
-	public Member selectMember(int memId) {
+	public Member selectMember(long memId) {
 		Member member = memberRepository.selectMember(memId);
 		if(member == null) throw new CustomException(ExceptionCode.MEMBER_NOT_FOUND);
 		return member;
@@ -66,6 +66,7 @@ public class MemberService implements IMemberService{
 		
 		//QR이미지 생성
 		uploadService.createMemberQRImage(member);
+		// TODO : QR 이미지 생성 후 이미지 경로 저장하기
 		
 		// member 권한 설정
 		List<Role> roles = new ArrayList<>();
@@ -75,7 +76,7 @@ public class MemberService implements IMemberService{
 
 		// role 저장
         if (member.getRoles() != null && !member.getRoles().isEmpty())
-        	memberEtcService.insertMemberRoles(member);
+        	roleService.insertMemberRoles(member);
         
         // member-rent 정보 자동 생성
         MemberRent memberRent = new MemberRent(member.getMemId(), 0, 't', null);
@@ -89,7 +90,8 @@ public class MemberService implements IMemberService{
 	public Member updateMember(Member member) {
 		// role 이외의 컬럼 수정
 		member.setMemPassword(passwordEncoder.encode(member.getMemPassword())); // 비밀번호 암호화
-		memberRepository.updateMember(member);
+		int result = memberRepository.updateMember(member);
+		if(result == 0) throw new CustomException(ExceptionCode.MEMBER_UPDATE_FAIL);
 		
 		// role 수정
 //        if (member.getRoles() != null && !member.getRoles().isEmpty()) {
@@ -102,8 +104,9 @@ public class MemberService implements IMemberService{
 
 	@Override
 	@Transactional
-	public void deleteMember(int memId) {
-		memberEtcService.deleteRoles(memId);
+	public void deleteMember(long memId) {
+		roleService.deleteRoles(memId);
+		memberRentService.deleteMemberRent(memId);
 		memberRepository.deleteMember(memId);
 		uploadService.deleteMemberQRImage(memId);
 	}

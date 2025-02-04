@@ -9,7 +9,7 @@
 	</resultMap>
 	
     <!-- member id로 Role 조회 -->
-	<select id="selectRolesByMemId" parameterType="int" resultMap="roleResultMap">
+	<select id="selectRolesByMemId" parameterType="long" resultMap="roleResultMap">
 	    SELECT 
 	        mem_id,
 	        role_name
@@ -39,7 +39,7 @@
     </insert>
     
     <!-- Role 삭제 -->
-	<delete id="deleteRoles">
+	<delete id="deleteRoles" parameterType="long">
 	    DELETE FROM role
 	    WHERE mem_id = #{memId}
 	</delete>

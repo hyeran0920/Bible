@@ -31,7 +31,7 @@ public class MemberService implements IMemberService{
     private final UploadService uploadService;
     
 	@Override
-	public Member selectMember(int memId) {
+	public Member selectMember(long memId) {
 		Member member = memberRepository.selectMember(memId);
 		if(member == null) throw new CustomException(ExceptionCode.MEMBER_NOT_FOUND);
 		return member;
@@ -66,6 +66,7 @@ public class MemberService implements IMemberService{
 		
 		//QR이미지 생성
 		uploadService.createMemberQRImage(member);
+		// TODO : QR 이미지 생성 후 이미지 경로 저장하기
 		
 		// member 권한 설정
 		List<Role> roles = new ArrayList<>();
@@ -103,7 +104,7 @@ public class MemberService implements IMemberService{
 
 	@Override
 	@Transactional
-	public void deleteMember(int memId) {
+	public void deleteMember(long memId) {
 		roleService.deleteRoles(memId);
 		memberRentService.deleteMemberRent(memId);
 		memberRepository.deleteMember(memId);

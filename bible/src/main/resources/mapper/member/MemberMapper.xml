@@ -9,6 +9,7 @@
         <result property="memPassword" column="mem_password"/>
         <result property="memEmail" column="mem_email"/>
         <result property="memPhone" column="mem_phone"/>
+        <result property="memQrPath" column="mem_qr_path" />
 	    <collection property="roles" ofType="Role">
 	        <result property="memId" column="mem_id"/>
 	        <result property="roleName" column="role_name"/>
@@ -16,13 +17,14 @@
     </resultMap>
     
     <!-- 회원 조회 -->
-    <select id="selectMember" parameterType="int" resultMap="memberResultMap">
+    <select id="selectMember" parameterType="long" resultMap="memberResultMap">
         SELECT 
             m.mem_id,
             m.mem_name,
             m.mem_password,
             m.mem_email,
             m.mem_phone,
+            m.mem_qr_path,
             r.mem_id,
             r.role_name
         FROM member m
@@ -38,6 +40,7 @@
             m.mem_password,
             m.mem_email,
             m.mem_phone,
+            m.mem_qr_path,
             r.mem_id,
             r.role_name
         FROM member m
@@ -53,6 +56,7 @@
 	        m.mem_password,
 	        m.mem_email,
             m.mem_phone,
+            m.mem_qr_path,
             r.mem_id,
 	        r.role_name
 	    FROM member m
@@ -65,12 +69,14 @@
             mem_name,
             mem_password,
             mem_email,
-            mem_phone
+            mem_phone,
+            mem_qr_path,
         ) VALUES (
             #{memName},
             #{memPassword},
             #{memEmail},
-            #{memPhone}
+            #{memPhone},
+            #{memQrPath}
         )
     </insert>
 
@@ -86,7 +92,7 @@
     </update>
     
     <!-- 회원 삭제 -->
-    <delete id="deleteMember" parameterType="int">
+    <delete id="deleteMember" parameterType="long">
         DELETE FROM member WHERE mem_id = #{memId}
     </delete>
 </mapper>

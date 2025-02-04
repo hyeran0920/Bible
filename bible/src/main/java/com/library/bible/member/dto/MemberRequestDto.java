@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MemberRequestDto {
-	private int memId;
+	private long memId;
 	private String memName;
 	private String memPassword;
 	

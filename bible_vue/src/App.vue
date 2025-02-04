@@ -32,4 +32,30 @@ export default {
 main {
   width: 100%;
 }
+
+/* 미디어 쿼리 추가 */
+@media (max-width: 1024px) {
+  .app {
+    width: 100% !important;
+    padding: 0 8px !important;  /* 화면 크기가 작아질 때 패딩 조정 */
+  }
+}
+
+@media (max-width: 768px) {
+  .app {
+    width: 100% !important;
+    padding: 0 4px !important;  /* 더 작은 화면에서는 패딩 더 좁히기 */
+  }
+}
+
+@media (max-width: 480px) {
+  .app {
+    width: 100% !important;
+    padding: 0 !important;  /* 모바일 화면에서는 패딩 없애기 */
+  }
+
+  main {
+    padding: 10px;  /* 작은 화면에서 메인 영역에 패딩 추가 */
+  }
+}
 </style>

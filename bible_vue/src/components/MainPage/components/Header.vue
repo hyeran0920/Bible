@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Header -->
-    <header class="header">
+    <header class="head">
       <div class="logo"><a href="/">Name</a></div>
       <div class="search-container">
         <input type="text" placeholder="Search..." class="search-input" />
@@ -13,6 +13,7 @@
         <button class="auth-button"><a href="/signUp">회원가입</a></button>
       </template>
       <template v-else>
+        <button class="auth-button"><a href="/cart">장바구니</a></button>
         <button class="auth-button"><a href="/mypage">Mypage</a></button>
         <button class="auth-button" @click="logout">Logout</button>
       </template>
@@ -62,7 +63,7 @@ body, ul, li {
 }
 
 /* Header */
-.header {
+.head {
   display: flex;
   justify-content: space-between;
   align-items: center;

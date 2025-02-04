@@ -7,11 +7,11 @@ import com.library.bible.member.model.Member;
 
 public interface IUploadService {
     
-	byte[] getMemberQRImage(int memId);
+	byte[] getMemberQRImage(long memId);
     byte[] getBookImage(Long bookId);
     byte[] getBookQRImage(Long bookId);
     
-    boolean deleteMemberQRImage(int memId);
+    boolean deleteMemberQRImage(long memId);
     boolean deleteBookQRImage(Long bookId);
     boolean deleteBookImage(Long bookId);
     

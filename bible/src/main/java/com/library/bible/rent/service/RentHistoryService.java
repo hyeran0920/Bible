@@ -43,8 +43,8 @@ public class RentHistoryService implements IRentHistoryService {
 
 	@Override
 	@Cacheable(value="rentHistory", key="#rentHistoryId")
-	public RentHistory selectRentHistory(int rentHistoryId) {
-		RentHistory rentHistory = rentHistoryRepository.selectRentHistory(rentHistoryId);
+	public RentHistory selectRentHistory(long rentHistoryId) {
+		RentHistory rentHistory = rentHistoryRepository.selectRentHistory((int)rentHistoryId);
 		if(rentHistory == null) throw new CustomException(ExceptionCode.RENT_HISTORY_NOT_FOUND);
 		return rentHistory;
 	}
@@ -59,22 +59,22 @@ public class RentHistoryService implements IRentHistoryService {
 	
 	@Override
 	@Transactional
-	public RentHistoryResponse insertRentHistoryAndRent(int memId , List<Integer> books, RentStatus rentStatus) {
+	public RentHistoryResponse insertRentHistoryAndRent(long memId , List<Integer> books, RentStatus rentStatus) {
 		// 실제 존재하는 책인지 확인
 		for(Integer bookId : books) {
-			bookService.getBookInfo(bookId);
+//			bookService.getBookInfo(bookId);
 		}
 		
 		// rent-history 생성
 		RentHistory rentHistory = new RentHistory();
-		rentHistory.setMemId(memId);
+//		rentHistory.setMemId(memId);
 		this.insertRentHistory(rentHistory);
 
 		// rent 생성
 		List<Rent> rents = new ArrayList<>();
 		for(Integer bookId : books) {
 			// 실제 존재하는 책인지 확인
-			bookService.getBookInfo(bookId);
+//			bookService.getBookInfo(bookId);
 			
 			Rent rent = new Rent();
 			rent.setBookId(bookId);
@@ -103,12 +103,12 @@ public class RentHistoryService implements IRentHistoryService {
 		@CacheEvict(value = "rentHistory", key = "#rentHistoryId"),
 		@CacheEvict(value = "rentHistorys", allEntries = true)
 	})
-	public int deleteRentHistory(int rentHistoryId) {
+	public int deleteRentHistory(long rentHistoryId) {
 		// rent-history 삭제 전 rent들 삭제
-		rentService.deleteRentByRentHistoryId(rentHistoryId);
+//		rentService.deleteRentByRentHistoryId(rentHistoryId);
 		
 		// rent-history 삭제
-		int result = rentHistoryRepository.deleteRentHistory(rentHistoryId);
+		int result = rentHistoryRepository.deleteRentHistory((int)rentHistoryId);
 		if(result == 0) throw new CustomException(ExceptionCode.RENT_HISTORY_DELETE_FAIL);
 		return result;
 	}
@@ -116,7 +116,7 @@ public class RentHistoryService implements IRentHistoryService {
 	// RentHistoryRespone
 	@Override
 	@Transactional
-    public PageResponse<RentHistoryResponse> selectRentHistoryResponses(int membId, Optional<RentStatus> rentStatus, PageRequest pageRequest) {
+    public PageResponse<RentHistoryResponse> selectRentHistoryResponses(long membId, Optional<RentStatus> rentStatus, PageRequest pageRequest) {
 		String status = rentStatus
 			    .map(RentStatus::toString) // 값이 있으면 toString() 호출
 			    .orElse(null);  // 값이 없으면 기본값 반환
@@ -129,7 +129,8 @@ public class RentHistoryService implements IRentHistoryService {
         );
         
         int total = rentHistoryRepository.countRentHistory(membId, status);
-        int totalPages = (int) Math.ceil((double) total / pageRequest.getPageSize());
+
+		int totalPages = (int) Math.ceil((double) total / pageRequest.getPageSize());
         boolean isLast = pageRequest.getPageNumber() >= totalPages - 1;
 
         return new PageResponse<RentHistoryResponse>(content, totalPages, total, isLast);

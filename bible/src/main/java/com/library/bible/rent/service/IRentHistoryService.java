@@ -13,12 +13,12 @@ import com.library.bible.rent.model.RentStatus;
 public interface IRentHistoryService {
 	List<RentHistory> selectAllRentHistory();
 	
-	RentHistory selectRentHistory(int rentHistoryId);
+	RentHistory selectRentHistory(long rentHistoryId);
 	void insertRentHistory(RentHistory rentHistory);
 	void updateRentHistory(RentHistory rentHistory);
-	int deleteRentHistory(int rentHistoryId);
+	int deleteRentHistory(long rentHistoryId);
 	
 	// RentHistoryRespone
-	PageResponse<RentHistoryResponse> selectRentHistoryResponses(int memId, Optional<RentStatus> rentStatus, PageRequest pageRequest);
-	RentHistoryResponse insertRentHistoryAndRent(int memId, List<Integer> books, RentStatus rentStatus);
+	PageResponse<RentHistoryResponse> selectRentHistoryResponses(long memId, Optional<RentStatus> rentStatus, PageRequest pageRequest);
+	RentHistoryResponse insertRentHistoryAndRent(long memId, List<Integer> books, RentStatus rentStatus);
 }

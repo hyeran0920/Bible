@@ -24,13 +24,13 @@ public interface IRentHistoryRepository {
 	
 	// RentHistoryRespone
 	List<RentHistoryResponse>selectRentHistoryResponses(
-			@Param("memId") int memId, 
+			@Param("memId") long memId, 
 	        @Param("rentStatus") String rentStatus,
             @Param("offset") int offset, 
             @Param("limit") int limit
     );
 	int countRentHistory(			
-			@Param("memId") int memId, 
+			@Param("memId") long memId, 
 	        @Param("rentStatus") String rentStatus
     );
 }

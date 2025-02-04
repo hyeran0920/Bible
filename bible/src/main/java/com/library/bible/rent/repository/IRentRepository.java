@@ -16,7 +16,9 @@ public interface IRentRepository {
 	
 	//Rent table CRUD
 	Rent selectRent(long rentId);
-	void insertRent(Rent rent);
-	void updateRent(Rent rent);
+	int insertRent(Rent rent);
+	int insertRents(List<Rent> rents);
+	int updateRent(Rent rent);
 	int deleteRent(long rentId);
+	int deleteRentByRentHistoryId(int rentHistoryId);
 }

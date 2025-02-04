@@ -1,6 +1,7 @@
 package com.library.bible.rent.model;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

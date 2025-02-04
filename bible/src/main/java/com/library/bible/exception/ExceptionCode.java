@@ -22,6 +22,13 @@ public enum ExceptionCode {
     ROLE_DELETE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "역할 삭제에 실패했습니다."),
     ROLE_NOT_FOUND(HttpStatus.NOT_FOUND, "역할을 찾을 수 없습니다."),
     
+    // Book 관련 에러 메시지
+    BOOK_INSERT_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "도서 등록에 실패했습니다."),
+    BOOK_UPDATE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "도서 수정에 실패했습니다."),
+    BOOK_DELETE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "도서 삭제에 실패했습니다."),
+    BOOK_NOT_FOUND(HttpStatus.NOT_FOUND, "도서를 찾을 수 없습니다."),
+
+    
     // Address 관련 에러
     ADDRESS_INSERT_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "주소 등록에 실패했습니다."),
     ADDRESS_UPDATE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "주소 수정에 실패했습니다."),
@@ -34,6 +41,20 @@ public enum ExceptionCode {
     MEMBER_RENT_DELETE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "대여 정보 삭제에 실패했습니다."),
     MEMBER_RENT_NOT_FOUND(HttpStatus.NOT_FOUND, "대여 정보를 찾을 수 없습니다."),
     
+    // 대여 관련 에러
+    RENT_INSERT_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "대여 신청에 실패했습니다."),
+    RENT_UPDATE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "대여 상태 수정에 실패했습니다."),
+    RENT_DELETE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "대여 취소에 실패했습니다."),
+    RENT_NOT_FOUND(HttpStatus.NOT_FOUND, "대여 정보를 찾을 수 없습니다."),
+    RENT_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 대여 중인 도서입니다."),
+    RENT_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "대여 가능 권수를 초과했습니다."),
+
+    // 대여 이력 관련 에러
+    RENT_HISTORY_INSERT_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "대여 이력 등록에 실패했습니다."),
+    RENT_HISTORY_UPDATE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "대여 이력 수정에 실패했습니다."),
+    RENT_HISTORY_DELETE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "대여 이력 삭제에 실패했습니다."),
+    RENT_HISTORY_NOT_FOUND(HttpStatus.NOT_FOUND, "대여 이력을 찾을 수 없습니다."),
+
 	// 인증/인가 관련 에러
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "로그인이 필요한 서비스입니다."),
     FORBIDDEN(HttpStatus.FORBIDDEN, "해당 리소스에 대한 접근 권한이 없습니다."),

@@ -13,6 +13,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.library.bible.book.model.Book;
 import com.library.bible.book.repository.IBookRepository;
+import com.library.bible.exception.CustomException;
+import com.library.bible.exception.ExceptionCode;
 import com.library.bible.upload.service.UploadService;
 
 @Service
@@ -59,7 +61,9 @@ public class BookService implements IBookService {
     @Override
     @Cacheable(value = "books", key = "#bookId")
     public Book getBookInfo(int bookId) {
-        return bookRepository.getBookInfo(bookId);
+        Book book = bookRepository.getBookInfo(bookId);
+        if(book == null) throw new CustomException(ExceptionCode.BOOK_NOT_FOUND);
+        return book;
     }
 
     // UPDATE, INSERT, DELETE

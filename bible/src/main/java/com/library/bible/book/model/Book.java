@@ -8,16 +8,17 @@ import lombok.ToString;
 @Setter
 @ToString
 public class Book {
-    private int bookId;
+    private Long bookId;
     private String bookTitle;
     private String bookAuthor;
     private String bookPublisher;
     private String bookReleaseDate;
     private String bookCategory;
-    private int bookPrice;
-    private String bookImg;
+    private Long bookPrice;
+    private String bookImgPath="";
     private String bookDetail;
-    private int bookTotalStock;
-    private int bookRentStock;
+    private Long bookTotalStock;
+    private Long bookRentStock=0L;
     private String bookLocation;
+    private String bookQrPath="";
 }

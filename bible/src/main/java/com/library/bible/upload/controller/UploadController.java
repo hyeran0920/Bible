@@ -42,22 +42,24 @@ public class UploadController {
 
     //DELETE IMAGE////////////////////////////////////////////////////////////
     @DeleteMapping("/book-image")
-    public ResponseEntity<String> deleteBookImage(@RequestParam("bookid") int bookId) {
+    public ResponseEntity<String> deleteBookImage(@RequestParam("bookid") Long bookId) {
         return getDeleteResponse(uploadService.deleteBookImage(bookId), "Book image", bookId);
     }
 
 
     @DeleteMapping("/book-qr-image")
-    public ResponseEntity<String> deleteBookQRImage(@RequestParam("bookid") int bookId) {
+    public ResponseEntity<String> deleteBookQRImage(@RequestParam("bookid") Long bookId) {
         return getDeleteResponse(uploadService.deleteBookQRImage(bookId), "Book QR image", bookId);
     }
 
     @DeleteMapping("/member-qr-image")
     public ResponseEntity<String> deleteMemberQRImageByToken(@AuthMember Member member) {
-        return getDeleteResponse(uploadService.deleteMemberQRImage(member.getMemId()), "Member QR image", member.getMemId());
+    	System.out.println("delete member qr image by token 지금 비활성화해놓음!!!");
+    	return null;
+        //return getDeleteResponse(uploadService.deleteMemberQRImage(member.getMemId()), "Member QR image", member.getMemId());
     }
 
-    private ResponseEntity<String> getDeleteResponse(boolean success, String type, int id) {
+    private ResponseEntity<String> getDeleteResponse(boolean success, String type, Long id) {
         if (success) {
             return ResponseEntity.ok(type + " deleted for ID: " + id);
         } else {
@@ -70,7 +72,7 @@ public class UploadController {
     @PostMapping("/book-image")
     public ResponseEntity<String> uploadBookImage(
             @RequestParam("file") MultipartFile file,
-            @RequestParam("bookid") int bookId) {
+            @RequestParam("bookid") Long bookId) {
 
         boolean uploaded = uploadService.uploadBookImage(bookId, file);
         if (uploaded) {
@@ -83,7 +85,7 @@ public class UploadController {
 
     //GET IMG/////////////////////////////////////////////////////////
     @GetMapping("/book-image")
-    public ResponseEntity<byte[]> getBookImage(@RequestParam("bookid") int bookId) {
+    public ResponseEntity<byte[]> getBookImage(@RequestParam("bookid") Long bookId) {
         //System.out.println("here is get obok img");
     	byte[] imageBytes = uploadService.getBookImage(bookId);
 

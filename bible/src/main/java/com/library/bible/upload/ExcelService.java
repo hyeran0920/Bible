@@ -44,13 +44,13 @@ public class ExcelService {
                 book.setBookPublisher(row.getCell(2).getStringCellValue());
                 book.setBookReleaseDate(row.getCell(3).getStringCellValue());
                 book.setBookCategory(row.getCell(4).getStringCellValue());
-                book.setBookPrice((int) row.getCell(5).getNumericCellValue());
-                book.setBookImg(null);
+                book.setBookPrice(Long.valueOf((long) row.getCell(5).getNumericCellValue()));
+                book.setBookImgPath("");
                 book.setBookDetail(row.getCell(6).getStringCellValue());
-                book.setBookTotalStock((int) row.getCell(7).getNumericCellValue());
-                book.setBookRentStock((int) row.getCell(8).getNumericCellValue());
+                book.setBookTotalStock(Long.valueOf((long) row.getCell(7).getNumericCellValue()));
+                book.setBookTotalStock(Long.valueOf((long) row.getCell(8).getNumericCellValue()));
                 book.setBookLocation(row.getCell(9).getStringCellValue());
-				
+				book.setBookQrPath("");
                 
                 bookList.add(book);
             }

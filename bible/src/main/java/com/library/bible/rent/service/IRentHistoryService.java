@@ -20,4 +20,5 @@ public interface IRentHistoryService {
 	
 	// RentHistoryRespone
 	PageResponse<RentHistoryResponse> selectRentHistoryResponses(int memId, Optional<RentStatus> rentStatus, PageRequest pageRequest);
+	RentHistoryResponse insertRentHistoryAndRent(int memId, List<Integer> books, RentStatus rentStatus);
 }

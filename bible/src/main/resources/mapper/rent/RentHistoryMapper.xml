@@ -30,11 +30,11 @@
 	</select>
 	
 	<!-- 대여 기록 추가 -->
-	<insert id="insertRentHistory" parameterType="RentHistory">
+	<insert id="insertRentHistory" parameterType="RentHistory" useGeneratedKeys="true" keyProperty="rentHistoryId" keyColumn="rent_history_id">
 	    INSERT INTO rent_history
 	        (mem_id, rent_date)
 	    VALUES 
-	        (#{memId}, #{rentDate})
+	        (#{memId}, CURRENT_DATE)
 	</insert>
 	
 	<!-- 대여 기록 수정 -->

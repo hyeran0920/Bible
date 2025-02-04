@@ -42,6 +42,14 @@ public class RentService implements IRentService {
 		int result = rentRepository.insertRent(rent);
 		if(result == 0) throw new CustomException(ExceptionCode.RENT_INSERT_FAIL);
 	}
+	
+	@Override
+	@Transactional
+	public List<Rent> insertRents(List<Rent> rents) {
+		int result = rentRepository.insertRents(rents);
+		if(result != rents.size()) throw new CustomException(ExceptionCode.MEMBER_RENT_INSERT_FAIL);
+		return rents;
+	}
 
 	@Override
 	@Transactional

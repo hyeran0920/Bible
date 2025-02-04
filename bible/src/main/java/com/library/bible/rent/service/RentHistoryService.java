@@ -1,5 +1,8 @@
 package com.library.bible.rent.service;
 
+import java.sql.Date;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,10 +13,13 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import com.library.bible.book.service.BookService;
 import com.library.bible.exception.CustomException;
 import com.library.bible.exception.ExceptionCode;
 import com.library.bible.pageresponse.PageResponse;
 import com.library.bible.rent.dto.RentHistoryResponse;
+import com.library.bible.rent.mapper.RentHistoryMapper;
+import com.library.bible.rent.model.Rent;
 import com.library.bible.rent.model.RentHistory;
 import com.library.bible.rent.model.RentStatus;
 import com.library.bible.rent.repository.IRentHistoryRepository;
@@ -25,6 +31,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RentHistoryService implements IRentHistoryService {
 	private final RentService rentService;
+	private final BookService bookService;
+	private final RentHistoryMapper rentHistoryMapper;
 	private final IRentHistoryRepository rentHistoryRepository;
 
 	@Override
@@ -47,6 +55,38 @@ public class RentHistoryService implements IRentHistoryService {
 	public void insertRentHistory(RentHistory rentHistory) {
 		int result = rentHistoryRepository.insertRentHistory(rentHistory);
 		if(result == 0) throw new CustomException(ExceptionCode.RENT_HISTORY_INSERT_FAIL);
+	}
+	
+	@Override
+	@Transactional
+	public RentHistoryResponse insertRentHistoryAndRent(int memId , List<Integer> books, RentStatus rentStatus) {
+		// 실제 존재하는 책인지 확인
+		for(Integer bookId : books) {
+			bookService.getBookInfo(bookId);
+		}
+		
+		// rent-history 생성
+		RentHistory rentHistory = new RentHistory();
+		rentHistory.setMemId(memId);
+		this.insertRentHistory(rentHistory);
+
+		// rent 생성
+		List<Rent> rents = new ArrayList<>();
+		for(Integer bookId : books) {
+			// 실제 존재하는 책인지 확인
+			bookService.getBookInfo(bookId);
+			
+			Rent rent = new Rent();
+			rent.setBookId(bookId);
+			rent.setRentHistoryId(rentHistory.getRentHistoryId());
+			rent.setRentStatus(rentStatus);			
+			rents.add(rent);
+		}
+		
+		// 생성한 rent 저장
+		rentService.insertRents(rents);
+		
+		return rentHistoryMapper.rentAndRentHistoryToRentHistoryResponse(rents, rentHistory);
 	}
 
 	@Override

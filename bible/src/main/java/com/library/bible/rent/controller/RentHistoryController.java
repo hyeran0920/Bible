@@ -1,6 +1,5 @@
 package com.library.bible.rent.controller;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,13 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.library.bible.member.model.Member;
 import com.library.bible.pageresponse.PageResponse;
+import com.library.bible.rent.dto.BookRequest;
 import com.library.bible.rent.dto.RentHistoryResponse;
 import com.library.bible.rent.model.RentHistory;
 import com.library.bible.rent.model.RentStatus;
 import com.library.bible.rent.service.IRentHistoryService;
 import com.library.bible.resolver.AuthMember;
-
-import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/rent-histories")
@@ -82,6 +80,13 @@ public class RentHistoryController {
 	public ResponseEntity<RentHistory> insertRentHistory(@RequestBody @Validated RentHistory history){
 		rentHistoryService.insertRentHistory(history);
 		return ResponseEntity.status(HttpStatus.CREATED).body(history);
+	}
+	
+	// 대여 신청할 books id를 바탕으로 대여 기록 생성
+	@PostMapping("/request")
+	public ResponseEntity<RentHistoryResponse> insertRentHistoryByBooks(@AuthMember Member member, @RequestBody BookRequest bookRequest) {
+		RentHistoryResponse rentHistoryResponse = rentHistoryService.insertRentHistoryAndRent(member.getMemId(), bookRequest.getBooks(), RentStatus.REQUESTED);
+		return ResponseEntity.status(HttpStatus.CREATED).body(rentHistoryResponse);
 	}
 	
 	//대여 기록 수정

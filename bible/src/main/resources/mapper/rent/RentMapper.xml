@@ -39,11 +39,20 @@
 	</select>
 	
 	<!-- 대여 추가 -->
-	<insert id="insertRent" parameterType="Rent">
+	<insert id="insertRent" parameterType="Rent" useGeneratedKeys="true" keyProperty="rentId" keyColumn="rent_id">
 	    INSERT INTO rent 
 	        (book_id, rent_history_id, rent_due_date, rent_finish_date, rent_status)
 	    VALUES 
-	        (#{bookId}, #{rentHistoryId}, #{rentDueDate}, #{rentFinishDate}, #{rentStatus})
+	        (#{bookId}, #{rentHistoryId}, SYSDATE+7 #{rentFinishDate}, #{rentStatus})
+	</insert>
+
+	<!-- 여러 개의 대여를 한 번에 추가 -->	
+	<insert id="insertRents" parameterType="list" >
+	    INSERT INTO rent (book_id, rent_history_id, rent_due_date, rent_finish_date, rent_status)
+        <foreach collection="list" item="rent" separator="UNION ALL">
+            SELECT #{rent.bookId}, #{rent.rentHistoryId}, SYSDATE + 7, #{rent.rentFinishDate}, #{rent.rentStatus} 
+            FROM DUAL
+        </foreach>
 	</insert>
 	
 	<!-- 대여 수정 -->

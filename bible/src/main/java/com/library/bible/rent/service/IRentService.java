@@ -10,6 +10,7 @@ public interface IRentService {
 	
 	Rent selectRent(int rentId);
 	void insertRent(Rent rent);
+	List<Rent> insertRents(List<Rent> rents);
 	void updateRent(Rent rent);
 	int deleteRent(int rentId);
 	int deleteRentByRentHistoryId(int rentHistoryId);

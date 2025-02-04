@@ -3,10 +3,6 @@ package com.library.bible.member.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -35,7 +31,6 @@ public class MemberService implements IMemberService{
     private final UploadService uploadService;
     
 	@Override
-	@Cacheable(value="member", key="#memId")
 	public Member selectMember(int memId) {
 		Member member = memberRepository.selectMember(memId);
 		if(member == null) throw new CustomException(ExceptionCode.MEMBER_NOT_FOUND);
@@ -43,7 +38,6 @@ public class MemberService implements IMemberService{
 	}
 
 	@Override
-	@Cacheable(value="member", key="#memEmail")
 	public Member selectMemberByMemEmail(String memEmail) {
 		Member member = memberRepository.selectMemberByMemEmail(memEmail);
 		if(member == null) throw new CustomException(ExceptionCode.MEMBER_NOT_FOUND);
@@ -51,7 +45,6 @@ public class MemberService implements IMemberService{
 	}
 
 	@Override
-	@Cacheable(value="member", key="'allMember'")
 	public List<Member> selectAllMembers() {
 		return memberRepository.selectAllMembers();
 	}
@@ -59,7 +52,6 @@ public class MemberService implements IMemberService{
 	// 회원가입
 	@Override
 	@Transactional
-	@CacheEvict(value = "memberCache", allEntries = true)  // 모든 멤버 캐시 삭제
 	public Member insertMember(Member member, String role) {
 		try {
 			// role 이외의 컬럼 저장
@@ -94,7 +86,6 @@ public class MemberService implements IMemberService{
 
 	@Override
 	@Transactional
-	@CachePut(value="member", key="#member.memId")
 	public Member updateMember(Member member) {
 		// role 이외의 컬럼 수정
 		member.setMemPassword(passwordEncoder.encode(member.getMemPassword())); // 비밀번호 암호화
@@ -111,10 +102,6 @@ public class MemberService implements IMemberService{
 
 	@Override
 	@Transactional
-	@Caching(evict = {
-		    @CacheEvict(value = "memberCache", key = "#memId"), // 특정 회원 캐시 삭제
-		    @CacheEvict(value = "roleCache", key = "#memId")   // 역할 캐시도 삭제
-		})
 	public void deleteMember(int memId) {
 		memberEtcService.deleteRoles(memId);
 		memberRepository.deleteMember(memId);

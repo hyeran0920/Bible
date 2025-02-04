@@ -80,6 +80,24 @@ public class BookService implements IBookService {
         }
     	return book;
     }
+    
+    // 책 대여 중인 수량 변경
+    @Override
+    //@CacheEvict(value = "books", key = "#book.bookId")
+    @CacheEvict(value = "books", allEntries = true) // 모든 책 캐시 삭제 -> 최신 상태 유지
+    public void updateBookRentStock(Book book) {
+    	int result = bookRepository.updateBookRentStock(book);
+    	if(result == 0) throw new CustomException(ExceptionCode.BOOK_UPDATE_FAIL);
+    }
+
+    @Override
+    //@CacheEvict(value = "books", key = "#book.bookId")
+    @CacheEvict(value = "books", allEntries = true) // 모든 책 캐시 삭제 -> 최신 상태 유지
+    public void updateBookRentStocks(List<Book> books) {
+    	for(Book book : books) {
+    		this.updateBookRentStock(book);
+    	}
+    }
 
     @Override
     //@CachePut(value = "books", key = "#book.bookId")

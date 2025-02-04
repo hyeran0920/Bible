@@ -25,6 +25,7 @@ public interface IBookRepository {
 	void updateBookImgPath(Long bookId, String bookImgPath);
 	void updateBookQrPath(Long bookId, String bookQrPath);
 	void updateBook(Book book);
+	int updateBookRentStock(Book book);
 	
 	void insertBook(Book book);
 	

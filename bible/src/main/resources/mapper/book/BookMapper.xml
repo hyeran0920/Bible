@@ -127,7 +127,11 @@
 	    WHERE book_id = #{bookId}
 	</update>
 	
-	
+	<update id="updateBookRentStock">
+	    UPDATE BOOK
+	    SET book_rent_stock = #{bookRentStock}
+	    WHERE book_id = #{bookId}
+	</update>
 
 	<delete id="deleteBook">
 	    DELETE FROM BOOK 

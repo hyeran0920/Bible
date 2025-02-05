@@ -1,28 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
-	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-	
-<mapper namespace="com.library.bible.order.OrderHistory">
-	
-	<!-- Result Map -->
-	<resultMap id ="ordersMap" type ="OrderHistory">
-		<id property="orderHistoryId" column ="order_history_id"/>
-		<result property="memId" column ="mem_id"/>
-		<result property="orderHistoryDate" column ="order_history_date"/>
-		<result property="OrderHistoryTotalPrice" column ="order_history_total_price"/>
-		<result property="OrderHistoryReceivedName" column ="order_history_received_name"/>
-		<result property="OrderHistoryPostcode" column ="order_history_postcode"/>
-		<result property="OrderHistoryAddress" column ="order_history_address"/>	
-		<result property="OrderHistoryDetailAddress" column ="order_history_detail_address"/>
-	</resultMap>
-	
-	<insert id="insertOrderHistory" useGeneratedKeys="true" keyProperty="order_history_id">
-    	INSERT INTO order_history (mem_id, address_id, order_history_date, order_history_total_price, order_history_received_name, order_paymeny_method)
-    	VALUES (#{memId}, #{addressId}, NOW(), 0, #{receivedName}, #{paymentMethod})
-	</insert>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-	<select id="getLastInsertId" resultType="long">
-    	SELECT LAST_INSERT_ID()
-	</select>
-	
+<mapper namespace="com.library.bible.order.repository.IOrderHistoryRepository">
+
+    <!-- Result Mapping -->
+    <resultMap id="orderHistoryResultMap" type="com.library.bible.order.model.OrderHistory">
+        <id property="orderHistoryId" column="order_history_id"/>
+        <result property="memId" column="mem_id"/>
+        <result property="addressId" column="address_id"/>
+        <result property="orderHistoryDate" column="order_history_date"/>
+        <result property="orderHistoryTotalPrice" column="order_history_total_price"/>
+        <result property="orderHistoryReceivedName" column="order_history_received_name"/>
+        <result property="orderPaymentMethod" column="order_payment_method"/>
+        <result property="orderPaymentStatus" column="order_payment_status"/>
+    </resultMap>
+
+    <!-- Retrieve all order histories -->
+    <select id="getAllOrderHistory" resultMap="orderHistoryResultMap">
+        SELECT * FROM order_history
+    </select>
+
+    <!-- Retrieve order histories by member ID -->
+    <select id="getOrderHistoryByMemId" resultMap="orderHistoryResultMap">
+        SELECT * FROM order_history WHERE mem_id = #{memId}
+    </select>
+
+    <!-- Retrieve a specific order history by ID -->
+    <select id="getOrderHistoryById" resultMap="orderHistoryResultMap">
+        SELECT * FROM order_history WHERE order_history_id = #{orderHistoryId}
+    </select>
+
+    <!-- Insert a new order history -->
+    <insert id="insertOrderHistory" parameterType="com.library.bible.order.model.OrderHistory">
+        INSERT INTO order_history 
+            (mem_id, address_id, order_history_date, order_history_total_price, 
+             order_history_received_name, order_payment_method, order_payment_status)
+        VALUES 
+            (#{memId}, #{addressId}, #{orderHistoryDate}, #{orderHistoryTotalPrice}, 
+             #{orderHistoryReceivedName}, #{orderPaymentMethod}, #{orderPaymentStatus})
+    </insert>
+
+    <!-- Delete an order history -->
+    <delete id="deleteOrderHistory">
+        DELETE FROM order_history WHERE order_history_id = #{orderHistoryId}
+    </delete>
+
+    <!-- Update an existing order history -->
+    <update id="updateOrderHistory" parameterType="com.library.bible.order.model.OrderHistory">
+        UPDATE order_history
+        SET order_history_date = #{orderHistoryDate},
+            order_history_total_price = #{orderHistoryTotalPrice},
+            order_history_received_name = #{orderHistoryReceivedName},
+            order_payment_method = #{orderPaymentMethod},
+            order_payment_status = #{orderPaymentStatus}
+        WHERE order_history_id = #{orderHistoryId}
+    </update>
+
+    <!-- Count all order histories -->
+    <select id="countOrderHistory" resultType="int">
+        SELECT COUNT(*) FROM order_history
+    </select>
+
 </mapper>

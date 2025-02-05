@@ -38,6 +38,24 @@
         </div>
       </div>
     </div>
+
+    <div class="review-section">
+      <h2>리뷰 작성</h2>
+      <div class="review-input">
+        <textarea v-model="reviewComment" placeholder="리뷰를 작성해주세요." rows="4"></textarea>
+        <div class="star-rating">
+          <label v-for="star in 5" :key="star">
+            <input 
+              type="radio" 
+              :value="star" 
+              v-model="reviewStar"
+            />
+            ★
+          </label>
+        </div>
+        <button @click="submitReview">리뷰 작성하기</button>
+      </div>
+    </div>
   </div>
   <Footer />
 </template>
@@ -51,14 +69,13 @@ export default {
   props: {
     bookId: 0,
   },
-  components: {
-    Footer,
-    Header
-  },
+  components: { Footer, Header },
   data() {
     return {
       book: null,
       nowBookCount: 1,
+      reviewStar: 0,
+      reviewComment: "",
     };
   },
   async created() {
@@ -102,10 +119,32 @@ export default {
       if (this.nowBookCount > 1) {
         this.nowBookCount--;
       }
+    },
+    submitReview() {
+      if (this.reviewStar === 0 || !this.reviewComment.trim()) {
+        alert("별점과 리뷰 내용을 모두 입력해주세요!");
+        return;
+      }
+      const reviewData = {
+        bookId: this.book.bookId,
+        reviewStar: this.reviewStar,
+        reviewComment: this.reviewComment,
+      };
+      axios.post("http://localhost:8080/api/reviews", reviewData, { withCredentials: true })
+        .then(response => {
+          alert(response.data);
+          this.reviewStar = 0;
+          this.reviewComment = "";
+        })
+        .catch(error => {
+          console.error("Error - submit review:", error);
+          alert("리뷰 제출에 실패했습니다.");
+        });
     }
   },
 };
 </script>
+
 
 <style scoped>
 .book-details-page {
@@ -215,6 +254,56 @@ h1 {
 .book-description h2 {
   font-size: 18px;
   margin-bottom: 10px;
+}
+.review-section {
+  margin-top: 30px;
+}
+
+.review-input {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.review-input textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.star-rating {
+  display: flex;
+  gap: 5px;
+}
+
+.star-rating input {
+  display: none;
+}
+
+.star-rating label {
+  font-size: 24px;
+  cursor: pointer;
+  color: #ffd700;
+}
+
+button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:disabled {
+  background-color: #aaa;
+}
+
+button:hover {
+  background-color: #45a049;
 }
 
 @media (max-width: 768px) {

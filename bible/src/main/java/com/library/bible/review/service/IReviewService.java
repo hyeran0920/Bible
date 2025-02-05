@@ -9,5 +9,5 @@ public interface IReviewService {
 
 	List<Review> getReview();
 	
-    void insertReview(long memId, long bookId);
+    void insertReview(long memId, long bookId, int reviewstar, String reviewComment);
 }

@@ -21,7 +21,7 @@
 
 	<insert id="insertReview" parameterType="com.library.bible.review.model.Review">
 	    INSERT INTO REVIEW (review_star, review_comment, book_id, mem_id)
-	    VALUES (#{reviewStar}, #{reviewComment}, #{bookId}, #{memId})
+	    VALUES (#{reviewstar}, #{reviewComment}, #{bookId}, #{memId})
 	</insert>
 
 

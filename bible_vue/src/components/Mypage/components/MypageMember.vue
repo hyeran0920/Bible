@@ -109,7 +109,7 @@
     const QR_BASEURL="http://localhost:8080/api/uploads/member-qr-image";
     const ADDRESS_BASEURL = MEMBER_BASEURL+"/addresses";
 
-    import AddressSearch from '../../Order/AddressSearch.vue';
+    import AddressSearch from '../../Order/components/AddressSearch.vue';
 
     export default{
         name:'Mypage',

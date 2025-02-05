@@ -14,6 +14,7 @@
         <result property="orderHistoryReceivedName" column="order_history_received_name"/>
         <result property="orderPaymentMethod" column="order_payment_method"/>
         <result property="orderPaymentStatus" column="order_payment_status"/>
+        <result property="orderTossPaymentKey" column="order_toss_payment_key"/>
     </resultMap>
 
     <!-- Retrieve all order histories -->
@@ -35,10 +36,10 @@
     <insert id="insertOrderHistory" parameterType="com.library.bible.order.model.OrderHistory">
         INSERT INTO order_history 
             (mem_id, address_id, order_history_date, order_history_total_price, 
-             order_history_received_name, order_payment_method, order_payment_status)
+             order_history_received_name, order_payment_method, order_payment_status, order_toss_payment_key)
         VALUES 
             (#{memId}, #{addressId}, #{orderHistoryDate}, #{orderHistoryTotalPrice}, 
-             #{orderHistoryReceivedName}, #{orderPaymentMethod}, #{orderPaymentStatus})
+             #{orderHistoryReceivedName}, #{orderPaymentMethod}, #{orderPaymentStatus}, #{orderTossPaymentKey})
     </insert>
 
     <!-- Delete an order history -->
@@ -53,7 +54,8 @@
             order_history_total_price = #{orderHistoryTotalPrice},
             order_history_received_name = #{orderHistoryReceivedName},
             order_payment_method = #{orderPaymentMethod},
-            order_payment_status = #{orderPaymentStatus}
+            order_payment_status = #{orderPaymentStatus},
+            order_toss_payment_key=#{orderPaymentStatus}
         WHERE order_history_id = #{orderHistoryId}
     </update>
 

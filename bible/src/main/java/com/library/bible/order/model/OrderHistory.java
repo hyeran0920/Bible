@@ -15,5 +15,6 @@ public class OrderHistory {
 	private long orderHistoryTotalPrice;
 	private String orderHistoryReceivedName;
 	private String orderPaymentMethod;
-	private char orderPaymentStatus='f';
+	private char orderPaymentStatus='0';
+	private String orderTossPaymentKey="";
 }

@@ -139,6 +139,12 @@ public class RentController {
 	// 4. 연장하기 - 관리자
 	
 	// 5. 반납하기 - 관리자
+	@PutMapping("/returns")
+	public ResponseEntity<List<RentResponse>> updateReturnedRent(@RequestParam @Positive long memId, @RequestBody RentRequest request) {
+		List<Rent> rentHistoryResponse = rentService.updateReturnedRent(memId, request.getBookIds());
+		List<RentResponse> responses = rentMapper.rentsToRentResponses(rentHistoryResponse);
+		return ResponseEntity.ok(responses);
+	}	
 	
 	// 6. 대여와 반납 동시에 - 관리자
 	

@@ -196,14 +196,9 @@ public class RentService implements IRentService {
 		
 		// rentIds로 rent 조회하기
 		List<Rent> rents = this.selectRentsByRendIds(rentIds);
-		// 대여 신청한 도서의 사용자가 아닌 경우
-		if (rents.stream().anyMatch(rent -> rent.getMemId() != memId)) {
-		    throw new CustomException(ExceptionCode.NOT_RENT_USER);
-		}
-		// 대여 신청한 도서가 아닌 경우
-		if (rents.stream().anyMatch(rent -> rent.getRentStatus() != RentStatus.REQUESTED)) {
-			throw new CustomException(ExceptionCode.NOT_RENT_REQUEST_CANCELD_STATE);
-		}
+		
+		// 대여 취소 조건 확인
+		CheckRentAbout.checkCancledRentPossible(memId, rents, RentStatus.REQUESTED, ExceptionCode.NOT_RENT_REQUEST_CANCELD_STATE);
 		// 대여 내역을 취소 상태로 변경
 		rents.stream().forEach(rent -> rent.setRentStatus(RentStatus.CANCLED));
 		this.updateRents(rents);
@@ -213,14 +208,10 @@ public class RentService implements IRentService {
 		// book에 대여 중인 도서수 감소
 		books.stream().forEach(book -> book.setBookRentStock(book.getBookRentStock() - 1));		
 		// 도서 업데이트
-		bookService.updateBookRentStocks(books);		
+		bookService.updateBookRentStocks(books);
 
-		// 현재 사용자의 대여 정보 확인
-		MemberRent memberRent = memberRentService.selectMemberRentByMemId(memId);		
-		// 사용자가 대여 중인 도서 수 업데이트
-		memberRent.setTotalRentCount(memberRent.getTotalRentCount() - books.size());
-		// 대여 정보 변경사항 반영
-		memberRentService.updateMemberRent(memberRent);
+		// member rent 정보 업데이트 - 현재 대여 중인 도서수 감소
+		memberRentService.updateTotalRentCount(memId, books.size());
 
 		return rents;
 	}
@@ -233,14 +224,8 @@ public class RentService implements IRentService {
 		// 대여할 대여 id값들이 없는 경우
 		if(rents == null || rents.isEmpty()) return rents;
 
-		// 대여 신청한 도서의 사용자가 아닌 경우
-		if (rents.stream().anyMatch(rent -> rent.getMemId() != memId)) {
-		    throw new CustomException(ExceptionCode.NOT_RENT_USER);
-		}
-		// 대여 신청한 도서가 아닌 경우
-		if (rents.stream().anyMatch(rent -> rent.getRentStatus() != RentStatus.REQUESTED)) {
-			throw new CustomException(ExceptionCode.NOT_RENT_STATE);
-		}
+		// 도서 대여 조건 확인
+		CheckRentAbout.checkCancledRentPossible(memId, rents, RentStatus.REQUESTED, ExceptionCode.NOT_RENT_STATE);
 
 		// 대여 내역을 대여 상태로 변경
 		rents.stream().forEach(rent -> rent.setRentStatus(RentStatus.IN_USE));
@@ -279,16 +264,13 @@ public class RentService implements IRentService {
 		// 도서 업데이트
 		bookService.updateBookRentStocks(books);		
 
-		// 현재 사용자의 대여 정보 확인
-		MemberRent memberRent = memberRentService.selectMemberRentByMemId(memId);		
-		// 사용자가 대여 중인 도서 수 업데이트
-		memberRent.setTotalRentCount(memberRent.getTotalRentCount() - books.size());
-		// 대여 정보 변경사항 반영
-		memberRentService.updateMemberRent(memberRent);
+		// member rent 정보 업데이트 - 현재 대여 중인 도서수 감소
+		memberRentService.updateTotalRentCount(memId, books.size());
 
 		return rents;
 	}
 	
+	// 연장하기
 	@Override
 	@Transactional
 	@CacheEvict(value = "rents", allEntries = true)
@@ -300,13 +282,8 @@ public class RentService implements IRentService {
 		// rentIds로 대여 중인 rent 조회하기
 		List<Rent> rents = this.selectRentsByRendIds(rentIds);
 
-		// 대여 신청한 도서의 사용자가 아닌 경우
-		if (rents.stream().anyMatch(rent -> rent.getMemId() != memId)) {
-		    throw new CustomException(ExceptionCode.NOT_RENT_USER);
-		}		
-		// 대여 신청한 도서가 아닌 경우
-		if (rents.stream().anyMatch(rent -> rent.getRentStatus() != RentStatus.IN_USE))
-			throw new CustomException(ExceptionCode.NOT_RENT_RENEWAL_STATE);
+		// 공통 조건 확인
+		CheckRentAbout.checkCancledRentPossible(memId, rents, RentStatus.IN_USE, ExceptionCode.NOT_RENT_RENEWAL_STATE);
 
 		// 대여 중인 도서의 예약 정보 가져오기
 		List<Reservation> reservations = new ArrayList<>();
@@ -376,7 +353,6 @@ public class RentService implements IRentService {
 			// 생성한 rent 저장
 			this.insertRent(rent);
 		}
-		
 		
 		// 대여 정보 변경사항 반영
 		memberRentService.updateMemberRent(memberRent);

@@ -8,12 +8,25 @@ import com.library.bible.exception.CustomException;
 import com.library.bible.exception.ExceptionCode;
 import com.library.bible.memberrent.model.MemberRent;
 import com.library.bible.rent.model.Rent;
+import com.library.bible.rent.model.RentStatus;
 import com.library.bible.reservation.model.Reservation;
 
 public class CheckRentAbout {
+	// 공통 조건
+	public static void checkCancledRentPossible(long memId, List<Rent> rents, RentStatus rentStatus, ExceptionCode exceptionCode) {
+		// 대여 신청한 도서의 사용자가 아닌 경우
+		if (rents.stream().anyMatch(rent -> rent.getMemId() != memId)) {
+		    throw new CustomException(ExceptionCode.NOT_RENT_USER);
+		}
+		
+		// 조건에 맞는 도서가 아닌 경우
+		if (rents.stream().anyMatch(rent -> rent.getRentStatus() != rentStatus)) {
+			throw new CustomException(exceptionCode);
+		}
+	}
 	
 	// 대여 신청 또는 대여 가능한 여부 확인
-	public static boolean checkRentBookPossible(Book book, MemberRent memberRent, List<Rent> currentRents) {
+	public static void checkRentBookPossible(Book book, MemberRent memberRent, List<Rent> currentRents) {
 		// 대여가능한 도서가 없을 경우
 		if(book.getBookTotalStock() - book.getBookRentStock() <= 0) 
 			throw new CustomException(ExceptionCode.NO_AVAILABLE_BOOK);
@@ -29,12 +42,10 @@ public class CheckRentAbout {
 		// 대여 중인 도서이면 대여 신청불가능
 		boolean exists = currentRents.stream().anyMatch(rent -> rent.getBookId() == book.getBookId());
 		if(exists) throw new CustomException(ExceptionCode.ALREADY_RENTED);
-		
-		return true;
 	}
 	
 	// 연장 가능한지 확인
-	public static boolean checkRenewalBookPossible(Rent rent, List<Book> books, MemberRent memberRent, List<Reservation> reservations) {
+	public static void checkRenewalBookPossible(Rent rent, List<Book> books, MemberRent memberRent, List<Reservation> reservations) {
 		// 연체 중이면 연체 신청 불가능
 		if(memberRent.getRentPoss() == 'f') 
 			throw new CustomException(ExceptionCode.OVERDUE_RENT);
@@ -56,7 +67,5 @@ public class CheckRentAbout {
 		LocalDate currentDueDate = rent.getRentDueDate().toLocalDateTime().toLocalDate(); // 현재 반납 예정일
 		if (lastRenewalDate.compareTo(currentDueDate) < 0)
 		    throw new CustomException(ExceptionCode.EXTENSION_LIMIT_EXCEEDED);
-		
-		return true;
 	}
 }

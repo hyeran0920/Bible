@@ -36,6 +36,19 @@ public class MemberRentService implements IMemberRentService {
         if(result == 0) throw new CustomException(ExceptionCode.MEMBER_RENT_UPDATE_FAIL);
         return result;
 	}
+	
+	@Override
+	@Transactional
+    public void updateTotalRentCount(long memId, int newTotalCount) {
+		// 현재 사용자의 대여 정보 확인
+		MemberRent memberRent = this.selectMemberRentByMemId(memId);		
+
+		// 사용자가 대여 중인 도서 수 업데이트
+		memberRent.setTotalRentCount(memberRent.getTotalRentCount() - newTotalCount);
+		
+		// 대여 정보 변경사항 반영
+		this.updateMemberRent(memberRent);
+	}
 
 	@Override
 	@Transactional

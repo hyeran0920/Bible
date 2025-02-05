@@ -59,12 +59,18 @@ public class BookService implements IBookService {
 
     @Override
     public List<Book> getBookListByRentIds(List<Long> rentIds) {
-    	return bookRepository.getBookListByRentIds(rentIds);
+    	List<Book> books = bookRepository.getBookListByRentIds(rentIds);
+    	if(rentIds.size() != books.size())
+    		throw new CustomException(ExceptionCode.BOOK_NOT_FOUND);
+    	return books;
     }
 
     @Override
     public List<Book> getBookListByBookIds(List<Long> bookIds) {
-    	return bookRepository.getBookListByBookIds(bookIds);
+    	List<Book> books = bookRepository.getBookListByBookIds(bookIds);
+    	if(bookIds.size() != books.size())
+    		throw new CustomException(ExceptionCode.BOOK_NOT_FOUND);
+    	return books;
     }
 
     @Override

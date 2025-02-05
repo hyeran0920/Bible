@@ -1,6 +1,6 @@
-<!-- <template>
+<template>
     <div>
-        <canvas ref="BookChart"></canvas>
+        <canvas ref="RentChart"></canvas>
     </div>
 </template>
 
@@ -11,16 +11,16 @@ import axios from 'axios';
 Chart.register(...registerables); // Chart.js 요소 등록
 
 export default {
-    name: "BookChart",
+    name: "RentChart",
     data() {
         return {
-            books: [], // API에서 받아올 책 데이터
+            rent: [], // API에서 받아올 책 데이터
             chartInstance: null, // 차트 인스턴스 저장
             chartData: {
                 labels: [], // 책 카테고리
                 datasets: [
                     {
-                        label: '멤버',
+                        label: '대여 차트',
                         data: [],
                         backgroundColor: 'rgba(75, 192, 192, 0.2)',
                         borderColor: 'rgba(75, 192, 192, 1)',
@@ -37,17 +37,17 @@ export default {
     methods: {
         async fetchData() {
             try {
-                const response = await axios.get('http://localhost:8080/api/members/data');
-                this.member = response.data;
+                const response = await axios.get('http://localhost:8080/api/rents');
+                this.rent = response.data;
 
                 // 차트 데이터 업데이트
-                this.chartData.labels = [...new Set(this.member.map(member => member.memName))]; // 중복 카테고리 제거
-                this.chartData.datasets[0].data = this.chartData.labels.map(name =>
-                    this.member.filter(member => member.memName === memName).length
+                this.chartData.labels = this.rent.map(rent => rent.bookTitle);
+                this.chartData.datasets[0].data = this.chartData.labels.map(rent =>
+                    this.rent.filter(rent => rent.bookTitle === bookTitle).length
                 );
 
             } catch (error) {
-                console.error('책 목록 가져오기 실패:', error);
+                console.error('대여 목록 가져오기 실패:', error);
             }
         },
         renderChart() {
@@ -55,10 +55,10 @@ export default {
                 this.chartInstance.destroy(); // 기존 차트 삭제 (재렌더링 방지)
             }
 
-            const ctx = this.$refs.BookChart.getContext('2d'); // canvas 요소 가져오기
+            const ctx = this.$refs.RentChart.getContext('2d'); // canvas 요소 가져오기
 
             this.chartInstance = new Chart(ctx, {
-                type: 'bar', // 막대 그래프
+                type: 'line', // 막대 그래프
                 data: this.chartData,
                 options: {
                     responsive: true,
@@ -75,7 +75,7 @@ div {
     width: 80%;
     margin: auto;
 }
-</style> -->
+</style>
 <template>
     
 </template>

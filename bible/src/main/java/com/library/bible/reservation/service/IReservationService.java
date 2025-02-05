@@ -6,7 +6,8 @@ import com.library.bible.reservation.model.Reservation;
 
 public interface IReservationService {
 	List<Reservation> selectAllReserv();
-	
+	List<Reservation> selectReservByBookIds(List<Long> bookIds);
+
 	Reservation selectReserv(long reservId);
 	void insertReserv(Reservation reservation);
 	void updateReserv(Reservation reservation);

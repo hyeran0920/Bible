@@ -21,6 +21,20 @@
 		FROM reservation
 	</select>
 	
+	<!-- rentIds로 rents 조회 -->
+	<select id="selectReservByBookIds"  resultMap="reservMap">
+		SELECT
+			reserv_id,
+			mem_id,
+			book_id,
+			reserv_date
+		FROM reservation
+	    WHERE book_id IN
+	    <foreach collection="bookIds" item="bookId" open="(" separator="," close=")">
+	        #{bookId}
+	    </foreach>
+	</select>
+	
 	<!-- 특정 예약 조회 -->
 	<select id="selectReserv" resultMap="reservMap">
 		SELECT

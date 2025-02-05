@@ -7,10 +7,11 @@ import SignUp from "../components/Member/components/SignUp.vue";
 import Login from "../components/Member/components/Login.vue";
 import AdminFilter from "../components/Admin/AdminFilter.vue";
 import AdminPage from "../components/Admin/AdminPage.vue";
-import Cart from "../components/Cart/components/CartPage.vue";
-import OrderPage from "../components/Order/OrderPage.vue";
 
-import Address from "../components/Order/ParentComponent.vue";
+import CartPage from "../components/Cart/components/CartPage.vue";
+import OrderPage from "../components/Order/components/OrderPage.vue";
+
+
 import AddBookExcel from "../components/Admin/AdminAddBookExcel.vue";
 
 import Mypage from "../components/Mypage/components/Mypage.vue";
@@ -26,11 +27,11 @@ const routes = [
   { path: "/login", name: "Login", component: Login },
   { path: "/admin", name: "AdminFilter", component: AdminFilter },
   { path: "/", redirect: "/login" },
-  { path: "/cart", name:"cart", component:Cart},
 
-  { path: "/order", name: "OrderPage", component: OrderPage },
+  { path: "/cart", name:"cart", component:CartPage},
+  { path: "/order/:cartIds", name:"order", component:OrderPage, props:true},
 
-  { path: "/address", name:"address", component: Address },
+
   { path: "/book/excel", name:"addBookExcel", component: AddBookExcel},
 
   { path: "/admin-page", name: "AdminPage",component: AdminPage, beforeEnter: (to, from, next) => {

@@ -1,44 +1,108 @@
 package com.library.bible.order.controller;
 
 import java.util.List;
-import java.util.Map;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import com.library.bible.order.dto.OrderPreviewDTO;
-import com.library.bible.order.service.OrderService;
+import com.library.bible.member.model.Member;
+import com.library.bible.order.model.Order;
+import com.library.bible.order.service.IOrderService;
+import com.library.bible.resolver.AuthMember;
+
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 
 @RestController
 @RequestMapping("/api/orders")
 public class OrderController {
     
-    private final OrderService orderService;
+    @Autowired
+    private IOrderService orderService; // Fixed typo from orderSerivce to orderService
 
-    public OrderController(OrderService orderService) {
-        this.orderService = orderService;
+    // GET-----------------------------------------------------------
+
+    // Get all orders
+    @GetMapping
+    public ResponseEntity<List<Order>> getOrders() {
+        List<Order> orders = orderService.getAllOrder();
+        return ResponseEntity.ok(orders);
     }
 
-    /**
-     * 주문 미리보기 API
-     */
-    @GetMapping("/preview")
-    public List<OrderPreviewDTO> getOrderPreview(@RequestParam("cartIds") List<Integer> cartIds) {
-        return orderService.getOrderPreview(cartIds);
+    // Get orders - member
+    @GetMapping("/me")
+    public ResponseEntity<List<Order>> getOrders(@AuthMember Member member) {
+    	List<Order> orders = orderService.getOrderByMemId(member.getMemId());
+        return ResponseEntity.ok(orders);
+    }
+    
+    @GetMapping("/member/{memId}")
+    public ResponseEntity<List<Order>> getMemberOrders(
+    		@PathVariable("memId") @Positive long memId) {
+    	List<Order> orders = orderService.getOrderByMemId(memId);
+        return ResponseEntity.ok(orders);
     }
 
-    /**
-     * 주문 확정 API
-     */
-    @PostMapping("/confirm")
-    public String confirmOrder(@RequestBody Map<String, List<Integer>> requestBody) {
-        List<Integer> cartIds = requestBody.get("cartIds");
-        orderService.confirmOrder(cartIds);
-        return "주문이 완료되었습니다.";
+    // Get orders - order history ID
+    @GetMapping("/history/{orderHistoryId}")
+    public ResponseEntity<List<Order>> getOrders(@PathVariable("orderHistoryId") @Positive long orderHistoryId) {
+        List<Order> orders = orderService.getOrderByHistoryId(orderHistoryId);
+        return ResponseEntity.ok(orders);
+    }
+
+    // Get a specific order
+    @GetMapping("/{orderId}")
+    public ResponseEntity<Order> getOrder(@PathVariable("orderId") @Positive long orderId) {
+        Order order = orderService.getOrderById(orderId);
+        return order != null ? ResponseEntity.ok(order) : ResponseEntity.notFound().build();
+    }
+
+    // Get total order count
+    @GetMapping("/count")
+    public ResponseEntity<Integer> getOrderCount() {
+        int count = orderService.countAllOrders();
+        return ResponseEntity.ok(count);
+    }
+
+    // Get order count - member
+    @GetMapping("/count/me")
+    public ResponseEntity<Integer> getOrderCount(@AuthMember Member member) {
+        int count = orderService.countMemOrders(member.getMemId());
+        return ResponseEntity.ok(count);
+    }
+    
+    @GetMapping("/count/{memId}")
+    public ResponseEntity<Integer> getMemberOrderCount(
+    		@PathVariable("memId") @Positive long memId) {
+        int count = orderService.countMemOrders(memId);
+        return ResponseEntity.ok(count);
+    }
+
+    // INSERT---------------------------------------------------------
+
+    // Insert a new order
+    @PostMapping
+    public ResponseEntity<Void> insertOrder(@RequestBody @Valid Order order) {
+        orderService.insertOrder(order);
+        return ResponseEntity.ok().build();
+    }
+
+    // DELETE---------------------------------------------------------
+
+    // Delete an order - ID
+    @DeleteMapping("/{orderId}")
+    public ResponseEntity<Void> deleteOrder(@PathVariable("orderId") @Positive long orderId) {
+        orderService.deleteOrder(orderId);
+        return ResponseEntity.ok().build();
+    }
+
+    // UPDATE---------------------------------------------------------
+
+    // Update an existing order
+    @PutMapping
+    public ResponseEntity<Void> updateOrder(@RequestBody @Valid Order order) {
+        orderService.updateOrder(order);
+        return ResponseEntity.ok().build();
     }
 }
-

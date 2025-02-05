@@ -28,6 +28,11 @@ public enum ExceptionCode {
     BOOK_DELETE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "도서 삭제에 실패했습니다."),
     BOOK_NOT_FOUND(HttpStatus.NOT_FOUND, "도서를 찾을 수 없습니다."),
 
+    // Reservation 관련 에러 메시지
+    RESERVATION_INSERT_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "예약 등록에 실패했습니다."),
+    RESERVATION_UPDATE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "예약 수정에 실패했습니다."),
+    RESERVATION_DELETE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "예약 삭제에 실패했습니다."),
+    RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND, "예약 정보를 찾을 수 없습니다."),
     
     // Address 관련 에러
     ADDRESS_INSERT_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "주소 등록에 실패했습니다."),
@@ -56,10 +61,20 @@ public enum ExceptionCode {
     ALREADY_RENTED(HttpStatus.BAD_REQUEST, "이미 대여 중인 도서입니다."),
     NOT_RENT_REQUEST_CANCELD_STATE(HttpStatus.BAD_REQUEST, "대여 신청을 취소할 수 없는 상태입니다."),
     NOT_RENT_RETURNED_STATE(HttpStatus.BAD_REQUEST, "대여 중인 도서가 아니어서 반납이 불가능한 상태입니다."),
+    NOT_RENT_RENEWAL_STATE(HttpStatus.BAD_REQUEST, "대여 중인 도서가 아니어서 연장이 불가능한 상태입니다."),
     NOT_RENT_STATE(HttpStatus.BAD_REQUEST, "대여 신청하지 않은 도서에 대해서는 대여 신청으로 상태 변경할 수 없습니다."),
     RENT_OR_BOOK_ID_NOT_INPUT(HttpStatus.BAD_REQUEST, "상태를 변경할 대여 또는 책의 ID값을 입력해주세요."),
     NOT_RENT_USER(HttpStatus.UNAUTHORIZED, "대여와 관련 없는 사람의 요청입니다."),
     INVALID_RETURN_BOOK_COUNT(HttpStatus.BAD_REQUEST, "반납할 도서 수가 대여 중인 도서 수보다 많습니다."),
+    EXTENSION_DENIED_DUE_TO_RESERVATION(HttpStatus.BAD_REQUEST, "도서를 예약한 사람이 있어서 연장이 불가능합니다."),
+    EXTENSION_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "연장 가능한 횟수를 초과했습니다."),
+    
+    // 예약 관련 비즈니스 로직 에러
+    RESERVATION_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "이미 예약된 도서입니다."),
+    RESERVATION_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "예약 가능한 수량을 초과했습니다."),
+    RESERVATION_EXPIRED(HttpStatus.BAD_REQUEST, "예약 기간이 만료되었습니다."),
+    RESERVATION_NOT_AVAILABLE(HttpStatus.BAD_REQUEST, "현재 예약이 불가능한 도서입니다."),
+    RESERVATION_CANCEL_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "예약 취소가 불가능한 상태입니다."),
     
 	// 인증/인가 관련 에러
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "로그인이 필요한 서비스입니다."),

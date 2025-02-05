@@ -136,6 +136,13 @@ public class RentController {
 	}
 	
 	// 4. 연장하기 - 사용자
+	@PutMapping("/renewals/me")
+	public ResponseEntity<List<RentResponse>> updateRenewaledRent(@AuthMember Member member, @RequestBody RentRequest request) {
+		List<Rent> rentHistoryResponse = rentService.updateRenewalRent(member.getMemId(), request.getRentIds());
+		List<RentResponse> responses = rentMapper.rentsToRentResponses(rentHistoryResponse);
+		return ResponseEntity.ok(responses);		
+	}
+	
 	// 4. 연장하기 - 관리자
 	
 	// 5. 반납하기 - 관리자

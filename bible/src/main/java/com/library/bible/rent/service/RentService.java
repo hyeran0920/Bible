@@ -22,10 +22,13 @@ import com.library.bible.memberrent.model.MemberRent;
 import com.library.bible.memberrent.service.IMemberRentService;
 import com.library.bible.pageresponse.PageResponse;
 import com.library.bible.rent.config.CheckRentAbout;
+import com.library.bible.rent.config.RentProperties;
 import com.library.bible.rent.dto.RentPageResponse;
 import com.library.bible.rent.model.Rent;
 import com.library.bible.rent.model.RentStatus;
 import com.library.bible.rent.repository.IRentRepository;
+import com.library.bible.reservation.model.Reservation;
+import com.library.bible.reservation.service.IReservationService;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +37,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RentService implements IRentService {
 	private final IBookService bookService;
+	private final IReservationService reservationService;
 	private final IMemberRentService memberRentService;
 	private final IRentRepository rentRepository;
 
@@ -49,6 +53,14 @@ public class RentService implements IRentService {
 	@Cacheable(value="rents")
 	public List<Rent> selectAllRent() {
 		return rentRepository.selectAllRent();
+	}
+	
+	@Override
+	public List<Rent> selectRentsByRendIds(List<Long> rentIds) {
+		List<Rent> rents = rentRepository.selectRentsByRendIds(rentIds);
+		if(rents.size() != rentIds.size())
+			throw new CustomException(ExceptionCode.RENT_NOT_FOUND);
+		return rents;
 	}
 
 	// memId, rentStatus로 조회 후 페이지네이션
@@ -173,7 +185,7 @@ public class RentService implements IRentService {
 		rents.stream().forEach(rent -> this.updateRent(rent));
 	}
 	
-	// 대여 취소하기
+	// 대여 신청 취소하기
 	@Override
 	@Transactional
 	@CachePut(value = "rent", key = "#rentIds")
@@ -182,8 +194,8 @@ public class RentService implements IRentService {
 		if(isListNullOrEmpty(rentIds))
 			throw new CustomException(ExceptionCode.RENT_OR_BOOK_ID_NOT_INPUT);
 		
-		// rentIds로 대여 중인 rent 조회하기
-		List<Rent> rents = rentRepository.selectRentsByRendIds(rentIds);
+		// rentIds로 rent 조회하기
+		List<Rent> rents = this.selectRentsByRendIds(rentIds);
 		// 대여 신청한 도서의 사용자가 아닌 경우
 		if (rents.stream().anyMatch(rent -> rent.getMemId() != memId)) {
 		    throw new CustomException(ExceptionCode.NOT_RENT_USER);
@@ -276,6 +288,48 @@ public class RentService implements IRentService {
 
 		return rents;
 	}
+	
+	@Override
+	@Transactional
+	@CacheEvict(value = "rents", allEntries = true)
+	public List<Rent> updateRenewalRent(long memId, List<Long> rentIds) {
+		// 대여 연장할 bookId 값들이 없는 경우
+		if(isListNullOrEmpty(rentIds))
+			throw new CustomException(ExceptionCode.RENT_OR_BOOK_ID_NOT_INPUT);
+		
+		// rentIds로 대여 중인 rent 조회하기
+		List<Rent> rents = this.selectRentsByRendIds(rentIds);
+
+		// 대여 신청한 도서의 사용자가 아닌 경우
+		if (rents.stream().anyMatch(rent -> rent.getMemId() != memId)) {
+		    throw new CustomException(ExceptionCode.NOT_RENT_USER);
+		}		
+		// 대여 신청한 도서가 아닌 경우
+		if (rents.stream().anyMatch(rent -> rent.getRentStatus() != RentStatus.IN_USE))
+			throw new CustomException(ExceptionCode.NOT_RENT_RENEWAL_STATE);
+
+		// 대여 중인 도서의 예약 정보 가져오기
+		List<Reservation> reservations = new ArrayList<>();
+		List<Long> bookIds = rents.stream().map(rent -> rent.getBookId()).toList();
+		reservations = reservationService.selectReservByBookIds(bookIds);
+
+		// 현재 사용자의 대여 정보 확인
+		MemberRent memberRent = memberRentService.selectMemberRentByMemId(memId);
+		// rentIds로 book 조회
+		List<Book> books = bookService.getBookListByRentIds(rentIds);
+		
+		long rewalDate = TimeUnit.DAYS.toMillis(RentProperties.RENEWAL_DATE.getValue());
+		for(Rent rent : rents) {
+			// 대여 날짜 연장
+			rent.setRentDueDate(new Timestamp(rent.getRentDueDate().getTime() + rewalDate));
+
+			// 연장 가능 여부 확인
+			CheckRentAbout.checkRenewalBookPossible(rent, books, memberRent, reservations);
+		}
+		this.updateRents(rents);
+
+		return rents;
+	}
 
 	@Override
 	@Transactional
@@ -308,7 +362,7 @@ public class RentService implements IRentService {
 
 			// 시간
 			Timestamp rentDate = new Timestamp(System.currentTimeMillis());
-			Timestamp rentDueDate = new Timestamp(rentDate.getTime() + TimeUnit.DAYS.toMillis(7));
+			Timestamp rentDueDate = new Timestamp(rentDate.getTime() + TimeUnit.DAYS.toMillis(RentProperties.RENT_DATE.getValue()));
 
 			// rent 생성
 			Rent rent = new Rent();

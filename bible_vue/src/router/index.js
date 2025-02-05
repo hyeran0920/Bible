@@ -7,12 +7,15 @@ import SignUp from "../components/Member/components/SignUp.vue";
 import Login from "../components/Member/components/Login.vue";
 import AdminFilter from "../components/Admin/AdminFilter.vue";
 import AdminPage from "../components/Admin/AdminPage.vue";
-import Mypage from "../components/Mypage/Mypage.vue";
 import Cart from "../components/Cart/components/CartPage.vue";
 import OrderPage from "../components/Order/OrderPage.vue";
 
 import Address from "../components/Order/ParentComponent.vue";
 import AddBookExcel from "../components/Admin/AdminAddBookExcel.vue";
+
+import Mypage from "../components/Mypage/components/Mypage.vue";
+import MypageMember from "../components/Mypage/components/MypageMember.vue";
+import MypageRent from "../components/Mypage/components/MypageRent.vue";
 
 
 const routes = [
@@ -23,7 +26,6 @@ const routes = [
   { path: "/login", name: "Login", component: Login },
   { path: "/admin", name: "AdminFilter", component: AdminFilter },
   { path: "/", redirect: "/login" },
-  { path: "/mypage", name: "Mypage", component: Mypage },
   { path: "/cart", name:"cart", component:Cart},
 
   { path: "/order", name: "OrderPage", component: OrderPage },
@@ -38,6 +40,12 @@ const routes = [
       } else {
         next(); // 필터를 통과한 경우만 "/admin-page"로 이동 가능
       }}, meta: { requiresAdmin: true },},
+
+  { path: "/mypage", name: "Mypage", component: Mypage, children:[
+    { path: "", redirect: "/mypage/mypageMember"},
+    { path: "mypageMember", component:MypageMember },
+    { path: "mypageRent", component:MypageRent },
+  ]},
 ];
 
 const router = createRouter({

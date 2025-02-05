@@ -1,14 +1,17 @@
 package com.library.bible.config;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.CacheControl;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.filter.ShallowEtagHeaderFilter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.library.bible.commons.HttpMethodOverrideFilter;
@@ -48,6 +51,13 @@ public class WebMvcConfig implements WebMvcConfigurer {
             .allowedMethods(corsConfiguration.getAllowedMethods().toArray(String[]::new))
             .allowedHeaders(corsConfiguration.getAllowedHeaders().toArray(String[]::new))
             .allowCredentials(corsConfiguration.getAllowCredentials());
+    }
+    
+    @Override
+    public void addResourceHandlers(final ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/**")
+                .addResourceLocations("classpath:/templates/", "classpath:/static/")
+                .setCacheControl(CacheControl.maxAge(10, TimeUnit.MINUTES));
     }
 
 }

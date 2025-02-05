@@ -34,7 +34,7 @@
           <BookChart />
         </div>
         <div class="radar-chart">
-          <MemberChart/>
+          <RentChart/>
         </div>
         <div class="pie-chart">
           <h3>Pie Chart</h3>
@@ -51,13 +51,13 @@
 
 <script>
 import BookChart from '../Chart/BookChart.vue';
-import MemberChart from '../Chart/MemberChart.vue';
+import RentChart from '../Chart/RentChart.vue';
 
 export default {
   name: "AdminContent",
   components: {
     BookChart,
-    MemberChart
+    RentChart
   },
 };
 </script>

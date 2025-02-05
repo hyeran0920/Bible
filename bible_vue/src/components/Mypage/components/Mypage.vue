@@ -3,12 +3,20 @@
         <button class="hamburger-btn" @click="toggleSidebar">☰</button>
 
         <div class="sidebar" :class="{ 'sidebar-hidden': !isSidebarOpen }">
-            <h2>마이페이지</h2>
-            <router-link to="/">메인 화면으로 돌아가기</router-link>
+            <h2>{{ $t('mypage.menubar.title') }}</h2>
+            <div class="language-selector">
+                <button class="language-btn" @click="toggleLanguageList">{{ selectedLanguage }}</button>
+                <!-- 언어 선택 리스트 (토글) -->
+                <ul v-show="isLanguageListVisible" class="language-list">
+                    <li @click="changeLanguage('ko')">한국어</li>
+                    <li @click="changeLanguage('en')">English</li>
+                </ul>
+            </div>
+            <router-link to="/">{{ $t('mypage.menubar.backHome') }}</router-link>
             <ul>
                 <li v-for="(item, index) in menuItems" :key="index">
                     <router-link :to="item.route" @click="closeSidebar" :class="{ 'active': isActive(item.route) }">
-                    {{ item.name }}
+                    {{ $t(item.name) }}
                     </router-link>
                 </li>
             </ul>
@@ -25,11 +33,17 @@
         data() {
             return {
                 isSidebarOpen: false,
+                isLanguageListVisible: false,
+                selectedLanguage: localStorage.getItem('selectedLanguage') || '한국어',
                 menuItems: [
-                    { name: "내 정보", route: "/mypage/mypageMember" },
-                    { name: "대여 내역", route: "/mypage/mypageRent" },
+                    { name: "mypage.menubar.myInfo", route: "/mypage/mypageMember" },
+                    { name: "mypage.menubar.rentHistory", route: "/mypage/mypageRent" },
                 ],
             };
+        },
+        mounted() {
+            const savedLanguage = localStorage.getItem('selectedLanguageCode') || 'ko';
+            this.$i18n.locale = savedLanguage;
         },
         methods: {
             toggleSidebar() {
@@ -42,6 +56,17 @@
             },
             isActive(route) {
                 return this.$route.path === route;
+            },
+            toggleLanguageList() {
+                this.isLanguageListVisible = !this.isLanguageListVisible;
+            },
+            changeLanguage(language) {
+                this.$i18n.locale = language;
+                this.selectedLanguage = language === 'ko' ? '한국어' : 'English';
+                this.isLanguageListVisible = false; // 언어를 선택하면 리스트 숨기기
+
+                localStorage.setItem('selectedLanguage', this.selectedLanguage);
+                localStorage.setItem('selectedLanguageCode', language);
             },
         },  
   };
@@ -128,5 +153,38 @@
     .sidebar a.active {
         background: #007bff;
         color: #fff;
+    }
+    .language-selector {
+        position: relative;
+        margin: 20px;
+    }
+
+    .language-btn {
+        padding: 10px 20px;
+        cursor: pointer;
+        font-size: 16px;
+        background-color: #333;
+    }
+
+    .language-list {
+        list-style: none;
+        padding: 0;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: white;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+    }
+
+    .language-list li {
+        padding: 8px;
+        cursor: pointer;
+    }
+
+    .language-list li:hover {
+        background-color: #f0f0f0;
     }
 </style>

@@ -1,74 +1,74 @@
 <template>
-    <h2>내 정보 관리</h2>
+    <h2>{{ $t('mypage.member.title') }}</h2>
     <div class="mypage-member">
-        <h3>회원정보</h3>
+        <h3>{{ $t('mypage.member.titleInfo') }}</h3>
         <hr class="hr-3">
         <!-- Member Info -->
         <div class="memberInfo">
-            <label class="info">이름: </label><span>{{ member.memName }}</span>
-            <label class="info">이메일:</label><span>{{ member.memEmail }}</span>
-            <label class="info">비밀번호:</label><span>********</span>
-            <label class="info">전화번호:</label><span>{{ member.memPhone}}</span>
+            <label class="info">{{ $t('mypage.member.name') }}: </label><span>{{ member.memName }}</span>
+            <label class="info">{{ $t('mypage.member.email') }}:</label><span>{{ member.memEmail }}</span>
+            <label class="info">{{ $t('mypage.member.password') }}:</label><span>********</span>
+            <label class="info">{{ $t('mypage.member.phone') }}:</label><span>{{ member.memPhone}}</span>
 
             <!--QR IMG-->
-            <label class="info">QR:</label>
+            <label class="info">{{ $t('mypage.member.QR') }}</label>
             <div class="qrContainer">
                 <img v-if="memberQRImg":src="memberQRImg" alt="Member QR Code" class="qr-image" />
-                <span v-else>QR 코드 없음..담당자에게 문의</span>
+                <span v-else>{{ $t('mypage.member.QRInfo') }}</span>
             </div>
         </div>
         <div class="InfoBtn">
-            <button @click="openModal(true, member)" type="button" class="btn btn-secondary">정보 수정</button>
-            <button @click="promptDelete(member.memId, member.memEmail)" type="button" class="btn btn-secondary">회원 탈퇴</button>
+            <button @click="openModal(true, member)" type="button" class="btn btn-secondary">{{ $t('mypage.member.insertBtn') }}</button>
+            <button @click="promptDelete(member.memId, member.memEmail)" type="button" class="btn btn-secondary">{{ $t('mypage.member.deleteBtn') }}</button>
         </div>
     </div>
 
     <!-- Edit Member Modal -->
      <div v-if="isModalVisible" class="custom-modal">
         <div class="modal-content">
-            <h2>회원 정보 수정</h2>
+            <h2>{{ $t('mypage.member.modalTitle') }}</h2>
             <form @submit.prevent="handleSubmit">
                 <div class="form-group">
-                    <label for="memName">이름: </label>
+                    <label for="memName">{{ $t('mypage.member.modalName') }}: </label>
                     <input v-model="currentMember.memName" type="text" id="memName" required/>
                 </div>
                 <div class="form-group">
-                    <label for="memEmail">이메일: </label>
+                    <label for="memEmail">{{ $t('mypage.member.modalEmail') }}: </label>
                     <input v-model="currentMember.memEmail" type="email" id="memEmail" placeholder="bible@gmail.com" :class="{ 'error-border': emailError }"  required/>
-                    <span v-if="emailError" class="error-message">유효한 이메일 형식이 아닙니다</span>
+                    <span v-if="emailError" class="error-message">{{ $t('mypage.member.modalCheckEmail') }}</span>
                 </div>
 
                 <div class="form-group">
-                    <label for="memPassword">비밀번호: </label>
+                    <label for="memPassword">{{ $t('mypage.member.modalPassword') }}: </label>
                     <input v-model="currentMember.memPassword" type="password" id="memPassword" :class="{ 'error-border': passwordError }" required/>
                 </div>
                 <div class="form-group">
-                    <label for="memPassword2">비밀번호 확인: </label>
+                    <label for="memPassword2">{{ $t('mypage.member.modalPassword2') }}: </label>
                     <input v-model="currentMember.memPassword2" type="password" id="memPassword2" :class="{ 'error-border': passwordError }" required />
-                    <span v-if="passwordError" class="error-message">비밀번호가 일치하지 않습니다!</span>
+                    <span v-if="passwordError" class="error-message">{{ $t('mypage.member.modalCheckPassword') }}</span>
                 </div>
                 <div class="form-group">
-                    <label for="memPhone">전화번호: </label>
+                    <label for="memPhone">{{ $t('mypage.member.modalPhone') }}: </label>
                     <input v-model="currentMember.memPhone" type="tel" id="memPhone" pattern="^010-\d{4}-\d{4}$" placeholder="010-1234-5678" :class="{ 'error-border': phoneError }" maxlength="13" required />
-                    <span v-if="phoneError" class="error-message">010-XXXX-XXXX 형식입니다.</span>
+                    <span v-if="phoneError" class="error-message">{{ $t('mypage.member.modalCheckPhone') }}</span>
                 </div>
                 <div class="modal-actions">
-                    <button type="submit" class="btn-primary">저장하기</button>
-                    <button type="button" @click="closeModal" class="btn-secondary">취소하기</button>
+                    <button type="submit" class="btn-primary">{{ $t('mypage.member.modalSaveBtn') }}</button>
+                    <button type="button" @click="closeModal" class="btn-secondary">{{ $t('mypage.member.modalCancleBtn') }}</button>
                 </div>
             </form>
         </div>
      </div>
      <div class="member-address">
-        <h3>주소록</h3>
+        <h3>{{ $t('mypage.address.title') }}</h3>
         <hr class="hr-3">
         <!-- My Address List -->
          <table id="address-table">
             <thead>
                 <tr>
-                    <th>우편주소</th>
-                    <th>도로명 주소</th>
-                    <th>상세 주소</th>
+                    <th>{{ $t('mypage.address.postal') }}</th>
+                    <th>{{ $t('mypage.address.road') }}</th>
+                    <th>{{ $t('mypage.address.detail') }}</th>
                     <th></th>
                 </tr>
             </thead>
@@ -78,19 +78,19 @@
                     <td>{{ addressInfo.address }}</td>
                     <td>{{ addressInfo.detailAddress }}</td>
                     <td>
-                        <button @click="addressDelete(addressInfo.addressId)">삭제</button>
+                        <button @click="addressDelete(addressInfo.addressId)">{{ $t('mypage.address.deleteBtn') }}</button>
                     </td>
                 </tr>
             </tbody>
             <tbody v-else>
                 <tr>
-                    <td colspan="3">저장된 주소가 없습니다.</td>
+                    <td colspan="3">{{ $t('mypage.address.addressInfo1') }}</td>
                 </tr>
             </tbody>
          </table>
 
         <div class="InfoBtn">
-            <button @click="openAddressModal()" type="button" class="btn btn-secondary">주소 추가</button>
+            <button @click="openAddressModal()" type="button" class="btn btn-secondary">{{ $t('mypage.address.addBtn') }}</button>
             <!-- 모달 컴포넌트 -->
             <div v-if="showModal" class="modal-overlay">
                 <div class="modal-content">
@@ -222,7 +222,7 @@
                 this.currentMember = {};
             },
             async promptDelete(memId){
-                const userInput = prompt('탈퇴하시려면 이메일을 입력해주세요.');
+                const userInput = prompt(this.$t('mypage.member.deleteEmailInfo'));
                 if(userInput && userInput === this.member.memEmail){
                     try{
                         await this.$axios.delete(MEMBER_BASEURL);
@@ -231,7 +231,7 @@
                         localStorage.removeItem("isLoggedIn");
                         this.isLoggedIn = false;
 
-                        alert('계정이 정상적으로 삭제 되었습니다.');
+                        alert(this.$t('mypage.member.deleteComplete'));
 
                         // 2초 후 홈으로 이동
                         setTimeout(() => {
@@ -241,7 +241,7 @@
                         console.error('Error delete member: ', error);
                     }
                 }else{
-                    alert('이메일이 맞지 않습니다. 다시 한번 확인해주세요.')
+                    alert(this.$t('mypage.member.deleteEmailError'));
                 }
             },
             async fetchQRImage() {
@@ -285,25 +285,25 @@
             async addressDelete(addressId){
                 try{
                     await this.$axios.delete(`members/addresses/${addressId}`);
-                    alert("삭제되었습니다.");
+                    alert(this.$t('mypage.address.deleteAddress'));
                     this.Addresslist = this.Addresslist.filter(address => address.addressId !== addressId);
                 }catch(error){
                     console.error("주소 삭제 중 오류 발생: ", error);
-                    alert("내부적인 이유로 삭제에 실패했습니다.");
+                    alert(this.$t('mypage.address.deleteFail'));
                 }
             },
             async addAddress(addressData){
                 try{
                     //DB에 추가하는 요청 보내기
                     const response = await this.$axios.post(ADDRESS_BASEURL, addressData);
-                    alert('주소가 추가되었습니다.');
+                    alert(this.$t('mypage.address.addSuccess'));
                     
                     //주소 추가 후 리스트 갱신
                     this.Addresslist.push(response.data);
                     this.showModal = false;
                 }catch(error){
                     console.error("주소 추가 오류: ", error);
-                    alert("주소 추가 실패");
+                    alert(this.$t('mypage.address.addFail'));
                 }
             },
         },

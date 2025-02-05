@@ -29,6 +29,7 @@ import com.library.bible.rent.model.RentStatus;
 import com.library.bible.rent.service.IRentService;
 import com.library.bible.resolver.AuthMember;
 
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -52,7 +53,7 @@ public class RentController {
 	
 	//특정 대여 조회
 	@GetMapping("{rentId}")
-	public ResponseEntity<Rent> selectRent(@PathVariable long rentId){
+	public ResponseEntity<Rent> selectRent(@PathVariable @Positive long rentId){
 		Rent rent = rentService.selectRent(rentId);
 		return ResponseEntity.ok(rent);
 	}
@@ -95,10 +96,10 @@ public class RentController {
 		}
 	}
 	
-	// 1. 대여 신청하기
+	// 1. 대여 신청하기 - 사용자
 	@PostMapping("/requests")
 	public ResponseEntity<List<RentResponse>> insertRents(@AuthMember Member member, @RequestBody RentRequest request) {
-		List<Rent> rentHistoryResponse = rentService.insertRents(member.getMemId(), request.getBookIds(), RentStatus.REQUESTED);
+		List<Rent> rentHistoryResponse = rentService.insertRequestRents(member.getMemId(), request.getBookIds(), RentStatus.REQUESTED);
 		List<RentResponse> responses = rentMapper.rentsToRentResponses(rentHistoryResponse);
 		return ResponseEntity.status(HttpStatus.CREATED).body(responses);
 	}
@@ -120,15 +121,31 @@ public class RentController {
 	
 	// 2. 대여 신청 취소하기 - 관리자
 	@PutMapping("/cancels")
-	public ResponseEntity<List<RentResponse>> updateCancledRent(@RequestParam long memId, @RequestBody RentRequest request) {
+	public ResponseEntity<List<RentResponse>> updateCancledRent(@RequestParam @Positive long memId, @RequestBody RentRequest request) {
 		List<Rent> rentHistoryResponse = rentService.updateCancledRent(memId, request.getRentIds());
+		List<RentResponse> responses = rentMapper.rentsToRentResponses(rentHistoryResponse);
+		return ResponseEntity.ok(responses);
+	}
+	
+	// 3. 대여하기 - 사용자
+	@PutMapping("/rentals/me")
+	public ResponseEntity<List<RentResponse>> updateRentedRent(@AuthMember Member member, @RequestBody RentRequest request) {
+		List<Rent> rentHistoryResponse = rentService.insertAndUpdateRentalRents(member.getMemId(), request.getBookIds(), RentStatus.IN_USE);
+		List<RentResponse> responses = rentMapper.rentsToRentResponses(rentHistoryResponse);
+		return ResponseEntity.ok(responses);
+	}
+	
+	// 3. 대여하기 - 관리자
+	@PutMapping("/rentals")
+	public ResponseEntity<List<RentResponse>> updateRentedRent(@RequestParam @Positive long memId, @RequestBody RentRequest request) {
+		List<Rent> rentHistoryResponse = rentService.insertAndUpdateRentalRents(memId, request.getBookIds(), RentStatus.IN_USE);
 		List<RentResponse> responses = rentMapper.rentsToRentResponses(rentHistoryResponse);
 		return ResponseEntity.ok(responses);
 	}
 	
 	// 대여 삭제
 	@DeleteMapping("{rentId}")
-	public void deleteRent(@PathVariable long rentId) {
+	public void deleteRent(@PathVariable @Positive long rentId) {
 		rentService.deleteRent(rentId);
 	}
 }

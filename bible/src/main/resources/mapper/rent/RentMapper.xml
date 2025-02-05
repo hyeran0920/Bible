@@ -63,6 +63,7 @@
         SELECT 
 			rent_date,
 			rent_id,
+			mem_id,
 			book_id,
 			rent_due_date,
 			rent_finish_date,
@@ -76,6 +77,28 @@
 	    </where>
 	</select>
 	
+	<!-- 해당 사용자의 rent 기록 조회 + 여러 rent_status 조회 -->
+	<select id="selectRentsByMemIdAndRentStatusList" resultMap="rentMap">
+	    SELECT 
+	        rent_date,
+	        rent_id,
+			mem_id,
+	        book_id,
+	        rent_due_date,
+	        rent_finish_date,
+	        rent_status
+	    FROM rent
+	    <where>
+	        mem_id = #{memId}
+	        <if test="rentStatusList != null and !rentStatusList.isEmpty()">
+	            AND rent_status IN
+	            <foreach collection="rentStatusList" item="status" open="(" separator="," close=")">
+	                #{status}
+	            </foreach>
+	        </if>
+	    </where>
+	</select>
+
 	<!-- 대여 추가 -->
 	<insert id="insertRent" parameterType="Rent" useGeneratedKeys="true" keyProperty="rentId" keyColumn="rent_id">
 	    INSERT INTO rent 

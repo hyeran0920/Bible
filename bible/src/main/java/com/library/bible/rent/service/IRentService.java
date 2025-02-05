@@ -5,8 +5,11 @@ import java.util.Optional;
 
 import org.springframework.data.domain.PageRequest;
 
+import com.library.bible.book.model.Book;
+import com.library.bible.memberrent.model.MemberRent;
 import com.library.bible.pageresponse.PageResponse;
 import com.library.bible.rent.dto.RentPageResponse;
+import com.library.bible.rent.dto.RentRequest;
 import com.library.bible.rent.model.Rent;
 import com.library.bible.rent.model.RentStatus;
 
@@ -18,11 +21,13 @@ public interface IRentService {
 
 	void insertRent(Rent rent);
 	List<Rent> insertRents(List<Rent> rent);
-	List<Rent> insertRents(long membId, List<Long> books, RentStatus rentStatus);
+	List<Rent> insertRequestRents(long membId, List<Long> bookIds, RentStatus rentStatus);
+	List<Rent> insertAndUpdateRentalRents(long membId, List<Long> bookIds, RentStatus rentStatus);
 
 	void updateRent(Rent rent);
 	void updateRents(List<Rent> rents);
-	List<Rent> updateCancledRent(long memId, List<Long> rentIds); // 대여신청 취소하기
+	List<Rent> updateCancledRent(long memId, List<Long> rentIds); 	// 대여신청 취소하기
+	List<Rent> updateRentedRent(long memId, List<Rent> rents); 		// 대여하기
 
 	int deleteRent(long rentId);
 }

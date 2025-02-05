@@ -10,7 +10,7 @@ import com.library.bible.rent.model.Rent;
 
 public class CheckRentAbout {
 	
-	// 대여 신청 가능한 여부 확인
+	// 대여 신청 또는 대여 가능한 여부 확인
 	public static boolean checkRentBookPossible(Book book, MemberRent memberRent, List<Rent> currentRents) {
 		// 대여가능한 도서가 없을 경우
 		if(book.getBookTotalStock() - book.getBookRentStock() <= 0) 
@@ -20,8 +20,7 @@ public class CheckRentAbout {
 		if(memberRent.getRentPoss() == 'f') 
 			throw new CustomException(ExceptionCode.OVERDUE_RENT);
 		
-		// 대여 가능한 개수 초과 시 대여 신청 불가능
-		if(memberRent.getTotalRentCount() >= RentProperties.POSSIBLE_BOOK_COUNT.getValue()) 
+		if(memberRent.getTotalRentCount() > RentProperties.POSSIBLE_BOOK_COUNT.getValue()) 
 			throw new CustomException(ExceptionCode.EXCEEDED_RENT_LIMIT);
 		
 		// 대여 중인 도서이면 대여 신청불가능

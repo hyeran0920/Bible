@@ -20,6 +20,9 @@ public interface IRentRepository {
 	List<Rent> selectRentsByMemIdAndRentStatus(
 		@Param("memId") long memId, 
 		@Param("rentStatus") String rentStatus);
+	List<Rent> selectRentsByMemIdAndRentStatusList(
+			@Param("memId") long memId, 
+			@Param("rentStatusList") List<String> rentStatusList);
 	Rent selectRent(long rentId);
 	
 	//Rent table CRUD

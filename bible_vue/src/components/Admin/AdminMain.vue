@@ -31,11 +31,10 @@
 
       <div class="charts">
         <div class="line-chart">
-          <Chart1 />
+          <BookChart />
         </div>
         <div class="radar-chart">
-          <h3>Radar Chart</h3>
-          <p>(Fake radar chart data)</p>
+          <MemberChart/>
         </div>
         <div class="pie-chart">
           <h3>Pie Chart</h3>
@@ -51,13 +50,14 @@
 </template>
 
 <script>
-import AdminProduct from './AdminProduct.vue';
-import Chart1 from './Chart1.vue';
+import BookChart from '../Chart/BookChart.vue';
+import MemberChart from '../Chart/MemberChart.vue';
 
 export default {
   name: "AdminContent",
   components: {
-    Chart1,
+    BookChart,
+    MemberChart
   },
 };
 </script>
@@ -107,5 +107,6 @@ export default {
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   text-align: center;
+  min-height: 200px; /* 최소 높이 지정 */
 }
 </style>

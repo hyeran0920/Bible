@@ -21,6 +21,7 @@ public interface IBookRepository {
 	Map<String, Object> getBookInfoMap(Long bookid);
 	List<Book> getBookList();
 	List<Book> getBookListByRentIds(List<Long> rentIds);
+	List<Book> getBookListByBookIds(List<Long> bookIds);
 	Book getBookInfo(long bookid);
 	
 	void updateBookImgPath(Long bookId, String bookImgPath);

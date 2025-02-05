@@ -7,6 +7,7 @@
         <input type="text" v-model="address" placeholder="주소" readonly>
         <input type="text" v-model="detailAddress" placeholder="상세주소" @input="emitAddressData">
     </div>
+    <button @click="addAddress()">추가</button>
 </template>
 
 <script>
@@ -71,6 +72,25 @@
                     }
                 }).open();
             },
+            //주소 추가
+            addAddress(){
+                if(!this.postcode || !this.address || !this.detailAddress){
+                    alert('모든 주소 정보를 입력해주세요.');
+                    return;
+                }
+                const addressData = {
+                    postcode: this.postcode,
+                    address: this.address,
+                    detailAddress: this.detailAddress
+                };
+                //부모 컴포넌트에 address insert 이벤트 전달
+                this.$emit('address-added', addressData);
+
+                //입력 필드 초기화
+                this.postcode = '';
+                this.address = '';
+                this.detailAddress = '';
+            }
         }
     };
 </script>

@@ -34,7 +34,13 @@ public class ReviewService implements IReviewService{
 	    }
 	    return reviews;
 	}
+	
+	@Override
+	public List<Review> getBookReview(long bookId) {
+		return reviewRepository.getBookReview(bookId);
+	}
 
+	
 	@Override
 	public void insertReview(long memId, long bookId, int reviewstar, String reviewComment) {
 		reviewRepository.insertReview(memId, bookId, reviewstar,reviewComment);

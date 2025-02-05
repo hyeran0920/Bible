@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +30,13 @@ public class ReviewController {
 		System.out.println("get review all");
 		return reviewService.getReview();
 	}
+	
+	// 특정 책 리뷰 데이터 조회
+	@GetMapping("/{bookId}")
+	public List<Review> getBookReview(@PathVariable long bookId){
+		return reviewService.getBookReview(bookId);
+	}
+	
 	
 	@PostMapping
     public ResponseEntity<String> addReview(@AuthMember Member member, @RequestBody Review request) {

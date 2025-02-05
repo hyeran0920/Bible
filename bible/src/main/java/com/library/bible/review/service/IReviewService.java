@@ -8,6 +8,7 @@ import com.library.bible.review.model.Review;
 public interface IReviewService {
 
 	List<Review> getReview();
-	
+    List<Review> getBookReview(long bookId);
+
     void insertReview(long memId, long bookId, int reviewstar, String reviewComment);
 }

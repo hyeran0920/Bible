@@ -18,6 +18,14 @@
 	    FROM review
 	    ORDER BY review_id DESC
 	</select>
+	
+	<select id="getBookReview" resultMap="reviewMap">
+	    SELECT review_id, review_star, review_comment, book_id, mem_id, created_at
+	    FROM review
+	    WHERE book_id = #{book_id}
+	    ORDER BY review_id DESC
+	</select>
+
 
 	<insert id="insertReview" parameterType="com.library.bible.review.model.Review">
 	    INSERT INTO REVIEW (review_star, review_comment, book_id, mem_id)

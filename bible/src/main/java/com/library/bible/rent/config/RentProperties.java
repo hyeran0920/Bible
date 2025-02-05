@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import jakarta.annotation.PostConstruct;
 
 public enum RentProperties {
-    DATE,
+    RENT_DATE,
     RENEWAL_DATE,
     RENEWAL_COUNT,
     POSSIBLE_BOOK_COUNT,
@@ -16,7 +16,7 @@ public enum RentProperties {
     @Configuration
     public static class RentPropertiesConfig {
         @Value("${rent.date}")
-        private int date;
+        private int rentDate;
         
         @Value("${rent.renewal-date}")
         private int renewalDate;
@@ -32,7 +32,7 @@ public enum RentProperties {
 
         @PostConstruct
         public void init() {
-            DATE.value = date;
+        	RENT_DATE.value = rentDate;
             RENEWAL_DATE.value = renewalDate;
             RENEWAL_COUNT.value = renewalCount;
             POSSIBLE_BOOK_COUNT.value = possibleBookCount;

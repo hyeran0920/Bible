@@ -16,6 +16,8 @@ public class Review {
 	private String reviewComment;
 	private Long bookId;
 	private Long memId;
+	private String memName;
 	private Timestamp createdAt;
+	private String bookTitle;
 
 }

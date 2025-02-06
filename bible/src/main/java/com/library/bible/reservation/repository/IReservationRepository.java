@@ -12,6 +12,7 @@ import com.library.bible.reservation.model.Reservation;
 public interface IReservationRepository {
 	//Get all reservation list
 	List<Reservation> selectAllReserv();
+	List<Reservation> selectReservByMemId(long memId);
 	List<Reservation> selectReservByBookIds(List<Long> bookIds);
 	
 	//Reservation CRUD

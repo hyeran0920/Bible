@@ -13,22 +13,26 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.library.bible.member.model.Member;
 import com.library.bible.reservation.model.Reservation;
 import com.library.bible.reservation.service.IReservationService;
+import com.library.bible.resolver.AuthMember;
 
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/reserv")
+@RequestMapping("/api/reservations")
 public class ReservationController {
 	private final IReservationService reservService;
 	private final ReentrantLock lock = new ReentrantLock();		//동시성 lock 처리
 	
 	//예약 전체 조회
-	@GetMapping
+	@GetMapping("/all")
 	public ResponseEntity<List<Reservation>> selectAllReserv(){
 		List<Reservation> reservs = reservService.selectAllReserv();
 		if(reservs.isEmpty()) {
@@ -38,14 +42,25 @@ public class ReservationController {
 	}
 	
 	//특정 예약 조회
-	@GetMapping("{reservId}")
-	public ResponseEntity<Reservation> selectReserv(@PathVariable long reservId){
+	@GetMapping("/{reservId}")
+	public ResponseEntity<Reservation> selectReserv(@PathVariable @Positive long reservId){
 		Reservation reserv = reservService.selectReserv(reservId);
-		if(reserv == null) {
-			return ResponseEntity.notFound().build();
-		}
 		return ResponseEntity.ok(reserv);
 	}
+	
+	// 1. 예약 조회 - 사용자
+	@GetMapping("/me")
+	public ResponseEntity<List<Reservation>> selectReservByMemId(@AuthMember Member member){
+		List<Reservation> reservs = reservService.selectReservByMemId(member.getMemId());
+		return ResponseEntity.ok(reservs);
+	}	
+
+	// 1. 예약 조회 - 관리자
+	@GetMapping
+	public ResponseEntity<List<Reservation>> selectReservByMemId(@RequestParam int memId){
+		List<Reservation> reservs = reservService.selectReservByMemId(memId);
+		return ResponseEntity.ok(reservs);
+	}	
 	
 	//예약 생성
 	@PostMapping
@@ -57,6 +72,19 @@ public class ReservationController {
 		} finally {
 			lock.unlock();
 		}
+	}
+	
+	// bookIds로 예약 생성하기
+	@PostMapping("/me")
+	public ResponseEntity<Reservation> insertReservByMemId(@AuthMember Member member) {
+		lock.lock();
+		try {
+//			reservService.insertReserv(reservation);
+//			return ResponseEntity.status(HttpStatus.CREATED).body(reservation);
+		} finally {
+			lock.unlock();
+		}
+		return null;
 	}
 	
 	//예약 수정
@@ -72,7 +100,7 @@ public class ReservationController {
 	
 	//예약 삭제
 	@DeleteMapping("{reservId}")
-	public void deleteReserv(@PathVariable long reservId) {
+	public void deleteReserv(@PathVariable @Positive long reservId) {
 		reservService.deleteReserv(reservId);
 	}
 }

@@ -21,6 +21,17 @@
 		FROM reservation
 	</select>
 	
+	<!-- 모든 예약 조회 -->
+	<select id="selectReservByMemId" resultMap="reservMap">
+		SELECT
+			reserv_id,
+			mem_id,
+			book_id,
+			reserv_date
+		FROM reservation
+	    WHERE mem_id = #{memId}
+	</select>
+	
 	<!-- rentIds로 rents 조회 -->
 	<select id="selectReservByBookIds"  resultMap="reservMap">
 		SELECT

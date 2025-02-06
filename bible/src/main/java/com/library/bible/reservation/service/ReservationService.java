@@ -28,6 +28,13 @@ public class ReservationService implements IReservationService {
 		return reservRepository.selectAllReserv();
 	}
 	
+	// 사용자 id로 예약들 조회하기
+	@Override
+	public List<Reservation> selectReservByMemId(long memId) {
+		return reservRepository.selectReservByMemId(memId);
+	}
+	
+	// 책 id들로 예약들 조회하기
 	@Override
 	public List<Reservation> selectReservByBookIds(List<Long> bookIds) {
 		List<Reservation> reservs = reservRepository.selectReservByBookIds(bookIds);

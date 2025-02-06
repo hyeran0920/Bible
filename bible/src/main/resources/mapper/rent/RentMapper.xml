@@ -119,6 +119,30 @@
 		WHERE rent_id = #{rentId}
 	</update>
 	
+	<!-- 여러 개의 대여 수정 -->
+	<update id="updateRents">
+	    UPDATE rent r
+	    SET (book_id, mem_id, rent_due_date, rent_finish_date, rent_status) = 
+	    (SELECT book_id, mem_id, rent_due_date, rent_finish_date, rent_status
+	     FROM (
+	        <foreach collection="rents" item="rent" separator="UNION ALL">
+	            SELECT 
+	                #{rent.bookId} as book_id, 
+	                #{rent.memId} as mem_id,
+	                #{rent.rentDueDate} as rent_due_date,
+	                CAST(#{rent.rentFinishDate} AS DATE) as rent_finish_date,
+	                #{rent.rentStatus} as rent_status,
+	                #{rent.rentId} as rent_id
+	            FROM dual
+	        </foreach>
+	     ) temp
+	     WHERE temp.rent_id = r.rent_id)
+	    WHERE r.rent_id IN 
+	    <foreach collection="rents" item="rent" open="(" separator="," close=")">
+	        #{rent.rentId}
+	    </foreach>
+	</update>
+	
 	<!-- 대여 삭제 -->
 	<delete id="deleteRent">
 		DELETE FROM rent WHERE rent_id = #{rentId}

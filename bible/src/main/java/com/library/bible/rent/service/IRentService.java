@@ -21,12 +21,12 @@ public interface IRentService {
 	void insertRent(Rent rent);
 	List<Rent> insertRents(List<Rent> rent);
 	List<Rent> insertRequestRents(long membId, List<Long> bookIds, RentStatus rentStatus);
-	List<Rent> insertAndUpdateRentalRents(long membId, List<Long> bookIds, RentStatus rentStatus);
+	List<Rent> insertAndUpdateRentalRents(long membId, List<Long> bookIds, RentStatus rentStatus); // 대여 신청 및 대여 신청 안한 도서 대여하기
 
 	void updateRent(Rent rent);
 	void updateRents(List<Rent> rents);
 	List<Rent> updateCancledRent(long memId, List<Long> rentIds); 	// 대여신청 취소하기
-	List<Rent> updateRentedRent(long memId, List<Rent> rents); 		// 대여하기
+	List<Rent> updateRentedRentInfo(long memId, List<Rent> rents); 	// 대여신청한 도서 대여하기
 	List<Rent> updateReturnedRent(long memId, List<Long> bookIds);	// 반납하기
 	List<Rent> updateRenewalRent(long memId, List<Long> rentIds);	// 연장하기
 	List<Rent> updateRentedReturnedRent(long memId, List<Long> bookIds);	// 대여 및 반납하기

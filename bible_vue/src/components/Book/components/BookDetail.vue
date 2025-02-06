@@ -31,6 +31,7 @@
           <button class="add-to-cart-btn" @click="addCart(book.bookId)">
             장바구니에 추가
           </button>
+          <button class="rent-btn" @click="bookRent(book.bookId, book.bookTitle)">대여하기</button>
         </div>
         <div class="book-description">
           <h2>책 소개</h2>
@@ -177,6 +178,21 @@ export default {
           console.error("리뷰 데이터를 가져오는 데 실패했습니다:", error);
         });
     },
+    // 대여 신청하기
+    bookRent(bookId, bookTitle){
+      const rentArr = Array.isArray(bookId) ? bookId : [bookId];
+      const bookJson = { "bookIds": rentArr };
+      axios.post("http://localhost:8080/api/rents/requests/me", bookJson, { withCredentials: true })
+        .then(response => {
+          alert("["+bookTitle +"] 대여 신청이 완료되었습니다.");
+        })
+        .catch(error=>{
+          console.error("Error - rent book", error.response?.data);
+
+          const errorMessage = error.response?.data?.message || "대여 신청에 실패했습니다.";
+          alert(errorMessage);
+        });
+    }
   },
 };
 </script>
@@ -272,7 +288,7 @@ h1 {
   font-size: 18px;
 }
 
-.add-to-cart-btn {
+.add-to-cart-btn, .rent-btn {
   background-color: #4caf50;
   color: white;
   border: none;

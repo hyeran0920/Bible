@@ -42,7 +42,7 @@ public class ReviewService implements IReviewService{
 		review.setMemId(memId);
 		reviewRepository.insertReview(review);
 	}
-
+	
 
 	@Override
 	public void deleteReview(long memId, long reviewId) {
@@ -54,6 +54,7 @@ public class ReviewService implements IReviewService{
 	public void deleteAdminReview(long reviewId) {
 		reviewRepository.deleteAdminReview(reviewId);
 	}
+
 
 
 

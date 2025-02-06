@@ -14,11 +14,11 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class AddressService implements IAddressService {
+public class AddressService implements IAddressService { 
 	private final IAddressRepository addressRepository;
 
 	@Override
-	public List<Address> selectAddressesByMemId(long memId) {
+	public List<Address> selectAddressesByMemId(long memId) {   
 		return addressRepository.selectAddressesByMemId(memId);
 	}
 

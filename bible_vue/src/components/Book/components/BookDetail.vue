@@ -31,6 +31,7 @@
           <button class="add-to-cart-btn" @click="addCart(book.bookId)">
             장바구니에 추가
           </button>
+          <button class="rent-btn" @click="bookRent(book.bookId, book.bookTitle)">대여하기</button>
         </div>
         <div class="book-description">
           <h2>책 소개</h2>
@@ -104,6 +105,55 @@ export default {
         this.nowBookCount--;
       }
     },
+
+    submitReview() {
+      if (this.reviewStar === 0 || !this.reviewComment.trim()) {
+        alert("별점과 리뷰 내용을 모두 입력해주세요!");
+        return;
+      }
+      const reviewData = {
+        bookId: this.book.bookId,
+        reviewStar: this.reviewStar,
+        reviewComment: this.reviewComment,
+      };
+      axios.post("http://localhost:8080/api/reviews", reviewData, { withCredentials: true })
+        .then(response => {
+          alert(response.data);
+          this.reviewStar = 0;
+          this.reviewComment = "";
+          this.fetchReviews(this.book.bookId); // 리뷰 작성 후 새로운 리뷰 데이터를 가져옵니다.
+        })
+        .catch(error => {
+          console.error("Error - submit review:", error);
+          alert("리뷰 제출에 실패했습니다.");
+        });
+    },
+    // 리뷰 데이터 가져오기
+    fetchReviews(bookId) {
+      axios
+        .get(`http://localhost:8080/api/reviews/${bookId}`)
+        .then((response) => {
+          this.reviews = response.data; // 받은 데이터를 reviews 배열에 저장
+        })
+        .catch((error) => {
+          console.error("리뷰 데이터를 가져오는 데 실패했습니다:", error);
+        });
+    },
+    // 대여 신청하기
+    bookRent(bookId, bookTitle){
+      const rentArr = Array.isArray(bookId) ? bookId : [bookId];
+      const bookJson = { "bookIds": rentArr };
+      axios.post("http://localhost:8080/api/rents/requests/me", bookJson, { withCredentials: true })
+        .then(response => {
+          alert("["+bookTitle +"] 대여 신청이 완료되었습니다.");
+        })
+        .catch(error=>{
+          console.error("Error - rent book", error.response?.data);
+
+          const errorMessage = error.response?.data?.message || "대여 신청에 실패했습니다.";
+          alert(errorMessage);
+        });
+    }
   },
 };
 </script>
@@ -199,7 +249,7 @@ h1 {
   font-size: 18px;
 }
 
-.add-to-cart-btn {
+.add-to-cart-btn, .rent-btn {
   background-color: #4caf50;
   color: white;
   border: none;

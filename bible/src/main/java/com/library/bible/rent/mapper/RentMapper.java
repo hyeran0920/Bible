@@ -9,5 +9,5 @@ import com.library.bible.rent.model.Rent;
 
 @Mapper(componentModel = "spring")
 public interface RentMapper {
-    List<RentResponse> toRentResponseList(List<Rent> rentList);
+	   List<RentResponse> rentsToRentResponses(List<Rent> rents);
 }

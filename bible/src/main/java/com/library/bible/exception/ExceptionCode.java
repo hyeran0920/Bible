@@ -103,7 +103,11 @@ public enum ExceptionCode {
     RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, "요청한 리소스를 찾을 수 없습니다."),
 
     // QR 이미지 생성 에러
-	QR_IMAGE_CREATION_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "QR 이미지 생성 실패");
+	QR_IMAGE_CREATION_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "QR 이미지 생성 실패"),
+	
+	// 이메일 전송 실패
+	FAIL_SEND_EMAIL(HttpStatus.INTERNAL_SERVER_ERROR, "이메일 전송에 실패하였습니다."),
+	NOT_MATCH_AUTHNUM(HttpStatus.INTERNAL_SERVER_ERROR, "이메일 인증번호가 일치하지 않습니다.");
 	
     private final HttpStatus httpStatus;
     private final String message;

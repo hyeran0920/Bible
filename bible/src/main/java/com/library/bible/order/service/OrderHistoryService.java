@@ -30,8 +30,11 @@ public class OrderHistoryService implements IOrderHistoryService {
     }
 
     @Override
-    public void insertOrderHistory(OrderHistory orderHistory) {
+    public long insertOrderHistory(OrderHistory orderHistory) {
         orderHisRepos.insertOrderHistory(orderHistory);
+        long orderHisId=orderHistory.getOrderHistoryId();
+        System.out.println("order history id="+orderHisId);
+    	return orderHisId;
     }
 
     @Override

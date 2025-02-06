@@ -64,13 +64,13 @@ public class OrderHistoryController {
 
     // Insert a new order history
     @PostMapping
-    public ResponseEntity<Void> insertOrderHistory(
+    public ResponseEntity<Long> insertOrderHistory(
     		@RequestBody @Valid OrderHistory orderHistory, 
     		@AuthMember Member member) 
     {
     	orderHistory.setMemId(member.getMemId());
-        orderHistoryService.insertOrderHistory(orderHistory);
-        return ResponseEntity.ok().build();
+    	long orderHisId=orderHistoryService.insertOrderHistory(orderHistory);
+    	return ResponseEntity.ok(orderHisId);
     }
 
     // DELETE ---------------------------------------------------------

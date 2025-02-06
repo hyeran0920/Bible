@@ -1,23 +1,27 @@
 package com.library.bible.toss.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Controller;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 public class WidgetController {
@@ -46,9 +50,9 @@ public class WidgetController {
         obj.put("amount", amount);
         obj.put("paymentKey", paymentKey);
 
-        // TODO: 개발자센터에 로그인해서 내 결제위젯 연동 키 > 시크릿 키를 입력하세요. 시크릿 키는 외부에 공개되면 안돼요.
+
         // @docs https://docs.tosspayments.com/reference/using-api/api-keys
-        String widgetSecretKey = "test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6";
+        String widgetSecretKey = "test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6";//진짜는 외부공개 ㄴㄴ
 
         // 토스페이먼츠 API는 시크릿 키를 사용자 ID로 사용하고, 비밀번호는 사용하지 않습니다.
         // 비밀번호가 없다는 것을 알리기 위해 시크릿 키 뒤에 콜론을 추가합니다.
@@ -57,8 +61,8 @@ public class WidgetController {
         byte[] encodedBytes = encoder.encode((widgetSecretKey + ":").getBytes(StandardCharsets.UTF_8));
         String authorizations = "Basic " + new String(encodedBytes);
 
-        // 결제 승인 API를 호출하세요.
-        // 결제를 승인하면 결제수단에서 금액이 차감돼요.
+        // 결제 승인 API를 호출
+        // 결제를 승인하면 결제수단에서 금액이 차감
         // @docs https://docs.tosspayments.com/guides/v2/payment-widget/integration#3-결제-승인하기
         URL url = new URL("https://api.tosspayments.com/v1/payments/confirm");
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -86,19 +90,21 @@ public class WidgetController {
 
     
     //인증 성공
-    @RequestMapping(value = "/success", method = RequestMethod.GET)
+    @GetMapping("/success")
     public String paymentRequest(HttpServletRequest request, Model model) throws Exception {
         return "/success";
     }
 
     //결제 시작 창
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @GetMapping("/")
     public String index(HttpServletRequest request, Model model) throws Exception {
+    	String orderHistoryId=request.getParameter("orderHistoryId");
+    	model.addAttribute("orderHistoryId",orderHistoryId);
         return "/checkout";
     }
 
     //인증 실패
-    @RequestMapping(value = "/fail", method = RequestMethod.GET)
+    @GetMapping("/fail")
     public String failPayment(HttpServletRequest request, Model model) throws Exception {
         String failCode = request.getParameter("code");
         String failMessage = request.getParameter("message");

@@ -46,9 +46,10 @@
       총 결제 금액: <strong>{{ totalPrice.toLocaleString() }} 원</strong>
     </div>
 
-    <div class="order-actions">
-      <button @click="payStart()" class="pay-btn">결제하기</button>
-    </div>
+    <!--결제 버튼튼-->
+    <button @click="confirmPayment()" class="pay-btn">결제하기</button>
+
+
   </div>
 
 
@@ -105,10 +106,10 @@
   <!--주소 추가 모달창-->
   <div v-if="isAddAddressModalVisible" class="modal-overlay">
     <div class="modal-content">
-      <AddressSearch @address-added="addAddress"/>
+      <AddressSearch @address-added="addAddress" />
       <button @click="closeAddAddressModal" class="btn btn-danger">닫기</button>
     </div>
-    
+
   </div>
 
 </template>
@@ -121,13 +122,15 @@ export default {
   props: ['cartIds'], // Router에서 받은 cartIds
   data() {
     return {
-      cartArray: [], // 장바구니 아이템을 저장할 배열
-      books: {}, // 책 정보를 저장할 객체
-      addressArray: [],
-      selectedAddress: {},
-      totalPrice: 0,
+      cartArray: [],           // 구매할 장바구니 아이템을 저장
+      books: {},               // 구매할 책 정보들을 저장
+      addressArray: [],        // 주소들 정보 저장 
+      selectedAddress: {},     // 최종 결정한 주소 저장
+      totalPrice: 0,           // 총 가격
+
       isModalVisible: false,
-      isAddAddressModalVisible:false,
+      isAddAddressModalVisible: false,
+      
     };
   },
   components: {
@@ -161,6 +164,9 @@ export default {
       console.error("주소 정보 가져오다가 에러", error);
     }
 
+
+    
+    
   },
   methods: {
 
@@ -188,7 +194,7 @@ export default {
     async fetchDefaultAddress() {
       try {
         const response = await axios.get(`http://localhost:8080/api/members/addresses/default`, { withCredentials: true });
-        if(response.data!=null){this.selectedAddress = response.data;}
+        if (response.data != null) { this.selectedAddress = response.data; }
       } catch (error) {
         console.error("Error fetching addresses:", error);
       }
@@ -199,25 +205,56 @@ export default {
     },
 
 
+    //결제----------------------------------------------------
+    async confirmPayment() {
+      try {
+       
+        //Insert Order History
+        const today = new Date().toISOString().split('T')[0];
+        const orderHisResponse = await axios.post(`http://localhost:8080/api/orderhistory`,{ 
+          addressId:this.selectedAddress.addressId,
+          orderHistoryDate:today,
+          orderHistoryTotalPrice:this.totalPrice,
+          orderHistoryReceivedName:this.selectedAddress.receiverName,
+          orderPaymentMethod:"결제전",
+          orderPaymentStatus:'0',
+          orderTossPaymentKey:"결제전"
+        },{withCredentials: true});
+
+        if(orderHisResponse.data==null){throw new Error("주문 내역 저장 Id 반환 에러");}
+
+        //Insert Orders
+        for(const cartItem of this.cartArray){
+          //console.log(cartItem.bookId+" "+orderHisResponse.data+" "+cartItem.bookCount);
+          await axios.post(`http://localhost:8080/api/orders`,{
+            bookId: cartItem.bookId,
+            orderHistoryId:orderHisResponse.data,
+            bookCount:cartItem.bookCount
+          })
+
+        }
 
 
+        //결제 창으로 이동
+        window.location.href = "http://localhost:8080/";
+        //indow.location.href = `http://localhost:8080/?orderHistoryId=${orderHisResponse.data}`;
 
 
-
-    //결제 시작--------------------------------------------
-    payStart() {
-      console.log("totalPay" + this.totalPrice);
+      } catch (error) {
+        console.error("결제 승인 요청 중 오류 발생:", error);
+      }
     },
+
 
 
 
     //모달창------------------------------------------------
     //주소 추가 모달 띄워짐
-    openAddAddressModal(){
-      this.isAddAddressModalVisible=true;
+    openAddAddressModal() {
+      this.isAddAddressModalVisible = true;
     },
-    closeAddAddressModal(){
-      this.isAddAddressModalVisible=false;
+    closeAddAddressModal() {
+      this.isAddAddressModalVisible = false;
     },
 
     //주소변경 모달 띄워짐
@@ -257,14 +294,14 @@ export default {
       }
     },
 
-    async setDefaultAddress(addressInfo){
-      try{
+    async setDefaultAddress(addressInfo) {
+      try {
         await this.$axios.put(`members/addresses/default/${addressInfo.addressId}`, { withCredentials: true });
         alert("기본주소가 변경되었습니다");
-        this.selectedAddress=addressInfo;
+        this.selectedAddress = addressInfo;
 
-      }catch(error){
-        console.log("기본주소로 바꾸기 오류",error);
+      } catch (error) {
+        console.log("기본주소로 바꾸기 오류", error);
         alert("기본주소로 변경 실패");
       }
     },
@@ -404,13 +441,15 @@ export default {
   }
 
 }
+
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5); /* 반투명 검정 배경 */
+  background: rgba(0, 0, 0, 0.5);
+  /* 반투명 검정 배경 */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -422,8 +461,10 @@ export default {
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  width: 500px; /* 모달 크기 조정 */
-  max-width: 90%; /* 화면이 작을 경우 최대 크기 */
+  width: 500px;
+  /* 모달 크기 조정 */
+  max-width: 90%;
+  /* 화면이 작을 경우 최대 크기 */
   position: relative;
   text-align: center;
 }

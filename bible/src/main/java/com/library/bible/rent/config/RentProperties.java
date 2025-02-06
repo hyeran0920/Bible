@@ -11,7 +11,7 @@ public enum RentProperties {
     POSSIBLE_BOOK_COUNT,
     REQUEST_DATE;
 
-    private int value;
+    private int value; 
 
     @Configuration
     public static class RentPropertiesConfig {

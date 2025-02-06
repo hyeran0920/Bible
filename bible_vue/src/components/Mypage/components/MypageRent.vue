@@ -1,16 +1,16 @@
 <template>
   <div class="container">
-    <h2>대여 내역</h2>
+    <h2>{{ $t('mypage.rent.title') }}</h2>
 
     <div v-for="date in rentList" :key="date.rentDate" class="rent-group">
-      <h3>대여일: {{ changeDateFormat(date.rentDate) }}</h3>
+      <h3>{{ $t('mypage.rent.rentDate') }}: {{ changeDateFormat(date.rentDate) }}</h3>
       <table class="rentTable">
         <thead>
           <tr>
-            <th>책 이름</th>
-            <th>반납예정일</th>
-            <th>반납일</th>
-            <th>상태</th>
+            <th>{{ $t('mypage.rent.bookName') }}</th>
+            <th>{{ $t('mypage.rent.expectedDate') }}</th>
+            <th>{{ $t('mypage.rent.returnDate') }}</th>
+            <th>{{ $t('mypage.rent.status') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -43,10 +43,10 @@ export default {
     },
     rentStatusMap() {
       return {
-        REQUESTED: "🟡 대여신청",
-        CANCLED: "🔴 대여취소",
-        IN_USE: "🟢 대여중",
-        RETURNED: "🔵 반납",
+        REQUESTED: "🟡 "+this.$t('mypage.rent.requested'),
+        CANCLED: "🔴 "+this.$t('mypage.rent.cancle'),
+        IN_USE: "🟢 "+this.$t('mypage.rent.inUse'),
+        RETURNED: "🔵 "+this.$t('mypage.rent.returned'),
       };
     },
   },
@@ -57,7 +57,7 @@ export default {
     },
     //상태 한글 변환
     getRentStatusLabel(status) {
-      return this.rentStatusMap[status] || "알 수 없음";
+      return this.rentStatusMap[status] || this.$t('mypage.rent.none');
     },
     //상태에 따른 클래스 적용
     getStatusClass(status) {

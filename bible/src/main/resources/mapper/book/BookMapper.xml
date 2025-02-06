@@ -269,4 +269,57 @@
 		</if>
 	</select>
 
+	<!-- BookResponse를 위한 ResultMap -->
+	<resultMap id="bookResponseMap" type="BookResponse">
+	    <id property="bookId" column="book_id"/>
+	    <result property="bookTitle" column="book_title"/>
+	    <result property="bookAuthor" column="book_author"/>
+	    <result property="bookPublisher" column="book_publisher"/>
+	    <result property="bookReleaseDate" column="book_release_date"/>
+	    <result property="bookCategory" column="book_category"/>
+	    <result property="bookPrice" column="book_price"/>
+	    <result property="bookImgPath" column="book_img_path"/>
+	    <result property="bookDetail" column="book_detail"/>
+	    <result property="bookTotalStock" column="book_total_stock"/>
+	    <result property="bookRentStock" column="book_rent_stock"/>
+	    <result property="bookLocation" column="book_location"/>
+	    <result property="bookQrPath" column="book_qr_path"/>
+	</resultMap>
+	
+	<!-- BookAndReservationInfo를 위한 ResultMap -->
+	<resultMap id="bookAndReservationInfoMap" type="BookAndReservationInfo">
+	    <id property="reservId" column="reserv_id"/>
+	    <result property="reservMemId" column="mem_id"/>
+	    <association property="book" resultMap="bookMap"/>
+	</resultMap>
+
+	<!-- book과 관련된 reservation 조회 가져오기 -->
+	<!-- bookIds의 예약 정보와 memId에 해당하는 예약 정보 전부 가져오기 -->
+	<select id="getBookAndReservations" resultMap="bookAndReservationInfoMap">
+	    SELECT 
+	        b.book_id,
+	        b.book_title,
+	        b.book_author,
+	        b.book_publisher,
+	        b.book_release_date,
+	        b.book_category,
+	        b.book_price,
+	        b.book_img_path,
+	        b.book_detail,
+	        b.book_total_stock,
+	        b.book_rent_stock,
+	        b.book_location,
+	        b.book_qr_path,
+	        r.reserv_id,
+	        r.mem_id
+	    FROM book b
+	    LEFT JOIN reservation r ON b.book_id = r.book_id
+	    WHERE r.mem_id = #{memId} OR b.book_id IN
+	        <foreach collection="bookIds" item="bookId" open="(" separator="," close=")">
+	            #{bookId}
+	        </foreach>
+	</select>
+
+	
+
 </mapper>

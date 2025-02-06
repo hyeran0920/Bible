@@ -21,12 +21,14 @@ public interface IBookRepository {
 	Map<String, Object> getBookInfoMap(Long bookid);
 	List<Book> getBookList();
 	List<Book> getBookListByRentIds(List<Long> rentIds);
+	List<Book> getBookListByBookIds(List<Long> bookIds);
 	Book getBookInfo(long bookid);
 	
 	void updateBookImgPath(Long bookId, String bookImgPath);
 	void updateBookQrPath(Long bookId, String bookQrPath);
 	void updateBook(Book book);
 	int updateBookRentStock(Book book);
+	int updateBookRentStocks(List<Book> books);
 	
 	void insertBook(Book book);
 	

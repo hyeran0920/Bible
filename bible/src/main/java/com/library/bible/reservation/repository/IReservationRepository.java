@@ -12,10 +12,12 @@ import com.library.bible.reservation.model.Reservation;
 public interface IReservationRepository {
 	//Get all reservation list
 	List<Reservation> selectAllReserv();
+	List<Reservation> selectReservByBookIds(List<Long> bookIds);
 	
 	//Reservation CRUD
 	Reservation selectReserv(long reservId);
 	void insertReserv(Reservation reservation);
 	void updateReserv(Reservation reservation);
 	int deleteReserv(long reservId);
+	int deleteReservs(List<Long> reservIds);
 }

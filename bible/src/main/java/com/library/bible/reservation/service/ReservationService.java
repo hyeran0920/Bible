@@ -9,6 +9,8 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
+import com.library.bible.exception.CustomException;
+import com.library.bible.exception.ExceptionCode;
 import com.library.bible.reservation.model.Reservation;
 import com.library.bible.reservation.repository.IReservationRepository;
 
@@ -25,11 +27,20 @@ public class ReservationService implements IReservationService {
 	public List<Reservation> selectAllReserv() {
 		return reservRepository.selectAllReserv();
 	}
+	
+	@Override
+	public List<Reservation> selectReservByBookIds(List<Long> bookIds) {
+		List<Reservation> reservs = reservRepository.selectReservByBookIds(bookIds);
+		return reservs;
+	}
 
 	@Override
 	@Cacheable(value="reserv", key="#reservId")
 	public Reservation selectReserv(long reservId) {
-		return reservRepository.selectReserv(reservId);
+		Reservation reservs = reservRepository.selectReserv(reservId);
+		if(reservs == null)
+			throw new CustomException(ExceptionCode.RESERVATION_NOT_FOUND);
+		return reservs;
 	}
 
 	@Override
@@ -53,7 +64,18 @@ public class ReservationService implements IReservationService {
 		@CacheEvict(value="reservs", allEntries=true)
 	})
 	public int deleteReserv(long reservId) {
-		return reservRepository.deleteReserv(reservId);
+		int result = reservRepository.deleteReserv(reservId);
+		if(result == 0) throw new CustomException(ExceptionCode.RESERVATION_DELETE_FAIL);
+		return result;
+	}
+	
+	@Override
+	@Transactional
+	@CacheEvict(value="reservs", allEntries=true)
+	public int deleteReservs(List<Long> reservIds) {
+		int result = reservRepository.deleteReservs(reservIds);
+		if(result != reservIds.size()) throw new CustomException(ExceptionCode.RESERVATION_DELETE_FAIL);
+		return result;
 	}
 
 }

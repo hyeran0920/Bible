@@ -17,6 +17,7 @@ public interface IBookService {
 	
 	List<Book> getBookList();
 	List<Book> getBookListByRentIds(List<Long> rendIds);
+	List<Book> getBookListByBookIds(List<Long> bookIds);
 	Book getBookInfo(Long bookid);
 	
 	Book updateBook(Book book, MultipartFile file);

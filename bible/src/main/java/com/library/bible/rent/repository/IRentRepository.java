@@ -3,6 +3,7 @@ package com.library.bible.rent.repository;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.hibernate.jdbc.Expectation.OutParameter;
 import org.springframework.stereotype.Repository;
 
 import com.library.bible.rent.dto.RentPageResponse;
@@ -21,13 +22,14 @@ public interface IRentRepository {
 		@Param("memId") long memId, 
 		@Param("rentStatus") String rentStatus);
 	List<Rent> selectRentsByMemIdAndRentStatusList(
-			@Param("memId") long memId, 
-			@Param("rentStatusList") List<String> rentStatusList);
+		@Param("memId") long memId, 
+		@Param("rentStatusList") List<String> rentStatusList);
 	Rent selectRent(long rentId);
 	
 	//Rent table CRUD
 	int insertRent(Rent rent);
 	int updateRent(Rent rent);
+	int updateRents(List<Rent> rents);
 	int deleteRent(long rentId);
 	
 	// RentResponse - pagenation

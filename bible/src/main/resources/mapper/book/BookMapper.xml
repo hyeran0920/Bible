@@ -104,7 +104,29 @@
 	        #{rentId}
 	    </foreach>
 	</select>
-
+	
+	<!-- book id들로 book 가져오기 -->
+	<select id="getBookListByBookIds" resultMap="bookMap">
+	    SELECT DISTINCT 
+	           book_id,
+	           book_title,
+	           book_author,
+	           book_publisher,
+	           book_release_date,
+	           book_category,
+	           book_price,
+	           book_img_path,
+	           book_detail,
+	           book_total_stock,
+	           book_rent_stock,
+	           book_location,
+	           book_qr_path
+	    FROM BOOK
+	    WHERE book_id IN
+	    <foreach collection="bookIds" item="bookId" open="(" separator="," close=")">
+	        #{bookId}
+	    </foreach>
+	</select>
 
 	<insert id="insertBook" parameterType="com.library.bible.book.model.Book">
 	    <selectKey keyProperty="bookId" resultType="java.lang.Long" order="BEFORE">
@@ -140,6 +162,30 @@
 	        book_qr_path=#{bookQrPath}
 	    WHERE book_id = #{bookId}
 	</update>
+	
+	<update id="updateBookRentStocks">
+	    UPDATE book b
+	    SET (
+	        book_rent_stock
+	    ) = (
+	        SELECT 
+	            temp.book_rent_stock
+	        FROM (
+	            <foreach collection="books" item="book" separator="UNION ALL">
+	                SELECT 
+	                    #{book.bookId} as book_id,
+	                    #{book.bookRentStock} as book_rent_stock
+	                FROM dual
+	            </foreach>
+	        ) temp
+	        WHERE temp.book_id = b.book_id
+	    )
+	    WHERE b.book_id IN 
+	    <foreach collection="books" item="book" open="(" separator="," close=")">
+	        #{book.bookId}
+	    </foreach>
+	</update>
+		
 	
 	<update id="updateBookImgPath" parameterType="map">
 	    UPDATE BOOK

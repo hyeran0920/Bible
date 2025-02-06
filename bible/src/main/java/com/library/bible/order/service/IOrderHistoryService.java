@@ -10,7 +10,7 @@ public interface IOrderHistoryService {
 	List<OrderHistory>getOrderHistoryByMemId(long memId);
 	OrderHistory getOrderHistoryById(long orderHistoryId);
 	
-	void insertOrderHistory(OrderHistory orderHistory);
+	long insertOrderHistory(OrderHistory orderHistory);
 	void deleteOrderHistory(long orderHistoryId);
 	void updateOrderHistory(OrderHistory orderHistory);
 	

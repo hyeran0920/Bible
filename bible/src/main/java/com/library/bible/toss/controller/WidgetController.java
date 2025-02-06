@@ -84,30 +84,20 @@ public class WidgetController {
         return ResponseEntity.status(code).body(jsonObject);
     }
 
-    /**
-     * 인증성공처리
-     * @param request
-     * @param model
-     * @return
-     * @throws Exception
-     */
+    
+    //인증 성공
     @RequestMapping(value = "/success", method = RequestMethod.GET)
     public String paymentRequest(HttpServletRequest request, Model model) throws Exception {
         return "/success";
     }
 
+    //결제 시작 창
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String index(HttpServletRequest request, Model model) throws Exception {
         return "/checkout";
     }
 
-    /**
-     * 인증실패처리
-     * @param request
-     * @param model
-     * @return
-     * @throws Exception
-     */
+    //인증 실패
     @RequestMapping(value = "/fail", method = RequestMethod.GET)
     public String failPayment(HttpServletRequest request, Model model) throws Exception {
         String failCode = request.getParameter("code");

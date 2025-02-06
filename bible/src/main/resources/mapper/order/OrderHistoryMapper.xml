@@ -33,7 +33,8 @@
     </select>
 
     <!-- Insert a new order history -->
-    <insert id="insertOrderHistory" parameterType="com.library.bible.order.model.OrderHistory">
+    <insert id="insertOrderHistory" parameterType="com.library.bible.order.model.OrderHistory"
+    	useGeneratedKeys="true" keyProperty="orderHistoryId" keyColumn="order_history_id">
         INSERT INTO order_history 
             (mem_id, address_id, order_history_date, order_history_total_price, 
              order_history_received_name, order_payment_method, order_payment_status, order_toss_payment_key)

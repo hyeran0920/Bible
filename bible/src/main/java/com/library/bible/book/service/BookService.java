@@ -110,9 +110,8 @@ public class BookService implements IBookService {
     //@CacheEvict(value = "books", key = "#book.bookId")
     @CacheEvict(value = "books", allEntries = true) // 모든 책 캐시 삭제 -> 최신 상태 유지
     public void updateBookRentStocks(List<Book> books) {
-    	for(Book book : books) {
-    		this.updateBookRentStock(book);
-    	}
+    	int result = bookRepository.updateBookRentStocks(books);
+    	if(result == 0) throw new CustomException(ExceptionCode.BOOK_UPDATE_FAIL);
     }
 
     @Override

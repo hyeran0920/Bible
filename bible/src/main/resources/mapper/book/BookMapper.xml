@@ -162,6 +162,30 @@
 	    WHERE book_id = #{bookId}
 	</update>
 	
+	<update id="updateBookRentStocks">
+	    UPDATE book b
+	    SET (
+	        book_rent_stock
+	    ) = (
+	        SELECT 
+	            temp.book_rent_stock
+	        FROM (
+	            <foreach collection="books" item="book" separator="UNION ALL">
+	                SELECT 
+	                    #{book.bookId} as book_id,
+	                    #{book.bookRentStock} as book_rent_stock
+	                FROM dual
+	            </foreach>
+	        ) temp
+	        WHERE temp.book_id = b.book_id
+	    )
+	    WHERE b.book_id IN 
+	    <foreach collection="books" item="book" open="(" separator="," close=")">
+	        #{book.bookId}
+	    </foreach>
+	</update>
+		
+	
 	<update id="updateBookImgPath" parameterType="map">
 	    UPDATE BOOK
 	    SET book_img_path = #{bookImgPath}

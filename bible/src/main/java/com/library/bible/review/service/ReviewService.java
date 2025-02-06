@@ -29,6 +29,12 @@ public class ReviewService implements IReviewService{
 	public List<Review> getBookReview(long bookId) {
 		return reviewRepository.getBookReview(bookId);
 	}
+	
+	
+	@Override
+	public List<Review> getMemberReview(long memId) {
+		return reviewRepository.getMemberReview(memId);
+	}
 
 	
 	@Override

@@ -11,6 +11,7 @@ public interface IReviewService {
 
 	List<Review> getReview();
     List<Review> getBookReview(long bookId);
+    List<Review> getMemberReview(long memId);
 
 	void insertReview(long memId, Review review);
 	void deleteReview(long memId, long reviewId);

@@ -15,6 +15,7 @@ import com.library.bible.resolver.AuthMember;
 public interface IReviewRepository {
     List<Review> getReview();
     List<Review> getBookReview(long bookId);
+    List<Review> getMemberReview(long memId);
     
     
 	void insertReview(Review review);

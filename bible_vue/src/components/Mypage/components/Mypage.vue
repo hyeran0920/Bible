@@ -43,6 +43,7 @@
                 menuItems: [
                     { name: "mypage.menubar.myInfo", route: "/mypage/mypageMember" },
                     { name: "mypage.menubar.rentHistory", route: "/mypage/mypageRent" },
+                    { name: "mypage.menubar.review", route:"/mypage/mypageReview"}
                 ],
             };
         },

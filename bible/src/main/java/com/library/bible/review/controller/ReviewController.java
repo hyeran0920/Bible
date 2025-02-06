@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.library.bible.review.model.Review;
 import com.library.bible.review.service.IReviewService;
+import com.library.bible.cart.model.Cart;
 import com.library.bible.member.model.Member;
 import com.library.bible.resolver.AuthMember;
 import jakarta.validation.Valid;
@@ -26,7 +27,7 @@ public class ReviewController {
 	@Autowired
 	IReviewService reviewService; // 소문자로 변경
 	
-	@GetMapping
+	@GetMapping("/admin")
 	public List<Review> getReview() {
 		System.out.println("get review all");
 		return reviewService.getReview();
@@ -37,8 +38,14 @@ public class ReviewController {
 	public List<Review> getBookReview(@PathVariable long bookId){
 		return reviewService.getBookReview(bookId);
 	}
+	// 특정 사용자 리뷰 데이터 조회
+	@GetMapping("/member/{member}")
+    public ResponseEntity<List<Review>> getMembereview(@AuthMember Member member) {
+        List<Review> reviewList = reviewService.getMemberReview(member.getMemId());
+        return ResponseEntity.ok(reviewList);
+    }
 	
-	//리뷰 추가!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	//리뷰 추가
 	@PostMapping
     public ResponseEntity<String> addReview(@AuthMember Member member, @RequestBody Review request) {
         System.out.println("add review");    

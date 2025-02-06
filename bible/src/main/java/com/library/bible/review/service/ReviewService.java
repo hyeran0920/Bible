@@ -10,6 +10,8 @@ import com.library.bible.review.repository.IReviewRepository;
 
 import jakarta.transaction.Transactional;
 
+import com.library.bible.member.model.Member;
+import com.library.bible.resolver.AuthMember;
 @Service
 @Transactional
 public class ReviewService implements IReviewService{
@@ -19,21 +21,9 @@ public class ReviewService implements IReviewService{
 
 	@Override
 	public List<Review> getReview() {
-		List<Review> reviews=null;
-		try {
-			 reviews = reviewRepository.getReview();
-		}catch(Exception e) {
-			System.out.println("Unexpected error: " + e);
-		}
-	   
-	    
-	    if (reviews == null || reviews.isEmpty()) {
-	        System.out.println("No reviews found or null returned from repository");
-	    } else {
-	        System.out.println("Retrieved " + reviews.size() + " reviews");
-	    }
-	    return reviews;
+	    return reviewRepository.getReview();
 	}
+
 	
 	@Override
 	public List<Review> getBookReview(long bookId) {
@@ -42,8 +32,20 @@ public class ReviewService implements IReviewService{
 
 	
 	@Override
-	public void insertReview(long memId, long bookId, int reviewstar, String reviewComment) {
-		reviewRepository.insertReview(memId, bookId, reviewstar,reviewComment);
+	public void insertReview(@AuthMember Member member, Review review) {
+		reviewRepository.insertReview(member, review);
+	}
+
+
+	@Override
+	public void deleteReview(long memId, long reviewId) {
+		reviewRepository.deleteReview(memId, reviewId);
+	}
+
+
+	@Override
+	public void deleteAdminReview(long reviewId) {
+		reviewRepository.deleteAdminReview(reviewId);
 	}
 
 

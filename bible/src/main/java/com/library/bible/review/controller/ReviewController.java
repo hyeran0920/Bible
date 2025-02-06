@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.library.bible.review.model.Review;
@@ -37,18 +38,26 @@ public class ReviewController {
 		return reviewService.getBookReview(bookId);
 	}
 	
-	
+	//리뷰 추가
 	@PostMapping
     public ResponseEntity<String> addReview(@AuthMember Member member, @RequestBody Review request) {
-        
-        long memId = member.getMemId();  // 인증된 사용자 ID 가져오기
-        long bookId = request.getBookId();  // 요청에서 책 ID 가져오기
-        int reviewStar = request.getReviewStar();
-        String reviewComment = request.getReviewComment();
-        
-        // 리뷰 추가
-            reviewService.insertReview(memId, bookId, reviewStar,reviewComment);
+            reviewService.insertReview(member,request);
             return ResponseEntity.ok("리뷰가 성공적으로 추가되었습니다.");
 
     }
+	// 리뷰 삭제 (memId와 reviewId 사용)
+	@PostMapping("/{reviewId}")
+	public ResponseEntity<String> delReview(@PathVariable long reviewId, @RequestParam long memId) {
+	    reviewService.deleteReview(memId, reviewId);
+	    return ResponseEntity.ok("리뷰가 삭제되었습니다");
+	}
+	
+	//Admin Review Delete
+	@PostMapping("/admin/{reviewId}")
+	public ResponseEntity<String> delAdmin(@PathVariable long reviewId){
+		reviewService.deleteAdminReview(reviewId);
+		return ResponseEntity.ok("관리자 리뷰 삭제");
+	}
+
+	
 }

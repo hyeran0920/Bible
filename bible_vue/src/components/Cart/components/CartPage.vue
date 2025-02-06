@@ -38,10 +38,9 @@
             </div>
 
             <p class="total-price">총 {{ (books[cart.bookId]?.bookPrice * cart.bookCount || 0).toLocaleString() }}원</p>
-            
-            <!--delete button-->
-            <button class="delete-btn" @click="deleteCart(cart.cartId)">삭제</button>
           </div>
+          <!--delete button-->
+          <div><button class="delete-btn" @click="deleteCart(cart.cartId)">X</button></div>
         </div>
       </div>
     </div>
@@ -60,10 +59,6 @@
   </div>
   <Footer />
 </template>
-
-
-
-
 
 
 

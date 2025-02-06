@@ -1,4 +1,6 @@
 <template>
+  <br>
+  <br>
   <div>
     <!-- Footer -->
     <footer class="footer">

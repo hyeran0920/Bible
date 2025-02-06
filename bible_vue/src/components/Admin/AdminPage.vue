@@ -6,6 +6,7 @@
         <li @click="changeMenu('product')">상품</li>
         <li @click="changeMenu('order')">주문</li>
         <li @click="changeMenu('rental')">대여</li>
+        <li @click="changeMenu('review')">리뷰</li>
       </ul>
     </aside>
 
@@ -21,6 +22,7 @@ import AdminMember from './AdminMember.vue';
 import AdminMain from './AdminMain.vue';
 import AdminProduct from './AdminProduct.vue';
 import AdminRental from './AdminRental.vue';
+import AdminReview from './AdminReview.vue';
 
 export default {
   name: "AdminDashboard",
@@ -37,6 +39,7 @@ export default {
         case 'member': return AdminMember;
         case 'product': return AdminProduct;
         case 'rental': return AdminRental;
+        case 'review': return AdminReview;
         default: return AdminMain;
       }
     }

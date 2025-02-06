@@ -236,8 +236,8 @@ export default {
 
 
         //결제 창으로 이동
-        window.location.href = "http://localhost:8080/";
-        //indow.location.href = `http://localhost:8080/?orderHistoryId=${orderHisResponse.data}`;
+        //window.location.href = "http://localhost:8080/";
+        window.location.href = `http://localhost:8080/?orderHistoryId=${orderHisResponse.data}`;
 
 
       } catch (error) {

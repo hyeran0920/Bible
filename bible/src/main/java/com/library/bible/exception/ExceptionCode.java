@@ -68,6 +68,7 @@ public enum ExceptionCode {
     INVALID_RETURN_BOOK_COUNT(HttpStatus.BAD_REQUEST, "반납할 도서 수가 대여 중인 도서 수보다 많습니다."),
     EXTENSION_DENIED_DUE_TO_RESERVATION(HttpStatus.BAD_REQUEST, "도서를 예약한 사람이 있어서 연장이 불가능합니다."),
     EXTENSION_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "연장 가능한 횟수를 초과했습니다."),
+    NOT_POSSIBLE_SAME_BOOK(HttpStatus.BAD_REQUEST, "같은 도서를 2권이면 대여하거나 대여 신청할 수 없습니다."),
     
     // 예약 관련 비즈니스 로직 에러
     RESERVATION_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "이미 예약된 도서입니다."),

@@ -160,7 +160,12 @@ public class RentController {
 	}	
 	
 	// 6. 대여와 반납 동시에 - 관리자
-	
+	@PutMapping("/rentals-returns")
+	public ResponseEntity<List<RentResponse>> updateRentedReturnedRent(@RequestParam @Positive long memId, @RequestBody RentRequest request) {
+		List<Rent> rentHistoryResponse = rentService.updateRentedReturnedRent(memId, request.getBookIds());
+		List<RentResponse> responses = rentMapper.rentsToRentResponses(rentHistoryResponse);
+		return ResponseEntity.ok(responses);
+	}	
 	
 	// 대여 삭제
 	@DeleteMapping("{rentId}")

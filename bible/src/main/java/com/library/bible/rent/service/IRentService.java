@@ -10,6 +10,7 @@ import com.library.bible.rent.dto.RentPageResponse;
 import com.library.bible.rent.model.Rent;
 import com.library.bible.rent.model.RentStatus;
 
+
 public interface IRentService {
 	
 	Rent selectRent(long rentId);
@@ -28,6 +29,7 @@ public interface IRentService {
 	List<Rent> updateRentedRent(long memId, List<Rent> rents); 		// 대여하기
 	List<Rent> updateReturnedRent(long memId, List<Long> bookIds);	// 반납하기
 	List<Rent> updateRenewalRent(long memId, List<Long> rentIds);	// 연장하기
+	List<Rent> updateRentedReturnedRent(long memId, List<Long> bookIds);	// 대여 및 반납하기
 
 	int deleteRent(long rentId);
 }

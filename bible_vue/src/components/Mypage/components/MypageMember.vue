@@ -66,6 +66,7 @@
          <table id="address-table">
             <thead>
                 <tr>
+                    <th>수취인명</th>
                     <th>우편주소</th>
                     <th>도로명 주소</th>
                     <th>상세 주소</th>
@@ -74,10 +75,12 @@
             </thead>
             <tbody v-if="Addresslist.length > 0">
                 <tr v-for="addressInfo in Addresslist" :key="addressInfo.addressId">
+                    <td>{{ addressInfo.receiverName }}</td>
                     <td>[{{ addressInfo.postcode}}]</td>
                     <td>{{ addressInfo.address }}</td>
                     <td>{{ addressInfo.detailAddress }}</td>
                     <td>
+                        <button @click="addressUpdate(addressInfo.addressId)">수정</button>
                         <button @click="addressDelete(addressInfo.addressId)">삭제</button>
                     </td>
                 </tr>
@@ -291,6 +294,9 @@
                     console.error("주소 삭제 중 오류 발생: ", error);
                     alert("내부적인 이유로 삭제에 실패했습니다.");
                 }
+            },
+            async addressUpdate(addressId){
+                
             },
             async addAddress(addressData){
                 try{

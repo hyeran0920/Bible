@@ -21,6 +21,17 @@
 		FROM reservation
 	</select>
 	
+	<!-- 모든 예약 조회 -->
+	<select id="selectReservByMemId" resultMap="reservMap">
+		SELECT
+			reserv_id,
+			mem_id,
+			book_id,
+			reserv_date
+		FROM reservation
+	    WHERE mem_id = #{memId}
+	</select>
+	
 	<!-- rentIds로 rents 조회 -->
 	<select id="selectReservByBookIds"  resultMap="reservMap">
 		SELECT
@@ -46,8 +57,18 @@
 		WHERE reserv_id = #{reservId}
 	</select>
 	
+	<!-- bookIds에 해당하는 예약 개수 세기 -->
+	<select id="selectReservCountByBookIds">
+		SELECT COUNT(*)
+		FROM reservation
+		WEHRE book_id IN 
+		<foreach collection="bookIds" item="bookId" open="(" separator=", " close=")">
+			#{bookId}
+		</foreach>
+	</select>
+	
 	<!-- 예약 추가 -->
-	<insert id="insertReserv" parameterType="Reservation">
+	<insert id="insertReserv" parameterType="Reservation" useGeneratedKeys="true" keyProperty="reservId" keyColumn="reserv_id">
 		INSERT INTO reservation
 			(mem_id, book_id, reserv_date)
 		VALUES
@@ -77,5 +98,16 @@
 	        #{reservId}
 	    </foreach>
 	</delete>
+	
+	<!-- 여러 개의 예약 삭제 -->
+	<delete id="deleteReservsByMemId">
+	    DELETE FROM reservation 
+	    WHERE reserv_id IN
+	    <foreach collection="reservIds" item="reservId" open="(" separator="," close=")">
+	        #{reservId}
+	    </foreach>
+	    AND mem_id = #{memId}
+	</delete>
+
 	
 </mapper>

@@ -56,7 +56,7 @@ public enum ExceptionCode {
 
     // 대여 관련 에러
     NO_AVAILABLE_BOOK(HttpStatus.BAD_REQUEST, "현재 대여 가능한 도서가 없습니다."),
-    OVERDUE_RENT(HttpStatus.BAD_REQUEST, "연체 중인 도서가 있어 대여가 불가능합니다."),
+    OVERDUE_RENT(HttpStatus.BAD_REQUEST, "연체 중인 도서가 있어 대여 또는 예약이 불가능합니다."),
     EXCEEDED_RENT_LIMIT(HttpStatus.BAD_REQUEST, "대여 가능한 도서 수를 초과하였습니다."),
     ALREADY_RENTED(HttpStatus.BAD_REQUEST, "이미 대여 중인 도서입니다."),
     NOT_RENT_REQUEST_CANCELD_STATE(HttpStatus.BAD_REQUEST, "대여 신청을 취소할 수 없는 상태입니다."),
@@ -71,8 +71,11 @@ public enum ExceptionCode {
     NOT_POSSIBLE_SAME_BOOK(HttpStatus.BAD_REQUEST, "같은 도서를 2권이면 대여하거나 대여 신청할 수 없습니다."),
     
     // 예약 관련 비즈니스 로직 에러
+    RESERVATION_ALREADY_EXISTS_CURRENT_MEMBER(HttpStatus.BAD_REQUEST, "현재 사용자가 이미 예약된 도서입니다."),
     RESERVATION_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "이미 예약된 도서입니다."),
+    CAN_RENT_OR_RENT_REQUEST(HttpStatus.BAD_REQUEST, "대여 신청 또는 대여 가능한 도서가 있습니다."),
     RESERVATION_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "예약 가능한 수량을 초과했습니다."),
+    RESERVATION_OR_BOOK_ID_NOT_INPUT(HttpStatus.BAD_REQUEST, "상태를 변경할 예약 또는 책의 ID값을 입력해주세요"),
     RESERVATION_EXPIRED(HttpStatus.BAD_REQUEST, "예약 기간이 만료되었습니다."),
     RESERVATION_NOT_AVAILABLE(HttpStatus.BAD_REQUEST, "현재 예약이 불가능한 도서입니다."),
     RESERVATION_CANCEL_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "예약 취소가 불가능한 상태입니다."),

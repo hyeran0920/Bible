@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.library.bible.book.dto.BookAndReservationInfo;
 import com.library.bible.book.model.Book;
 import com.library.bible.book.repository.IBookRepository;
 import com.library.bible.exception.CustomException;
@@ -49,6 +50,13 @@ public class BookService implements IBookService {
     @Cacheable(value = "books", key = "#bookId")
     public Map<String, Object> getBookInfoMap(long bookId) {
         return bookRepository.getBookInfoMap(bookId);
+    }
+    
+    // book과 reservation 동시 조회
+    // bookIds의 예약 정보와 memId에 해당하는 예약 정보 전부 가져오기
+    @Override
+	public List<BookAndReservationInfo> getBookAndReservations(List<Long> bookIds, long memId) {
+    	return bookRepository.getBookAndReservations(bookIds, memId);
     }
 
     @Override

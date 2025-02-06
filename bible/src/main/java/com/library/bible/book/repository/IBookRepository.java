@@ -7,7 +7,10 @@ import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.library.bible.book.dto.BookAndReservationInfo;
 import com.library.bible.book.model.Book;
+
+import io.lettuce.core.dynamic.annotation.Param;
 
 
 @Mapper
@@ -23,6 +26,10 @@ public interface IBookRepository {
 	List<Book> getBookListByRentIds(List<Long> rentIds);
 	List<Book> getBookListByBookIds(List<Long> bookIds);
 	Book getBookInfo(long bookid);
+	List<BookAndReservationInfo> getBookAndReservations(
+		    @Param("bookIds") List<Long> bookIds, 
+		    @Param("memId") long memId
+	);
 	
 	void updateBookImgPath(Long bookId, String bookImgPath);
 	void updateBookQrPath(Long bookId, String bookQrPath);

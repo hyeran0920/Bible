@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.library.bible.book.dto.BookAndReservationInfo;
 import com.library.bible.book.model.Book;
 
 public interface IBookService {
@@ -14,6 +15,7 @@ public interface IBookService {
 	
 	List<Map<String, Object>> getBookListMap();
 	Map<String, Object> getBookInfoMap(long bookid);
+	List<BookAndReservationInfo> getBookAndReservations(List<Long> bookIds, long memId);
 	
 	List<Book> getBookList();
 	List<Book> getBookListByRentIds(List<Long> rendIds);

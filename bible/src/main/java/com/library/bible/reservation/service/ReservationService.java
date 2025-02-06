@@ -64,7 +64,18 @@ public class ReservationService implements IReservationService {
 		@CacheEvict(value="reservs", allEntries=true)
 	})
 	public int deleteReserv(long reservId) {
-		return reservRepository.deleteReserv(reservId);
+		int result = reservRepository.deleteReserv(reservId);
+		if(result == 0) throw new CustomException(ExceptionCode.RESERVATION_DELETE_FAIL);
+		return result;
+	}
+	
+	@Override
+	@Transactional
+	@CacheEvict(value="reservs", allEntries=true)
+	public int deleteReservs(List<Long> reservIds) {
+		int result = reservRepository.deleteReservs(reservIds);
+		if(result != reservIds.size()) throw new CustomException(ExceptionCode.RESERVATION_DELETE_FAIL);
+		return result;
 	}
 
 }

@@ -69,4 +69,13 @@
 		DELETE FROM reservation WHERE reserv_id = #{reservId}
 	</delete>
 	
+	<!-- 여러 개의 예약 삭제 -->
+	<delete id="deleteReservs">
+		DELETE FROM reservation 
+	    WHERE reserv_id IN
+	    <foreach collection="reservIds" item="reservId" open="(" separator="," close=")">
+	        #{reservId}
+	    </foreach>
+	</delete>
+	
 </mapper>

@@ -12,4 +12,5 @@ public interface IReservationService {
 	void insertReserv(Reservation reservation);
 	void updateReserv(Reservation reservation);
 	int deleteReserv(long reservId);
+	int deleteReservs(List<Long> reservIds);
 }

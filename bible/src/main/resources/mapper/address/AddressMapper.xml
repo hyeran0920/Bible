@@ -9,6 +9,9 @@
         <result property="postcode" column="postcode"/>
         <result property="address" column="address"/>
         <result property="detailAddress" column="detail_address"/>
+        <result property="receiverName" column="receiver_name"/>
+        <result property="receiverPhone" column="receiver_phone"/>
+        <result property="defaultAddress" column="default_address"/>
     </resultMap>
     
 	<!-- Member ID로 address 조회 -->
@@ -18,7 +21,10 @@
 	        mem_id,
 	        postcode,
 	        address,
-	        detail_address
+	        detail_address,
+	        receiver_name,
+	        receiver_phone,
+	        default_address
 	    FROM address
 	    WHERE mem_id = #{memId}
 	</select>
@@ -30,10 +36,44 @@
 	        mem_id,
 	        postcode,
 	        address,
-	        detail_address
+	        detail_address,
+	        receiver_name,
+	        receiver_phone,
+	        default_address
 	    FROM address 
 	    WHERE address_id = #{addressId}
 	</select>
+	
+	<select id="selectDefaultAddress" resultMap="addressResultMap">
+		SELECT 
+	        address_id,
+	        mem_id,
+	        postcode,
+	        address,
+	        detail_address,
+	        receiver_name,
+	        receiver_phone,
+	        default_address
+	    FROM address 
+	    WHERE mem_id = #{memId} AND default_address=1
+	</select>
+	
+	<select id="countAddress" parameterType="long" resultType="int">
+		select count(*) from address
+		where mem_id=#{memId}
+	</select>
+	
+	<update id="setDefaultAddress" parameterType="map">
+	    UPDATE address 
+	    SET default_address = 
+	        CASE 
+	            WHEN address_id = #{addressId} THEN 1 
+	            ELSE 0 
+	        END
+	    WHERE mem_id = #{memId}
+	</update>
+
+
 	
     <!-- Address 등록 -->
 	<insert id="insertAddress" parameterType="Address" useGeneratedKeys="true" keyProperty="addressId" keyColumn="address_id">
@@ -41,12 +81,18 @@
 	        mem_id,
 	        postcode,
 	        address,
-	        detail_address
+	        detail_address,
+	        receiver_name,
+	        receiver_phone,
+	        default_address
 	    ) VALUES (
 	        #{memId},
 	        #{postcode},
 	        #{address},
-	        #{detailAddress}
+	        #{detailAddress},
+	        #{receiverName},
+	        #{receiverPhone},
+	        #{defaultAddress}
 	    )
 	</insert>
 
@@ -55,7 +101,10 @@
 	    UPDATE address SET
 	        postcode = #{postcode},
 	        address = #{address},
-	        detail_address = #{detailAddress}
+	        detail_address = #{detailAddress},
+	        receiver_name=#{receiverName},
+	        receiver_phone=#{receiverPhone},
+	        default_address=#{defaultAddress}
 	    WHERE address_id = #{addressId}
 	</update>
     
@@ -70,4 +119,7 @@
 	    DELETE FROM address
 	    WHERE address_id = #{addressId}
 	</delete>
+	
+	
+	
 </mapper>

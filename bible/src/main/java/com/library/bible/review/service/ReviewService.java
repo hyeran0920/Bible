@@ -32,8 +32,10 @@ public class ReviewService implements IReviewService{
 
 	
 	@Override
-	public void insertReview(@AuthMember Member member, Review review) {
-		reviewRepository.insertReview(member, review);
+	public void insertReview(long memId, Review review) {
+		System.out.println("insert review - review service");
+		review.setMemId(memId);
+		reviewRepository.insertReview(review);
 	}
 
 

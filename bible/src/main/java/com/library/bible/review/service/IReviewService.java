@@ -12,7 +12,7 @@ public interface IReviewService {
 	List<Review> getReview();
     List<Review> getBookReview(long bookId);
 
-	void insertReview(@AuthMember Member member, Review review);
+	void insertReview(long memId, Review review);
 	void deleteReview(long memId, long reviewId);
 	void deleteAdminReview(long reviewId);
 

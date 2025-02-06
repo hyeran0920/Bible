@@ -38,11 +38,12 @@ public class ReviewController {
 		return reviewService.getBookReview(bookId);
 	}
 	
-	//리뷰 추가
+	//리뷰 추가!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	@PostMapping
     public ResponseEntity<String> addReview(@AuthMember Member member, @RequestBody Review request) {
-            reviewService.insertReview(member,request);
-            return ResponseEntity.ok("리뷰가 성공적으로 추가되었습니다.");
+        System.out.println("add review");    
+		reviewService.insertReview(member.getMemId(),request);
+        return ResponseEntity.ok("리뷰가 성공적으로 추가되었습니다.");
 
     }
 	// 리뷰 삭제 (memId와 reviewId 사용)

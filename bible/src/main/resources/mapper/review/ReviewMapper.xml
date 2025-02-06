@@ -39,7 +39,7 @@
 
 	<insert id="insertReview" parameterType="com.library.bible.review.model.Review">
 	    INSERT INTO REVIEW (review_star, review_comment, book_id, mem_id)
-	    VALUES (#{reviewstar}, #{reviewComment}, #{bookId}, #{memId})
+	    VALUES (#{reviewStar}, #{reviewComment}, #{bookId}, #{memId})
 	</insert>
 	
 	<delete id="deleteReview" parameterType="com.library.bible.review.model.Review">

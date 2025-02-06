@@ -17,7 +17,7 @@ public interface IReviewRepository {
     List<Review> getBookReview(long bookId);
     
     
-	void insertReview(@AuthMember Member member, Review review);
+	void insertReview(Review review);
 	void deleteReview(long memId, long reviewId);
 	
 	void deleteAdminReview(long reviewId);

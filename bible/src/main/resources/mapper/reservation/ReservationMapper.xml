@@ -57,8 +57,18 @@
 		WHERE reserv_id = #{reservId}
 	</select>
 	
+	<!-- bookIds에 해당하는 예약 개수 세기 -->
+	<select id="selectReservCountByBookIds">
+		SELECT COUNT(*)
+		FROM reservation
+		WEHRE book_id IN 
+		<foreach collection="bookIds" item="bookId" open="(" separator=", " close=")">
+			#{bookId}
+		</foreach>
+	</select>
+	
 	<!-- 예약 추가 -->
-	<insert id="insertReserv" parameterType="Reservation">
+	<insert id="insertReserv" parameterType="Reservation" useGeneratedKeys="true" keyProperty="reservId" keyColumn="reserv_id">
 		INSERT INTO reservation
 			(mem_id, book_id, reserv_date)
 		VALUES

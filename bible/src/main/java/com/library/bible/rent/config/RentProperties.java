@@ -5,11 +5,11 @@ import org.springframework.context.annotation.Configuration;
 import jakarta.annotation.PostConstruct;
 
 public enum RentProperties {
-    RENT_DATE,
-    RENEWAL_DATE,
-    RENEWAL_COUNT,
-    POSSIBLE_BOOK_COUNT,
-    REQUEST_DATE;
+    RENT_DATE,				// 대여일
+    RENEWAL_DATE,			// 연장일
+    RENEWAL_COUNT,			// 연장 가능 횟수
+    POSSIBLE_BOOK_COUNT,	// 대여 가능한 도서 개수
+    REQUEST_DATE;			// 대여 신청 후 대여까지 기간
 
     private int value; 
 

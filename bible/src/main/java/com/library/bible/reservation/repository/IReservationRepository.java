@@ -19,8 +19,9 @@ public interface IReservationRepository {
 	
 	//Reservation CRUD
 	Reservation selectReserv(long reservId);
-	void insertReserv(Reservation reservation);
-	void updateReserv(Reservation reservation);
+	int selectReservCountByBookIds(List<Long> bookIds);
+	int insertReserv(Reservation reservation);
+	int updateReserv(Reservation reservation);
 	int deleteReserv(long reservId);
 	int deleteReservs(List<Long> reservIds);
 	int deleteReservsByMemId(@Param("reservIds") List<Long> reservIds, @Param("memId") Long memId);

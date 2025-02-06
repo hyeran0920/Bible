@@ -63,29 +63,44 @@ public class ReservationController {
 		return ResponseEntity.ok(reservs);
 	}	
 	
-	// 예약 생성
-	@PostMapping
-	public ResponseEntity<Reservation> insertReserv(@RequestBody @Validated Reservation reservation){
+//	// 예약 생성
+//	@PostMapping
+//	public ResponseEntity<Reservation> insertReserv(@RequestBody @Validated Reservation reservation){
+//		lock.lock();
+//		try {
+//			reservService.insertReserv(reservation);
+//			return ResponseEntity.status(HttpStatus.CREATED).body(reservation);
+//		} finally {
+//			lock.unlock();
+//		}
+//	}
+	
+	// 2. 예약 생성 - bookIds로 예약 생성하기(사용자)
+	@PostMapping("/me")
+	public ResponseEntity<List<Reservation>> insertReservByMemId(@RequestParam int memI, @RequestBody ReservationRequest request) {
 		lock.lock();
 		try {
-			reservService.insertReserv(reservation);
-			return ResponseEntity.status(HttpStatus.CREATED).body(reservation);
+			List<Reservation> reservations = reservService.insertReservByBookIds(request.getBookIds(), memI);
+			System.out.println(reservations);
+
+			return ResponseEntity.status(HttpStatus.CREATED).body(reservations);
 		} finally {
 			lock.unlock();
 		}
 	}
 	
-	// bookIds로 예약 생성하기
-	@PostMapping("/me")
-	public ResponseEntity<Reservation> insertReservByMemId(@AuthMember Member member) {
+	// 2. 예약 생성 - bookIds로 예약 생성하기(관리자)
+	@PostMapping
+	public ResponseEntity<List<Reservation>> insertReservByMemId(@AuthMember Member member, @RequestBody ReservationRequest request) {
 		lock.lock();
 		try {
-//			reservService.insertReserv(reservation);
-//			return ResponseEntity.status(HttpStatus.CREATED).body(reservation);
+			List<Reservation> reservations = reservService.insertReservByBookIds(request.getBookIds(), member.getMemId());
+			System.out.println(reservations);
+			
+			return ResponseEntity.status(HttpStatus.CREATED).body(reservations);
 		} finally {
 			lock.unlock();
 		}
-		return null;
 	}
 	
 	// 예약 수정

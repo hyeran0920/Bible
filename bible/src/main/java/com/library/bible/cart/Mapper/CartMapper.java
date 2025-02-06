@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.library.bible.cart.model.Cart;
 
-@Mapper  
+@Mapper  // ✅ 추가
 public interface CartMapper {
 
 	 @Select({

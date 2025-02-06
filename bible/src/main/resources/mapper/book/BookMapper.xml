@@ -21,7 +21,6 @@
 	            book_location 	 AS "bookLocation",
 	            book_qr_path     AS "bookQrPath"
 	    FROM BOOK
-	    ORDER BY book_id ASC
 	</select>
 
 	<select id="getBookInfoMap" parameterType="java.lang.Long" resultType="hashmap">

@@ -39,7 +39,7 @@ public class ReviewController {
 		return reviewService.getBookReview(bookId);
 	}
 	// 특정 사용자 리뷰 데이터 조회
-	@GetMapping("/member/{member}")
+	@GetMapping("/member")
     public ResponseEntity<List<Review>> getMembereview(@AuthMember Member member) {
         List<Review> reviewList = reviewService.getMemberReview(member.getMemId());
         return ResponseEntity.ok(reviewList);
@@ -55,8 +55,8 @@ public class ReviewController {
     }
 	// 리뷰 삭제 (memId와 reviewId 사용)
 	@PostMapping("/{reviewId}")
-	public ResponseEntity<String> delReview(@PathVariable long reviewId, @RequestParam long memId) {
-	    reviewService.deleteReview(memId, reviewId);
+	public ResponseEntity<String> delReview(@PathVariable long reviewId, @AuthMember Member member) {
+	    reviewService.deleteReview(reviewId, member.getMemId());
 	    return ResponseEntity.ok("리뷰가 삭제되었습니다");
 	}
 	

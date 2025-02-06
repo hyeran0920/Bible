@@ -4,6 +4,9 @@
       <ul v-if="reviews.length" class="review-list">
         <li v-for="review in reviews" :key="review.reviewId" class="review-card">
           <div class="review-header">
+            <div>
+              <span class="title">{{ review.bookTitle }}</span>
+            </div>
             <div class="review-star-rating">
               <span class="stars">{{ '★'.repeat(review.reviewStar) }}</span>
             </div>
@@ -112,21 +115,25 @@
   }
   
   .review-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-  }
-  
-  .review-star-rating {
-    font-size: 18px;
-    color: #ffd700;
-  }
-  
-  .review-date {
-    font-size: 12px;
-    color: #888;
-  }
+  display: flex;
+  flex-direction: column; /* 세로로 나열되도록 수정 */
+  align-items: flex-start; /* 책 제목과 별은 왼쪽 정렬 */
+  margin-bottom: 15px;
+}
+
+.review-star-rating {
+  font-size: 18px;
+  color: #ffd700;
+  margin-top: 5px; /* 별과 날짜 사이의 간격을 주기 위해 추가 */
+}
+
+.review-date {
+  font-size: 12px;
+  color: #888;
+  margin-top: 5px; /* 별과 날짜 사이의 간격을 주기 위해 추가 */
+  align-self: flex-end; /* 날짜는 오른쪽 정렬 */
+}
+
   
   .review-comment p {
     font-size: 14px;

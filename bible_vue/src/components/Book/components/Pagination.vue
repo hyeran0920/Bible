@@ -5,6 +5,13 @@
     <button class="arrow-btn" :disabled="currentPage === totalPages" @click="goToNextPage">&gt;</button>
   </div>
   <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
 </template>
 
 <script>

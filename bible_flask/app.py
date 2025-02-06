@@ -7,7 +7,7 @@ from flask_cors import CORS
 app = Flask(__name__)
 
 # ngrok 터널 열기
-ngrok.set_auth_token("2gAz8iHMKHDtlgbxaand8ce6EAu_2pSR9fiiFYRnhBPUHT1Vz")
+ngrok.set_auth_token("2gAz8iHMKHDtlgbxaand8ce6EAu_2pSR9fiiFYRnhBPUHT1Vz") # ngrok Authtoken
 public_url = ngrok.connect(5000)
 print(f"🚀 Public URL: {public_url}")
 
@@ -16,7 +16,7 @@ def home():
     return "Flask API is running!"
 
 @app.route("/recommend", methods=["POST"])
-def get_recommendations():
+def recommend_post():
     data = request.get_json()
     user_id = data.get("user_id")
     n = data.get("n", 5)
@@ -25,13 +25,13 @@ def get_recommendations():
 
     return jsonify({"user_id": user_id, "recommendations": recommendations})
 
-#@app.route("/recommend", methods=["GET"])
-#def get_recommendations():
-#    user_id = request.args.get("user_id", type=int)
-#    n = request.args.get("n", default=5, type=int)
-#
-#    recommendations = ["Book 1", "Book 2", "Book 3"]  # 임시 결과
-#    return jsonify({"user_id": user_id, "recommendations": recommendations})
+@app.route("/recommend", methods=["GET"])
+def recommend_get():
+    user_id = request.args.get("user_id", type=int)
+    n = request.args.get("n", default=5, type=int)
+
+    recommendations = [f"Book {i+1}" for i in range(n)]  # 임시 결과
+    return jsonify({"user_id": user_id, "recommendations": recommendations})
 
 # Flask 서버 실행
 if __name__ == "__main__":

@@ -12,8 +12,13 @@ import com.library.bible.address.model.Address;
 public interface IAddressRepository {
     List<Address> selectAddressesByMemId(long memId);
     Address seleAddress(long addressId);
-    int insertAddress(Address address);
+    Address selectDefaultAddress(long memId);
+    
+    int insertAddress(Address address); 
     int updateAddress(Address address);
     int deleteAddressesByMemId(long memId);
     int deleteAddress(long addressId);
+	
+    int countAddress(long memId);
+    void setDefaultAddress(long memId, long addressId);
 }

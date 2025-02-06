@@ -30,8 +30,26 @@ public class AddressService implements IAddressService {
 	@Override
 	@Transactional
 	public Address insertAddress(Address address) {
+		
+		System.out.println(address.getDefaultAddress());
+		if(address.getDefaultAddress()!=1) {address.setDefaultAddress(0);}
+		
+		//insert address
         int result = addressRepository.insertAddress(address);
         if(result == 0) throw new CustomException(ExceptionCode.ADDRESS_INSERT_FAIL);
+        
+        //default address
+        System.out.println("is default address="+address.getDefaultAddress());
+        System.out.println("address count="+addressRepository.countAddress(address.getMemId()));
+        
+        if(address.getDefaultAddress()== 1 || 
+        		addressRepository.countAddress(address.getMemId())==1)
+        {
+        	System.out.println("default address="+address.getAddressId());
+			addressRepository.setDefaultAddress(address.getMemId(),address.getAddressId());
+		}
+
+        
         return address;
 	}
 
@@ -62,5 +80,23 @@ public class AddressService implements IAddressService {
 	public void deleteAddress(long addressId) {
 		int result = addressRepository.deleteAddress(addressId);
         if(result == 0) throw new CustomException(ExceptionCode.ADDRESS_DELETE_FAIL);
+	}
+
+	@Override
+	public Address selectDefaultAddress(long memId) {
+		Address address=addressRepository.selectDefaultAddress(memId);
+		return address;
+		
+	}
+
+	@Override
+	public int countAddress(long memId) {
+		return addressRepository.countAddress(memId);
+	}
+
+	@Override
+	public void setDefaultAddress(long memId, long addressId) {
+		addressRepository.setDefaultAddress(memId, addressId);
+		
 	}
 }

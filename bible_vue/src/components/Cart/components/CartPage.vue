@@ -1,19 +1,31 @@
 <template>
+  <Header />
   <div class="cart-page">
     <h2>카트</h2>
+
+
     <div class="cart-items">
       <div v-for="cart in carts" :key="cart.cartId" class="cart-item">
+        
+        <!--book 선택-->
         <div class="item-checkbox">
           <input type="checkbox" :value="cart.cartId" v-model="selectedCartIds" @change="calculateTotal()" />
         </div>
+
+        <!--book 정보-->
         <div class="item-content">
+
+          <!--img-->
           <div class="item-image">
             <img :src="getBookImageUrl(cart.bookId)" :alt="books[cart.bookId]?.bookTitle || '책 제목 없음'" />
           </div>
+
+          <!--title, author, qunaitiy, price-->
           <div class="item-details">
             <h3>{{ books[cart.bookId]?.bookTitle || '제목 없음' }}</h3>
             <p class="author">{{ books[cart.bookId]?.bookAuthor || '저자 없음' }}</p>
             <!-- <p class="price">{{ books[cart.bookId]?.bookPrice.toLocaleString() || 0 }}원</p> -->
+            
             <div class="quantity-control">
               <button @click="decreaseQuantity(cart)">-</button>
               <input 
@@ -24,27 +36,40 @@
               />
               <button @click="increaseQuantity(cart)">+</button>
             </div>
+
             <p class="total-price">총 {{ (books[cart.bookId]?.bookPrice * cart.bookCount || 0).toLocaleString() }}원</p>
-            <button class="delete-btn" @click="deleteCart(cart.cartId)">삭제</button>
           </div>
+          <!--delete button-->
+          <div><button class="delete-btn" @click="deleteCart(cart.cartId)">X</button></div>
         </div>
       </div>
     </div>
+
+    <!-- total payment-->
     <div class="cart-summary">
       <p>총 결제 금액: <strong>{{ totalPayPrice.toLocaleString() }}원</strong></p>
-      <button class="checkout-btn">결제하기</button>
+      
+      <!--Order page로 이동-->
+      <router-link :to="'/order/' + selectedCartIds.join('-')">
+        <button class="checkout-btn">결제하기</button>
+      </router-link>
+
     </div>
-    <!-- 구매 버튼 추가 -->
-    <div style="margin-top: 20px;">
-      <button @click="placeOrder" :disabled="selectedCartIds.length === 0">구매하기</button>
-    </div>
+
   </div>
   <Footer />
 </template>
 
+
+
 <script>
 import axios from 'axios';
+import Header from '../../MainPage/components/Header.vue';
 import Footer from '../../MainPage/components/Footer.vue';
+import '../styles/CartStyle.css';
+import { RouterLink } from 'vue-router';
+
+
 
 export default {
   data() {
@@ -56,22 +81,15 @@ export default {
     };
   },
   components: {
-    Footer
+    Footer,
+    Header
   },
   mounted() {
     this.fetchCarts();
   },
   methods: {
-    increaseQuantity(cart) {
-      cart.bookCount++;
-      this.calculateBookPrice(cart.cartId, cart.bookCount, cart.bookId);
-    },
-    decreaseQuantity(cart) {
-      if (cart.bookCount > 1) {
-        cart.bookCount--;
-        this.calculateBookPrice(cart.cartId, cart.bookCount, cart.bookId);
-      }
-    },
+
+    //Fetch Data---------------------------------------------------------------
     fetchCarts() {
       axios.get('http://localhost:8080/api/carts', { withCredentials: true })
         .then(response => {
@@ -94,6 +112,18 @@ export default {
         .catch(error => {
           console.error("책 정보를 불러오는 중 오류 발생:", error);
         });
+    },
+
+    //CART----------------------------------------------------------------
+    increaseQuantity(cart) {
+      cart.bookCount++;
+      this.calculateBookPrice(cart.cartId, cart.bookCount, cart.bookId);
+    },
+    decreaseQuantity(cart) {
+      if (cart.bookCount > 1) {
+        cart.bookCount--;
+        this.calculateBookPrice(cart.cartId, cart.bookCount, cart.bookId);
+      }
     },
     calculateTotal() {
       let total = 0;
@@ -128,184 +158,24 @@ export default {
           console.error("장바구니 항목 삭제 중 오류 발생:", error);
         });
     },
-    //(추가) 주문 요청 (선택한 장바구니 상품들)
-    placeOrder() {
-    if (this.selectedCartIds.length === 0) {
-      alert("주문할 상품을 선택해주세요.");
-      return;
-    }
-
-    // ✅ 백엔드에 데이터 전송 없이 order 페이지로 이동
-    this.$router.push({
-      path: "/order",
-      query: { cartIds: this.selectedCartIds.join(",") },
-    });
-  },
     
 
-    // Get Book Image URL
+    // Book Img------------------------------------------------------------
     getBookImageUrl(bookId) {
       return `http://localhost:8080/api/uploads/book-image?bookid=${bookId}`;
     },
+
+
+    // Order---------------------------------------------------------------
+    orderStart(){
+      console.log("selected cart ids");
+      for(let cartId in this.selectedCartIds){
+        console.log(cartId);
+
+      }
+    }
+
   }
 };
 </script>
-<style scoped>
-.cart-page {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 10px;
-  font-family: Arial, sans-serif;
-}
 
-h2 {
-  text-align: center;
-  color: #333;
-  margin-bottom: 15px;
-}
-
-.cart-items {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.cart-item {
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  padding: 10px;
-  display: flex;
-  position: relative;
-}
-
-.item-checkbox {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-}
-
-.item-content {
-  display: flex;
-  flex: 1;
-  margin-left: 25px;
-}
-
-.item-image {
-  width: 80px;
-  height: 120px;
-  margin-right: 15px;
-}
-
-.item-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 4px;
-}
-
-.item-details {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.item-details h3 {
-  margin: 0 0 3px 0;
-  font-size: 16px;
-  color: #333;
-}
-
-.author {
-  font-size: 12px;
-  color: #666;
-  margin-bottom: 3px;
-}
-
-.quantity-control {
-  display: flex;
-  align-items: center;
-  margin-bottom: 5px;
-}
-
-.quantity-control input {
-  width: 30px;
-  text-align: center;
-  margin: 0 3px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  padding: 3px;
-}
-
-.quantity-control button {
-  background-color: #fff;
-  border: none;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  cursor: pointer;
-  color: #333;
-  font-size: 14px;
-  padding-top: 3px;
-}
-
-.total-price {
-  font-weight: bold;
-  color: #4caf50;
-  font-size: 14px;
-}
-
-.delete-btn {
-  background-color: #ff4d4d;
-  color: white;
-  border: none;
-  padding: 3px 8px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 12px;
-  align-self: flex-end;
-}
-
-.cart-summary {
-  padding: 15px;
-  border-radius: 8px;
-  text-align: right;
-}
-
-.checkout-btn {
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-@media (max-width: 600px) {
-  .cart-item {
-    padding: 8px;
-  }
-
-  .item-content {
-    flex-direction: row;
-    margin-left: 0;
-  }
-
-  .item-image {
-    width: 40%;
-    height: auto;
-  }
-
-  .item-details {
-    width: 60%;
-    padding-left: 10px;
-  }
-
-  .item-checkbox {
-    position: static;
-    margin-bottom: 5px;
-  }
-}
-</style>

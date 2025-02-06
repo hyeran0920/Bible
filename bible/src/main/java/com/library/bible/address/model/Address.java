@@ -13,4 +13,7 @@ public class Address {
     private String postcode;
 	private String address;
 	private String detailAddress;
+	private String receiverName;
+	private String receiverPhone;
+	private int defaultAddress;
 }

@@ -20,7 +20,7 @@ export default {
                 labels: [], // 책 카테고리
                 datasets: [
                     {
-                        label: '책 개수',
+                        label: 'Top 200 카테고리',
                         data: [],
                         backgroundColor: 'rgba(75, 192, 192, 0.2)',
                         borderColor: 'rgba(75, 192, 192, 1)',

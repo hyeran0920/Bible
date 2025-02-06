@@ -1,0 +1,63 @@
+{
+    "mypage":{
+        "menubar":{
+            "title": "MYPAGE",
+            "backHome": "Return to Main Screen",
+            "myInfo": "My information",
+            "rentHistory": "rental History"
+        },
+        "member":{
+            "title": "Manage My Information",
+            "titleInfo": "Information",
+            "name": "Name",
+            "email": "Email",
+            "password": "Password",
+            "phone": "PhoneNumber",
+            "QR":"QR Code",
+            "QRInfo":"QR has not been issued, please contact your administrator.",
+            "insertBtn": "Modifying Information",
+            "deleteBtn": "Membership Withdrawal",
+            "modalTitle": "Modifying Member Information",
+            "modalName": "Name",
+            "modalEmail": "Email",
+            "modalPassword": "Password",
+            "modalPassword2": "Check the password",
+            "modalPhone": "PhoneNumber",
+            "modalSaveBtn": "Save",
+            "modalCancleBtn": "Cancle",
+            "modalCheckEmail": "It is not a valid e-mail format.",
+            "modalCheckPassword": "Password does not match.",
+            "modalCheckPhone": " It's a format: 010-XXXX-XXXX.",
+            "deleteEmailInfo": "Please enter your e-mail.",
+            "deleteComplete": "Your account has been deleted.",
+            "deleteEmailError": "The e-mail is not correct. Please check."
+        },
+        "address":{
+            "title": "address book",
+            "postal": "postal address",
+            "road": "Road address",
+            "detail":"Detailed address",
+            "addBtn": "Add Address",
+            "deleteBtn": "Delete",
+            "addressInfo1": "There are no saved addresses.",
+            "deleteAddress": "Your address has been deleted.",
+            "deleteFail": "Deletion failed for internal reasons.",
+            "addFail": "Address addition failed",
+            "addSuccess": "Address addition success"
+        },
+        "rent":{
+            "title": "Rent History",
+            "rentDate": "Rent Date",
+            "bookName": "Book Name",
+            "expectedDate": "Expected Date",
+            "returnDate": "Expiry Date",
+            "status": "Status",
+            "requested": "REQUESTED",
+            "cancle": "CANCLED",
+            "inUse": "IN USE",
+            "returned": "RETURNED",
+            "none": "None"
+        }
+    }
+}
+    

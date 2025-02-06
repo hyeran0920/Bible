@@ -1,8 +1,8 @@
 <template>
     <div class="mypage-container">
         <button class="hamburger-btn" @click="toggleSidebar">☰</button>
-
         <div class="sidebar" :class="{ 'sidebar-hidden': !isSidebarOpen }">
+            <button class="hidden-btn" @click="toggleSidebar">X</button>
             <h2>{{ $t('mypage.menubar.title') }}</h2>
             <div class="language-selector">
                 <button class="language-btn" @click="toggleLanguageList">{{ selectedLanguage }}</button>
@@ -24,15 +24,20 @@
         <div class="content-area">
             <router-view />
         </div>
+        <Footer />
     </div>
 </template>
   
 <script>
+    import Footer from '../../MainPage/components/Footer.vue';
     export default {
         name: "mypageMember",
+        components:{
+            Footer,
+        },
         data() {
             return {
-                isSidebarOpen: false,
+                isSidebarOpen: true,
                 isLanguageListVisible: false,
                 selectedLanguage: localStorage.getItem('selectedLanguage') || '한국어',
                 menuItems: [
@@ -51,7 +56,7 @@
             },
             closeSidebar() {
                 if (window.innerWidth <= 768) {
-                this.isSidebarOpen = false;
+                    this.isSidebarOpen = true;
                 }
             },
             isActive(route) {
@@ -98,8 +103,18 @@
         left: 15px;
         background: none;
         border: none;
-        font-size: 24px;
+        font-size: 20px;
         cursor: pointer;
+        background-color: rgba(0, 0, 0, 0.0);
+        color:#333;
+        width: 45px;
+    }
+    .hidden-btn{
+        display:none;
+        width: 45px;
+        /* background-color: darkgray; */
+        background: rgba(0, 0, 0, 0.0);
+        color:#333;
     }
     /* 반응형 스타일 */
     @media (max-width: 768px){
@@ -112,6 +127,7 @@
             left: 0;
             height: 100vh;
             transform: translateX(-100%);
+            transform: transform 0.3s ease-in-out;
             z-index: 1000;
             box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.1);
         }
@@ -121,6 +137,9 @@
         }
 
         .hamburger-btn {
+            display: block;
+        }
+        .hidden-btn{
             display: block;
         }
     }

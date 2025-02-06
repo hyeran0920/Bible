@@ -76,11 +76,21 @@ public class ReservationService implements IReservationService {
 		return result;
 	}
 	
+	// reservIds를 이용해서 한 번에 예약 삭제
 	@Override
 	@Transactional
 	@CacheEvict(value="reservs", allEntries=true)
 	public int deleteReservs(List<Long> reservIds) {
 		int result = reservRepository.deleteReservs(reservIds);
+		if(result != reservIds.size()) throw new CustomException(ExceptionCode.RESERVATION_DELETE_FAIL);
+		return result;
+	}
+	
+	// 해당 사용자의 reservIds에 해당하는 예약 삭제
+	@Override
+	@Transactional
+	public int deleteReservsByMemId(List<Long> reservIds, Long memId) {
+		int result = reservRepository.deleteReservsByMemId(reservIds, memId);
 		if(result != reservIds.size()) throw new CustomException(ExceptionCode.RESERVATION_DELETE_FAIL);
 		return result;
 	}

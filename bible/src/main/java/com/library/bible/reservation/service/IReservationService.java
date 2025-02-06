@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.library.bible.reservation.model.Reservation;
 
+import io.lettuce.core.dynamic.annotation.Param;
+
 public interface IReservationService {
 	List<Reservation> selectAllReserv();
 	List<Reservation> selectReservByMemId(long memId);
@@ -14,4 +16,5 @@ public interface IReservationService {
 	void updateReserv(Reservation reservation);
 	int deleteReserv(long reservId);
 	int deleteReservs(List<Long> reservIds);
+	int deleteReservsByMemId(List<Long> reservIds, Long memId);
 }

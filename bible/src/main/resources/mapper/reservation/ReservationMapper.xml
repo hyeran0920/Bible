@@ -89,4 +89,15 @@
 	    </foreach>
 	</delete>
 	
+	<!-- 여러 개의 예약 삭제 -->
+	<delete id="deleteReservsByMemId">
+	    DELETE FROM reservation 
+	    WHERE reserv_id IN
+	    <foreach collection="reservIds" item="reservId" open="(" separator="," close=")">
+	        #{reservId}
+	    </foreach>
+	    AND mem_id = #{memId}
+	</delete>
+
+	
 </mapper>

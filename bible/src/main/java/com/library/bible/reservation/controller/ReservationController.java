@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.library.bible.member.model.Member;
+import com.library.bible.reservation.dto.ReservationRequest;
 import com.library.bible.reservation.model.Reservation;
 import com.library.bible.reservation.service.IReservationService;
 import com.library.bible.resolver.AuthMember;
@@ -41,7 +42,7 @@ public class ReservationController {
 		return ResponseEntity.ok(reservs);
 	}
 	
-	//특정 예약 조회
+	// 특정 예약 조회
 	@GetMapping("/{reservId}")
 	public ResponseEntity<Reservation> selectReserv(@PathVariable @Positive long reservId){
 		Reservation reserv = reservService.selectReserv(reservId);
@@ -62,7 +63,7 @@ public class ReservationController {
 		return ResponseEntity.ok(reservs);
 	}	
 	
-	//예약 생성
+	// 예약 생성
 	@PostMapping
 	public ResponseEntity<Reservation> insertReserv(@RequestBody @Validated Reservation reservation){
 		lock.lock();
@@ -87,7 +88,7 @@ public class ReservationController {
 		return null;
 	}
 	
-	//예약 수정
+	// 예약 수정
 	@PutMapping("{reservId}")
 	public ResponseEntity<Reservation> updateReserv(@PathVariable long reservId, @RequestBody Reservation reservation){
 		Reservation existingReserv = reservService.selectReserv(reservId);
@@ -98,9 +99,24 @@ public class ReservationController {
 		return ResponseEntity.ok(reservation);
 	}
 	
-	//예약 삭제
+	// 예약 삭제
 	@DeleteMapping("{reservId}")
-	public void deleteReserv(@PathVariable @Positive long reservId) {
+	public ResponseEntity<?> deleteReserv(@PathVariable @Positive long reservId) {
 		reservService.deleteReserv(reservId);
+		return ResponseEntity.noContent().build();
+	}
+	
+	// 3. 여러 개의 예약 삭제 - 사용자
+	@PostMapping("/deletion/me")
+	public ResponseEntity<?> deleteReservs(@AuthMember Member member, @RequestBody ReservationRequest request) {
+		reservService.deleteReservsByMemId(request.getReservIds(), member.getMemId());
+		return ResponseEntity.noContent().build();
+	}
+	
+	// 3. 여러 개의 예약 삭제 - 관리자
+	@PostMapping("/deletion")
+	public ResponseEntity<?> deleteReservs(@RequestBody ReservationRequest request) {
+		reservService.deleteReservs(request.getReservIds());
+		return ResponseEntity.noContent().build();
 	}
 }

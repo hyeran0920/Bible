@@ -22,7 +22,7 @@ public class FlaskClientService {
     public FlaskClientService() {
         this.FLASK_API_URL = getNgrokUrl() + "/recommend";
     }
-    
+   
     private String getNgrokUrl() {
         String ngrokApiUrl = "http://127.0.0.1:4040/api/tunnels";
         try {

@@ -35,5 +35,4 @@ public class FlaskController {
         String response = flaskClientService.postRecommendation(userId, n);
         return ResponseEntity.ok(response);
     }
-
 }

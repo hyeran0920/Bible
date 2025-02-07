@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -544,11 +545,9 @@ public class RentService implements IRentService {
 	    return rents;
 	}
 
-
-	
 	@Override
 	public List<String> processOverdueBooks() {
-	    List<String> overdueMessages = new ArrayList<>();
+	    Map<String, Integer> overdueMap = new HashMap<>();
 	    
 	    List<RentMemberResponse> activeRents = rentRepository.findActiveRents();
 	    
@@ -556,13 +555,19 @@ public class RentService implements IRentService {
 	        int overdueDays = calculateDaysOverdue(rent.getRentDueDate());
 	        
 	        if (overdueDays > 0) {
-	            String message = String.format("%s 님, %d 일 연체 되었습니다", rent.getMemName(), overdueDays);
-	            overdueMessages.add(message);
+	            overdueMap.merge(rent.getMemName(), overdueDays, Integer::sum);
 	        }
+	    }
+	    
+	    List<String> overdueMessages = new ArrayList<>();
+	    for (Map.Entry<String, Integer> entry : overdueMap.entrySet()) {
+	        String message = String.format("%s 님, 총 %d 일 연체 되었습니다", entry.getKey(), entry.getValue());
+	        overdueMessages.add(message);
 	    }
 	    
 	    return overdueMessages;
 	}
+
 
 	//연체일 계산
 	private int calculateDaysOverdue(Timestamp rentDueDate) {

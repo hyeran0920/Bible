@@ -571,7 +571,6 @@ public class RentService implements IRentService {
 
 	//연체일 계산
 	private int calculateDaysOverdue(Timestamp rentDueDate) {
-		System.out.println("연체일 계산 !!!!!!!!");
 		if(rentDueDate == null) {
 			return 0;
 		}

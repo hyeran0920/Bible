@@ -211,4 +211,14 @@ public class BookService implements IBookService {
         return bookRepository.searchBooks(keyword);
     }
 
+    //베스트 셀러 북 리스트 리턴
+    @Override
+    public long[] getBestSellerBookIdArray() {
+    	return bookRepository.getBestSellerBookIdArray();
+    }
+    
+    @Override
+    public List<Map<String, Object>> getBestSellerBookListMap(){
+    	return bookRepository.getBestSellerBookListMap();
+    }
 }

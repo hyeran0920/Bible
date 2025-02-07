@@ -38,6 +38,6 @@ public interface IBookService {
 	List<Map<String, Object>> getAllCategory();
 	List<Map<String, Object>> searchBooks(String keyword);
 	
-	
-	
+	List<Map<String, Object>> getBestSellerBookListMap();
+	long[] getBestSellerBookIdArray();
 }

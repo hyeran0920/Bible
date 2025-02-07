@@ -19,7 +19,7 @@
                         <td>{{ orderHis.orderHistoryDate }}</td>
                         <td>{{ orderHis.orderHistoryReceivedName || "수취인" }}</td>
                         <td>{{ orderHis.orderHistoryTotalPrice }}</td>
-                        <td>{{ orderHis.orderPaymentStatus }}</td>
+                        <td>{{ orderHis.orderPaymentStatus?"결제 완료":"결제 전" }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -86,22 +86,41 @@ export default {
     data() {
         return {
             orderHistories: [],
-            orders: [],
+            orders: {},
             books: {},
-            addresses: [],             
+            addresses: {},             
             selectedOrderHistory: null,
             orderModalVisible: false
         };
     },
     mounted() {
-        this.fetchOrderHistory();
+        this.fetchAllData();
+        
     },
     methods: {
+        async fetchAllData(){
+            try{
+                this.fetchOrderHistory();
+                
+                
+
+            }catch(error){
+                console.log("fetch all data = ",error);
+            }
+        },
+
         async fetchOrderHistory() {
             try {
+
+                //get order hisotries
                 const response = await axios.get('http://localhost:8080/api/orderhistory/me', { withCredentials: true });
                 this.orderHistories = response.data;
-               
+
+                //get address
+                this.orderHistories.forEach(oh => {
+                    if(!this.addresses[oh.addressId]){this.fetchAddress(oh.addressId);}
+                });
+
             } catch (error) {
                 console.error("구매 기록 불러오는 중 오류 발생:", error);
             }
@@ -143,7 +162,7 @@ export default {
             }
         },
 
-        async fetchAddresses(addressId) {
+        async fetchAddress(addressId) {
             try {
                 const response = await axios.get(`http://localhost:8080/api/members/addresses/${addressId}`);
                 this.addresses[addressId] = response.data;
@@ -161,7 +180,7 @@ export default {
             this.selectedOrderHistory = orderHistory;
             this.orderModalVisible = true;
             this.fetchOrder(orderHistory.orderHistoryId);
-            this.fetchAddresses(orderHistory.addressId)
+            
         }
     }
 };

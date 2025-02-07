@@ -17,6 +17,7 @@ import com.library.bible.exception.ExceptionCode;
 import com.library.bible.memberrent.model.MemberRent;
 import com.library.bible.memberrent.service.IMemberRentService;
 import com.library.bible.reservation.config.ReservationProperties;
+import com.library.bible.reservation.dto.ReservationResponse;
 import com.library.bible.reservation.model.Reservation;
 import com.library.bible.reservation.repository.IReservationRepository;
 
@@ -30,16 +31,10 @@ public class ReservationService implements IReservationService {
 	private final IBookService bookService;
 	private final IReservationRepository reservRepository;
 	
+	// memId로 예약 조회 또는 모든 예약 조회
 	@Override
-	@Cacheable(value="reserv")
-	public List<Reservation> selectAllReserv() {
-		return reservRepository.selectAllReserv();
-	}
-	
-	// 사용자 id로 예약들 조회하기
-	@Override
-	public List<Reservation> selectReservByMemId(long memId) {
-		return reservRepository.selectReservByMemId(memId);
+	public List<ReservationResponse> selectReservResponsesByMemId(Long memId) {
+		return reservRepository.selectReservResponsesByMemId(memId);
 	}
 	
 	// 책 id들로 예약들 조회하기

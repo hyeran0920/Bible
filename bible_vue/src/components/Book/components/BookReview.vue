@@ -1,38 +1,39 @@
 <template>
   <div class="review-section">
     <h2>리뷰 작성</h2>
-    <div class="review-input">
-      <textarea v-model="reviewComment" placeholder="리뷰를 작성해주세요." rows="4"></textarea>
-      <div class="star-rating">
-        <label v-for="star in 5" :key="star">
-          <input 
-            type="radio" 
-            :value="star" 
-            v-model="reviewStar"
-            @change="updateStarRating(star)"
-          />
-          <span :class="{'filled': reviewStar >= star}">★</span>
-        </label>
-      </div>
-      <button @click="submitReview">리뷰 작성하기</button>
+    <div class="star-rating">
+      <label v-for="star in 5" :key="star">
+        <input 
+          type="radio" 
+          :value="star" 
+          v-model="reviewStar"
+        />
+        <span :class="{'filled': reviewStar >= star}">★</span>
+      </label>
     </div>
     <br>
+    <div class="review-input">
+      <textarea v-model="reviewComment" placeholder="리뷰를 작성해주세요." rows="4"></textarea>
+      <button @click="submitReview">리뷰 작성하기</button>
+    </div>
+
+    <br>
+
     <ul v-if="reviews.length" class="review-list">
       <li v-for="review in reviews" :key="review.reviewId" class="review-card">
         <div class="review-header">
           <div class="review-star-rating">
-            <span class="stars">{{ '★'.repeat(review.reviewStar) }}</span>
+            <span class="stars">{{ '★'.repeat(review.reviewStar || 0) }}</span>
           </div>
           <div class="review-date">
             <span>{{ formatDate(review.createdAt) }}</span>
           </div>
         </div>
         <div class="review-comment">
-          <p>{{ review.reviewComment }}</p>
+          <p>{{ review.reviewComment || "내용 없음" }}</p>
         </div>
         <div class="review-name">
-          <!-- 이름 중간 모자이크 처리 -->
-          <p>{{ maskName(review.memName) }}</p>
+          <p>{{ review.memName ? maskName(review.memName) : "익명" }}</p>
         </div>
       </li>
     </ul>
@@ -41,75 +42,84 @@
 </template>
 
 <script>
+import { ref, onMounted, nextTick } from 'vue';
 import axios from 'axios';
 
 export default {
   props: {
     bookId: Number,
   },
-  data() {
-    return {
-      reviewStar: 0,
-      reviewComment: "",
-      reviews: [],
+  setup(props) {
+    const reviewStar = ref(0);
+    const reviewComment = ref("");
+    const reviews = ref([]);
+
+    // ✅ API 요청 후 Vue가 반응형 데이터 변경을 감지하도록 처리
+    const fetchReviews = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8080/api/reviews/${props.bookId}`);
+        if (Array.isArray(response.data)) {
+          reviews.value = response.data;
+          await nextTick(); // Vue DOM 업데이트 보장
+          console.log("책 리뷰 리스트:", reviews.value);
+        } else {
+          console.error("서버 응답이 배열이 아님:", response.data);
+        }
+      } catch (error) {
+        console.error("리뷰 데이터를 가져오는 데 실패했습니다:", error);
+      }
     };
-  },
-  created() {
-    this.fetchReviews();
-  },
-  methods: {
-    updateStarRating(star) {
-      this.reviewStar = star;
-    },
-    submitReview() {
-      if (this.reviewStar === 0 || !this.reviewComment.trim()) {
+
+    const submitReview = async () => {
+      if (reviewStar.value === 0 || !reviewComment.value.trim()) {
         alert("별점과 리뷰 내용을 모두 입력해주세요!");
         return;
       }
       const reviewData = {
-        bookId: this.bookId,
-        reviewStar: this.reviewStar,
-        reviewComment: this.reviewComment,
+        bookId: props.bookId,
+        reviewStar: reviewStar.value,
+        reviewComment: reviewComment.value,
       };
-      axios.post("http://localhost:8080/api/reviews", reviewData, { withCredentials: true })
-        .then(response => {
-          alert(response.data);
-          this.reviewStar = 0;
-          this.reviewComment = "";
-          this.fetchReviews(); // 리뷰 작성 후 새로운 리뷰 데이터를 가져옵니다.
-        })
-        .catch(error => {
-          console.error("Error - submit review:", error);
-          alert("리뷰 제출에 실패했습니다.");
-        });
-    },
-    fetchReviews() {
-      axios
-        .get(`http://localhost:8080/api/reviews/${this.bookId}`)
-        .then((response) => {
-          this.reviews = response.data;
-          console.log(response.data);
-        })
-        .catch((error) => {
-          console.error("리뷰 데이터를 가져오는 데 실패했습니다:", error);
-        });
-    },
-    formatDate(date) {
-      return new Date(date).toLocaleDateString('ko-KR');
-    },
-    // 이름 중간 모자이크 함수
-    maskName(name) {
-      if (name.length > 2) {
-        const start = name.slice(0, 1); // 첫 글자
-        const end = name.slice(-1); // 마지막 글자
-        const masked = '*'.repeat(name.length - 2); // 중간 부분 마스킹
-        return start + masked + end;
+      try {
+        const response = await axios.post("http://localhost:8080/api/reviews", reviewData, { withCredentials: true });
+        alert(response.data);
+        reviewStar.value = 0;
+        reviewComment.value = "";
+        await fetchReviews(); // 리뷰 업데이트
+      } catch (error) {
+        console.error("Error - submit review:", error);
+        alert("리뷰 제출에 실패했습니다.");
       }
-      return name; // 이름이 2글자 이하일 경우 모자이크 안함
-    }
+    };
+
+    // ✅ 날짜 포맷 함수
+    const formatDate = (date) => {
+      return date ? new Date(date).toLocaleDateString('ko-KR') : "날짜 없음";
+    };
+
+    // ✅ 이름 중간 모자이크 처리
+    const maskName = (name) => {
+      if (!name) return "익명";
+      return name.length > 2
+        ? name.slice(0, 1) + "*".repeat(name.length - 2) + name.slice(-1)
+        : name;
+    };
+
+    // ✅ 컴포넌트가 마운트되면 리뷰 불러오기
+    onMounted(fetchReviews);
+
+    return {
+      reviewStar,
+      reviewComment,
+      reviews,
+      submitReview,
+      formatDate,
+      maskName,
+    };
   },
 };
 </script>
+
 
 <style scoped>
 .review-section {

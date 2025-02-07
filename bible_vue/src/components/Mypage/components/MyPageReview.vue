@@ -53,7 +53,7 @@ export default {
   },
   async mounted() {
     try {
-      const reviewsInfo = await this.$axios.get(`http://localhost:8080/api/reviews/member`);
+      const reviewsInfo = await this.$axios.get(`http://localhost:8080/api/reviews/me`);
       this.reviews = reviewsInfo.data; // 멤버 리뷰 목록 저장
     } catch (error) {
       console.error("리뷰를 가져오는 데 실패했습니다:", error);

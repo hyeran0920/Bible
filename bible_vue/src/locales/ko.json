@@ -28,6 +28,7 @@
             "modalSaveBtn": "저장하기",
             "modalCancleBtn": "취소하기",
             "modalCheckEmail": "유효한 이메일 형식이 아닙니다.",
+            "modalCheckPasswordPattern": "비밀번호는 대소문자, 숫자, 특수기호(@$!%*?&#)를 포함한 8자 이상입니다.",
             "modalCheckPassword": "비밀번호가 일치하지 않습니다.",
             "modalCheckPhone": "010-XXXX-XXXX 형식입니다.",
             "deleteEmailInfo": "탈퇴하시려면 이메일을 입력해주세요.",

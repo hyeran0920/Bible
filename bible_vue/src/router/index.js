@@ -18,6 +18,7 @@ import Mypage from "../components/Mypage/components/Mypage.vue";
 import MypageMember from "../components/Mypage/components/MypageMember.vue";
 import MypageRent from "../components/Mypage/components/MypageRent.vue";
 import MyPageReview from "../components/Mypage/components/MyPageReview.vue";
+import MyPageOrderList from "../components/Mypage/components/MyPageOrderList.vue";
 
 
 const routes = [
@@ -48,7 +49,10 @@ const routes = [
     { path: "mypageMember", component:MypageMember },
     { path: "mypageRent", component:MypageRent },
     { path: "mypageReview", component:MyPageReview },
+    { path: "mypageOrder", component:MyPageOrderList},
   ]},
+
+ 
 ];
 
 const router = createRouter({

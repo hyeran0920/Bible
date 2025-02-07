@@ -41,6 +41,7 @@
                 <div class="form-group">
                     <label for="memPassword">{{ $t('mypage.member.modalPassword') }}: </label>
                     <input v-model="currentMember.memPassword" type="password" id="memPassword" :class="{ 'error-border': passwordError }" required/>
+                    <span v-if="passwordPatternError" class="error-message">{{ $t('mypage.member.modalCheckPasswordPattern') }}</span>
                 </div>
                 <div class="form-group">
                     <label for="memPassword2">{{ $t('mypage.member.modalPassword2') }}: </label>
@@ -131,6 +132,8 @@
                 showModal: false,
 
                 // 정보 수정 시 
+                passwordPattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/,
+                passwordPatternError: false,
                 passwordError: false,
                 phoneError: false,
                 phonePattern: /^010-\d{4}-\d{4}$/,
@@ -148,7 +151,10 @@
         watch: {
             'currentMember.memPassword': {
                 handler(newValue) {
-                    if (newValue && this.currentMember.memPassword2) {
+                    if (newValue) {
+                        // 패턴 검사 추가
+                        this.passwordPatternError = !this.passwordPattern.test(newValue);
+                        // 비밀번호 일치 여부 검사
                         this.passwordError = newValue !== this.currentMember.memPassword2;
                     }
                 },
@@ -203,6 +209,9 @@
 
                 // 이메일 check
                 if (this.emailError) return;
+
+                // 비밀번호 패턴 check
+                if (this.passwordPatternError) return;
 
                 try{
                     await this.$axios.put(MEMBER_BASEURL, this.currentMember);
@@ -410,6 +419,7 @@ span {
     display: flex;
     flex-direction: column;
     gap: 15px;
+    size: 100%;
 }
 
 /* 입력 폼 스타일 */
@@ -417,6 +427,11 @@ span {
     display: flex;
     flex-direction: column;
     margin-bottom: 20px;
+    width: 100%;
+}
+
+form{
+    width: 100%;
 }
 
 label {
@@ -430,6 +445,8 @@ input {
     border: 1px solid #ccc;
     border-radius: 4px;
     outline: none;
+    box-sizing: border-box;    /* 추가 */
+    size: 100%;
 }
 
 input:focus {
@@ -444,7 +461,8 @@ input:focus {
 
 /* 에러 표시 */
 .error-border {
-    border: 2px solid #ff4444;
+    border: 2px solid #ff4444 !important;
+    box-sizing: border-box;     /* 추가: 테두리가 크기에 포함되도록 설정 */
     animation: shake 0.5s;
 }
 

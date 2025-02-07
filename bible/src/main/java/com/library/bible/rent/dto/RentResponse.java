@@ -18,9 +18,7 @@ public class RentResponse {
     private Timestamp rentDueDate;		// 반납 예정일
     private Timestamp rentFinishDate;	// 반납일
     private RentStatus rentStatus;
+    
     private String bookTitle; 
     private String bookImgPath; 
-    
-
-
 }

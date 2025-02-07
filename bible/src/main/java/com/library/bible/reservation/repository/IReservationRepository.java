@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+import com.library.bible.reservation.dto.ReservationResponse;
 import com.library.bible.reservation.model.Reservation;
 
 import io.lettuce.core.dynamic.annotation.Param;
@@ -13,8 +14,7 @@ import io.lettuce.core.dynamic.annotation.Param;
 @Repository
 public interface IReservationRepository {
 	//Get all reservation list
-	List<Reservation> selectAllReserv();
-	List<Reservation> selectReservByMemId(long memId);
+	List<ReservationResponse> selectReservResponsesByMemId(Long memId);
 	List<Reservation> selectReservByBookIds(List<Long> bookIds);
 	
 	//Reservation CRUD

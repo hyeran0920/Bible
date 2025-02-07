@@ -10,27 +10,6 @@
 		<result property="bookId" column="book_id"/>
 		<result property="reservDate" column="reserv_date"/>
 	</resultMap>
-
-	<!-- 모든 예약 조회 -->
-	<select id="selectAllReserv" resultMap="reservMap">
-		SELECT
-			reserv_id,
-			mem_id,
-			book_id,
-			reserv_date
-		FROM reservation
-	</select>
-	
-	<!-- 모든 예약 조회 -->
-	<select id="selectReservByMemId" resultMap="reservMap">
-		SELECT
-			reserv_id,
-			mem_id,
-			book_id,
-			reserv_date
-		FROM reservation
-	    WHERE mem_id = #{memId}
-	</select>
 	
 	<!-- rentIds로 rents 조회 -->
 	<select id="selectReservByBookIds"  resultMap="reservMap">
@@ -109,5 +88,31 @@
 	    AND mem_id = #{memId}
 	</delete>
 
+		
+	<!-- ResultMap -->
+	<resultMap id="reservResponseMap" type="ReservationResponse">
+		<id property="reservId" column="reserv_id"/>
+		<result property="memId" column="mem_id"/>
+		<result property="bookId" column="book_id"/>
+		<result property="reservDate" column="reserv_date"/>
+		<result property="bookTitle" column="book_title"/>
+		<result property="bookImgPath" column="book_img_path"/>
+	</resultMap>
+	
+	<!-- memId로 예약 조회 또는 모든 예약 조회 -->
+	<select id="selectReservResponsesByMemId" resultMap="reservResponseMap">
+		SELECT
+			r.reserv_id,
+			r.mem_id,
+			r.book_id,
+			r.reserv_date,
+			b.book_title,
+			b.book_img_path
+		FROM reservation r
+	    LEFT JOIN book b ON r.book_id = b.book_id
+	    <if test="memId != null">
+		    WHERE mem_id = #{memId}
+	    </if>
+	</select>
 	
 </mapper>

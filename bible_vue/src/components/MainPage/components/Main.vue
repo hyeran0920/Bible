@@ -2,6 +2,11 @@
   <div id="app">
     <Header />
 
+
+    <div>
+      <WebSocketAlarm/>
+    </div>
+
     <main class="main">
       <div class="carousel">
         <div class="main-image" :style="{ backgroundImage: `url(${images[currentSlide]})` }"
@@ -40,6 +45,7 @@
 <script>
 import Header from './Header.vue'
 import Footer from './Footer.vue';
+import WebSocketAlarm from '../../Alarm/components/WebSocketAlarm.vue';
 
 //배너 이미지 import
 const imageModules = import.meta.glob('../../../assets/banner/*.{png,jpg,jpeg,svg}', { eager: true });
@@ -53,7 +59,8 @@ export default {
   name: 'Main',
   components: {
     Header,  
-    Footer
+    Footer,
+    WebSocketAlarm
   },
   computed: {
     limitedBooks(){

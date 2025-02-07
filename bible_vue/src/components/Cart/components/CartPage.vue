@@ -50,10 +50,12 @@
       <p>총 결제 금액: <strong>{{ totalPayPrice.toLocaleString() }}원</strong></p>
       
       <!--Order page로 이동-->
-      <router-link :to="'/order/' + selectedCartIds.join('-')">
+      <div class="cart-parent-btn-layout">
+      <router-link :to="'/order/' + selectedCartIds.join('-')" style="display: flex; flex: 1">
         <button class="checkout-btn">결제하기</button>
       </router-link>
-
+      <button class="rentAllBtn" @click="rentAll()">대여신청</button>
+      </div>
     </div>
 
   </div>
@@ -173,8 +175,28 @@ export default {
         console.log(cartId);
 
       }
-    }
+    },
 
+    // Rent ---------------------------------------------------------------
+    rentAll(){
+      //선택한 책 ID 가져오기
+      const selectedBookIds = this.carts
+          .filter(i => this.selectedCartIds.includes(i.cartId)).map(i=> i.bookId);
+      
+      const bookJson = { "bookIds": selectedBookIds };
+
+      //대여하기
+      axios.post("http://localhost:8080/api/rents/requests/me", bookJson, { withCredentials: true })
+        .then(response => {
+          alert("대여 신청이 완료되었습니다.");
+        })
+        .catch(error=>{
+          console.error("Error - rent book", error.response?.data);
+          const errorMessage = error.response?.data?.message || "대여 신청에 실패했습니다.";
+          alert(errorMessage);
+        });
+
+    }
   }
 };
 </script>

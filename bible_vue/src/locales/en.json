@@ -4,6 +4,7 @@
             "title": "MYPAGE",
             "backHome": "Return to Main Screen",
             "myInfo": "My information",
+            "reservation": "Reservation History",
             "rentHistory": "Rental History",
             "review": "Review",
             "orderHistory": "Order History"
@@ -47,6 +48,12 @@
             "deleteFail": "Deletion failed for internal reasons.",
             "addFail": "Address addition failed",
             "addSuccess": "Address addition success"
+        },    
+        "reserv": {
+            "title": "Reservation List",
+            "bookName": "Book Title",
+            "reservDate": "Reservation Date",
+            "cancelBtn": "Cancel Reservation"
         },
         "rent":{
             "title": "Rent History",

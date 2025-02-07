@@ -15,7 +15,8 @@
         </div>
         <div class="book-price">
           <p class="price">{{ formatPrice(book.bookPrice) }}원</p>
-          <p class="stock">재고: {{ book.bookTotalStock }}권</p>
+          <p class="stock">총재고: {{ book.bookTotalStock }}권</p>
+          <p class="stock">대여 가능 수량: {{ book.bookTotalStock-book.bookRentStock }}권</p>
         </div>
         <div class="cart-actions">
           <div class="quantity-input">
@@ -31,7 +32,19 @@
           <button class="add-to-cart-btn" @click="addCart(book.bookId)">
             장바구니에 추가
           </button>
-          <button class="rent-btn" @click="bookRent(book.bookId, book.bookTitle)">대여하기</button>
+          <!-- 대여 가능 수량에 따라 버튼 조건부 표시 -->
+          <button 
+            v-if="book.bookTotalStock-book.bookRentStock > 0"
+            class="rent-btn" 
+            @click="bookRent(book.bookId, book.bookTitle)">
+            대여하기
+          </button>
+          <button 
+            v-else
+            class="reserve-btn" 
+            @click="bookReserve(book.bookId, book.bookTitle)">
+            예약하기
+          </button>
         </div>
         <div class="book-description">
           <h2>책 소개</h2>
@@ -153,6 +166,18 @@ export default {
           const errorMessage = error.response?.data?.message || "대여 신청에 실패했습니다.";
           alert(errorMessage);
         });
+    },
+    // 책 예약하기
+    async bookReserve(bookId, bookTitle) {
+      try {
+        const bookJson = { "bookIds": [bookId] };
+        await this.$axios.post("http://localhost:8080/api/reservations/me", bookJson, );
+        alert("["+bookTitle +"] 예약이 완료되었습니다.");
+      } catch(error) {
+        console.error("Error - reserve book", error.response?.data);
+        const errorMessage = error.response?.data?.message || "예약에 실패했습니다.";
+        alert(errorMessage);
+      }
     }
   },
 };
@@ -378,6 +403,18 @@ h1 {
   }
 }
 
+.reserve-btn {
+  background-color: #ff9800; /* 예약 버튼은 주황색으로 구분 */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
 
+.reserve-btn:hover {
+  background-color: #f57c00;
+}
 
 </style>

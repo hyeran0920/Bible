@@ -16,6 +16,7 @@ import AddBookExcel from "../components/Admin/AdminAddBookExcel.vue";
 
 import Mypage from "../components/Mypage/components/Mypage.vue";
 import MypageMember from "../components/Mypage/components/MypageMember.vue";
+import MypageReservation from "../components/Mypage/components/MypageReservation.vue"
 import MypageRent from "../components/Mypage/components/MypageRent.vue";
 import MyPageReview from "../components/Mypage/components/MyPageReview.vue";
 import MyPageOrderList from "../components/Mypage/components/MyPageOrderList.vue";
@@ -47,6 +48,7 @@ const routes = [
   { path: "/mypage", name: "Mypage", component: Mypage, children:[
     { path: "", redirect: "/mypage/mypageMember"},
     { path: "mypageMember", component:MypageMember },
+    { path: "mypageReservation", component:MypageReservation },
     { path: "mypageRent", component:MypageRent },
     { path: "mypageReview", component:MyPageReview },
     { path: "mypageOrder", component:MyPageOrderList},

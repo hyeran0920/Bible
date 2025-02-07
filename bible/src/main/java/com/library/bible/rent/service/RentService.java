@@ -562,22 +562,26 @@ public class RentService implements IRentService {
 
 	@Override
 	public List<String> processOverdueBooks() {
-	    Map<String, Integer> overdueMap = new HashMap<>();
-	    
 	    List<RentMemberResponse> activeRents = rentRepository.findActiveRents();
+	    List<String> overdueMessages = new ArrayList<>();
 	    
 	    for (RentMemberResponse rent : activeRents) {
 	        int overdueDays = calculateDaysOverdue(rent.getRentDueDate());
 	        
 	        if (overdueDays > 0) {
-	            overdueMap.merge(rent.getMemName(), overdueDays, Integer::sum);
+	            String message = String.format(
+	                "대여ID: %d, 회원명: %s, 전화번호: %s, 도서명: %s, 대여만기일: %s, 반납일: %s, 대여상태: %s, 연체일수: %d일",
+	                rent.getRentId(),
+	                rent.getMemName(),
+	                rent.getMemPhone(),
+	                rent.getBookTitle(),
+	                rent.getRentDueDate(),
+	                rent.getRentFinishDate(),
+	                rent.getRentStatus(),
+	                overdueDays
+	            );
+	            overdueMessages.add(message);
 	        }
-	    }
-	    
-	    List<String> overdueMessages = new ArrayList<>();
-	    for (Map.Entry<String, Integer> entry : overdueMap.entrySet()) {
-	        String message = String.format("%s 님, 총 %d 일 연체 되었습니다", entry.getKey(), entry.getValue());
-	        overdueMessages.add(message);
 	    }
 	    
 	    return overdueMessages;
@@ -586,7 +590,6 @@ public class RentService implements IRentService {
 
 	//연체일 계산
 	private int calculateDaysOverdue(Timestamp rentDueDate) {
-		System.out.println("연체일 계산 !!!!!!!!");
 		if(rentDueDate == null) {
 			return 0;
 		}

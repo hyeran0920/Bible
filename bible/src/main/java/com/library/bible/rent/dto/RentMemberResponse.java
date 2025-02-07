@@ -23,8 +23,5 @@ public class RentMemberResponse {
     
     private String bookTitle;  // 도서 제목
     
-    // Timestamp가 제대로 값이 들어오는지 확인
-    public Timestamp getRentDueDate() {
-        return rentDueDate;
-    }
+
 }

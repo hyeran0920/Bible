@@ -1,4 +1,4 @@
-package com.library.bible.websocket.handler;
+package com.library.bible.alarm;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -61,9 +61,13 @@ public class WebSocketHandler extends TextWebSocketHandler implements Initializi
         public void run() {
             while (true) {
                 try {
-                    long time = System.currentTimeMillis() + 32400000;
-                    int randomNum = (int) (Math.random() * 45 + 1);
-                    String messageContent = "{\"time\":" + time + ",\"randomNum\":" + randomNum + "}";
+                    //long time = System.currentTimeMillis() + 32400000;
+                    //int randomNum = (int) (Math.random() * 45 + 1);
+                	//String messageContent = "{\"time\":" + time + ",\"randomNum\":" + randomNum + "}";
+                	
+                	String alarmTitle="알림";
+                	String alarmText="반납하세요!!!";
+                	String messageContent = "{\"alarmTitle\":\"" + alarmTitle + "\",\"alarmText\":\"" + alarmText + "\"}";
 
                     for (WebSocketSession session : sessionSet) {
                         if (session.isOpen()) {
@@ -72,7 +76,7 @@ public class WebSocketHandler extends TextWebSocketHandler implements Initializi
                             logger.info("메시지 전송: {}", messageContent);
                         }
                     }
-                    Thread.sleep(100000); // 간격으로 메시지 전송
+                    Thread.sleep(10000); // 간격으로 메시지 전송
                     
                 } catch (InterruptedException e) {
                     logger.error("쓰레드 중단!", e);
@@ -84,6 +88,19 @@ public class WebSocketHandler extends TextWebSocketHandler implements Initializi
         }
     }
 
+    public void sendMessageToAll(String messageContent) {
+        for (WebSocketSession session : sessionSet) {
+            if (session.isOpen()) {
+                try {
+                    session.sendMessage(new TextMessage(messageContent));
+                    logger.info("메시지 전송 성공: {}", messageContent);
+                } catch (Exception e) {
+                    logger.error("메시지 전송 실패", e);
+                }
+            }
+        }
+    }
+    
 
     @Override
     public void afterPropertiesSet() throws Exception {

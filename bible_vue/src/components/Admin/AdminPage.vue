@@ -7,6 +7,7 @@
         <li @click="changeMenu('order')">주문</li>
         <li @click="changeMenu('rental')">대여</li>
         <li @click="changeMenu('review')">리뷰</li>
+        <li @click="changeMenu('alarm')">알람 전송</li>
       </ul>
     </aside>
 
@@ -23,6 +24,7 @@ import AdminMain from './AdminMain.vue';
 import AdminProduct from './AdminProduct.vue';
 import AdminRental from './AdminRental.vue';
 import AdminReview from './AdminReview.vue';
+import AdminSendAlarm from './AdminSendAlarm.vue';
 
 export default {
   name: "AdminDashboard",
@@ -40,6 +42,7 @@ export default {
         case 'product': return AdminProduct;
         case 'rental': return AdminRental;
         case 'review': return AdminReview;
+        case 'alarm': return AdminSendAlarm;
         default: return AdminMain;
       }
     }

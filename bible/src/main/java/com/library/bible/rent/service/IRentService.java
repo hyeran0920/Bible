@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.data.domain.PageRequest;
 
 import com.library.bible.pageresponse.PageResponse;
+import com.library.bible.rent.dto.RentMemberResponse;
 import com.library.bible.rent.dto.RentPageResponse;
 import com.library.bible.rent.model.Rent;
 import com.library.bible.rent.model.RentStatus;
@@ -32,4 +33,10 @@ public interface IRentService {
 	List<Rent> updateRentedReturnedRent(long memId, List<Long> bookIds);	// 대여 및 반납하기
 
 	int deleteRent(long rentId);
+	
+	
+	// 활성화된 대여 목록 조회
+    List<RentMemberResponse> findActiveRents();
+    // 연체일 계산
+    List<String> processOverdueBooks();
 }

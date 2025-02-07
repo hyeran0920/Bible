@@ -7,6 +7,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>토스페이먼츠 샘플 프로젝트</title>
+    
+    <!-- Axios 추가 -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   </head>
 
   <body>
@@ -27,22 +30,57 @@
         <div class="p-grid-col text--right" id="paymentKey" style="white-space: initial; width: 250px"></div>
       </div>
       <div class="p-grid" style="margin-top: 30px">
-        <button class="button p-grid-col5" onclick="location.href='https://docs.tosspayments.com/guides/v2/payment-widget/integration';">연동 문서</button>
-        <button class="button p-grid-col5" onclick="location.href='https://discord.gg/A4fRFXQhRu';" style="background-color: #e8f3ff; color: #1b64da">실시간 문의</button>
+        <button class="button p-grid-col5" onclick="location.href='http://localhost:3000';">홈으로</button>
+		<button class="button p-grid-col5" onclick="location.href='http://localhost:3000/cart';" style="background-color: #e8f3ff; color: #1b64da">
+			구매 내역 확인
+		</button>
       </div>
     </div>
 
+	<!-- 
     <div class="box_section" style="width: 600px; text-align: left">
       <b>Response Data :</b>
       <div id="response" style="white-space: initial"></div>
     </div>
-
-    <script>
-      // 쿼리 파라미터 값이 결제 요청할 때 보낸 데이터와 동일한지 반드시 확인하세요.
-      // 클라이언트에서 결제 금액을 조작하는 행위를 방지할 수 있습니다.
+	 -->
+	 
+    <script type="module">
+      import { fetchOrders, fetchOrderHistory, fetchBookPrice, fetchMemInfo, validateTotalPrice, generateRandomString } from "./paymentUtils.js";
+      const BASE_URL=`http://localhost:8080/api/`;
+      
+    
+	  //get order history id
       const urlParams = new URLSearchParams(window.location.search);
+      const orderHistoryId = urlParams.get("orderHistoryId");
+      console.log("주문 내역 ID:", orderHistoryId);
+      
+      
+      //Get Orders, Order History Data
+      let orderHistory=null;
+      let orders=null;
 
-      // 서버로 결제 승인에 필요한 결제 정보를 보내세요.
+      try {
+	        orderHistory = await fetchOrderHistory(orderHistoryId); //orderHistory 가져오기
+	        console.log("주문 내역:", orderHistory);
+	
+	        orders = await fetchOrders(orderHistoryId); // 해당 orderHistory의 orders 가져오기
+	        console.log("주문 목록:", orders);
+	        
+	        if(!orders || !orderHistory){throw new Error("empty orders");}
+	        
+	        
+	    } catch (error) {
+	    	throw new Error("`main()` 실행 중 오류 발생:", error);
+	    }
+      
+  	
+      
+	    
+	    
+      
+      
+      
+      // 서버로 결제 승인에 필요한 결제 정보를 보내기
       async function confirm() {
         var requestData = {
           paymentKey: urlParams.get("paymentKey"),
@@ -50,6 +88,7 @@
           amount: urlParams.get("amount"),
         };
 
+        
         const response = await fetch("/confirm", {
           method: "POST",
           headers: {
@@ -57,23 +96,76 @@
           },
           body: JSON.stringify(requestData),
         });
-
+		
+        
+      	//결과 데이터
         const json = await response.json();
 
-        if (!response.ok) {
+
+		//Check total Price
+      	const targetAmount=await validateTotalPrice(orders, orderHistory);
+	  	console.log("결제되어야 하는 금액=",targetAmount);
+      	
+      	// 결제 실패
+        if (!response.ok || targetAmount!=json.totalAmount) {
           // TODO: 결제 실패 비즈니스 로직을 구현하세요.
+          console.log("실제 결제 금액=",json.totalAmount);
           console.log(json);
+          updateOrderHistory(json,true);
           window.location.href = `/fail?message=${json.message}&code=${json.code}`;
         }
-
-        // TODO: 결제 성공 비즈니스 로직을 구현하세요.
-        // console.log(json);
+        else{
+        	// 결제 성공 비즈니스 로직
+            updateOrderHistory(json,false);
+        }
+        
+      	
         return json;
       }
+      
+      
+      
+      
+      
+      async function updateOrderHistory(resultData, isFail) {
+    	try {
+       		const updateData = {
+            	orderHistoryId: orderHistory.orderHistoryId,  // 필드명 추가
+            	memId: orderHistory.memId,
+            	addressId: orderHistory.addressId,
+            	orderHistoryDate: null,
+            	orderHistoryTotalPrice: orderHistory.orderHistoryTotalPrice,
+            	orderHistoryReceivedName: orderHistory.orderHistoryReceivedName,
+            	orderPaymentMethod: isFail ? "fail" : (resultData.method || "unknown"),
+            	orderPaymentStatus: isFail ? "0" : "1",
+            	orderTossPaymentKey: isFail ? "fail" : resultData.paymentKey
+        	};
+
+        console.log("📝 Updating Order History:", updateData);
+
+        await axios.put(BASE_URL + `orderhistory`, updateData);  // `await` 추가
+
+        console.log("Order History Updated Successfully!");
+    	} catch (error) {
+        	console.error("Error - updating order history:", error.message);
+    	}
+	}
+
+      
+      
+      
+      
+      //confirm functino 실행
       confirm().then(function (data) {
         document.getElementById("response").innerHTML = `<pre>${JSON.stringify(data, null, 4)}</pre>`;
       });
 
+      
+      
+      
+      
+      
+      //parameter
       const paymentKeyElement = document.getElementById("paymentKey");
       const orderIdElement = document.getElementById("orderId");
       const amountElement = document.getElementById("amount");
@@ -81,6 +173,10 @@
       orderIdElement.textContent = urlParams.get("orderId");
       amountElement.textContent = urlParams.get("amount") + "원";
       paymentKeyElement.textContent = urlParams.get("paymentKey");
+      
+      
+      
+      
     </script>
   </body>
 </html>

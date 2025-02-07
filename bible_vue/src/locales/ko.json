@@ -5,7 +5,8 @@
             "backHome": "메인 화면으로 돌아가기",
             "myInfo": "내 정보",
             "rentHistory": "대여 기록",
-            "review": "리뷰 관리"
+            "review": "리뷰 관리",
+            "orderHistory": "구매 내역"
         },
         "member":{
             "title": "내 정보 관리",

@@ -39,7 +39,7 @@
             (mem_id, address_id, order_history_date, order_history_total_price, 
              order_history_received_name, order_payment_method, order_payment_status, order_toss_payment_key)
         VALUES 
-            (#{memId}, #{addressId}, #{orderHistoryDate}, #{orderHistoryTotalPrice}, 
+            (#{memId}, #{addressId}, SYSDATE, #{orderHistoryTotalPrice}, 
              #{orderHistoryReceivedName}, #{orderPaymentMethod}, #{orderPaymentStatus}, #{orderTossPaymentKey})
     </insert>
 
@@ -51,12 +51,11 @@
     <!-- Update an existing order history -->
     <update id="updateOrderHistory" parameterType="com.library.bible.order.model.OrderHistory">
         UPDATE order_history
-        SET order_history_date = #{orderHistoryDate},
-            order_history_total_price = #{orderHistoryTotalPrice},
+        SET order_history_total_price = #{orderHistoryTotalPrice},
             order_history_received_name = #{orderHistoryReceivedName},
             order_payment_method = #{orderPaymentMethod},
             order_payment_status = #{orderPaymentStatus},
-            order_toss_payment_key=#{orderPaymentStatus}
+            order_toss_payment_key = #{orderTossPaymentKey}
         WHERE order_history_id = #{orderHistoryId}
     </update>
 

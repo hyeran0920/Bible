@@ -267,4 +267,117 @@ h1 {
   font-size: 18px;
   margin-bottom: 10px;
 }
+@media screen and (max-width: 768px) {
+  .book-details {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .book-image {
+    flex: 0 0 auto;
+    width: 80%;
+    max-width: 300px;
+  }
+
+  .book-image img {
+    width: 100%;
+    height: auto;
+  }
+
+  .book-info {
+    width: 100%;
+  }
+
+  h1 {
+    font-size: 22px;
+  }
+
+  .author {
+    font-size: 14px;
+  }
+
+  .book-meta p,
+  .book-price p,
+  .stock {
+    font-size: 14px;
+  }
+
+  .cart-actions {
+    flex-direction: row; /* 가로 정렬 */
+    justify-content: center; /* 가운데 정렬 */
+    flex-wrap: wrap; /* 버튼이 너무 길어질 경우 줄바꿈 */
+  }
+
+
+  .quantity-input {
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 10px;
+  }
+
+  .quantity-input button {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+
+  .quantity-input input {
+    width: 60px;
+    font-size: 16px;
+  }
+  .add-to-cart-btn, 
+  .rent-btn {
+    width: 48%; /* 버튼을 양옆으로 배치 */
+    min-width: 140px;
+    font-size: 16px;
+    padding: 12px;
+    text-align: center;
+  }
+
+  .book-description {
+    text-align: left;
+    padding: 10px;
+  }
+
+  .book-description h2 {
+    font-size: 16px;
+  }
+
+  .review-section {
+    padding: 15px;
+  }
+
+  .review-list {
+    padding: 0;
+  }
+
+  .review-card {
+    padding: 15px;
+  }
+
+  .review-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .review-star-rating {
+    font-size: 18px;
+  }
+
+  .review-date {
+    font-size: 12px;
+  }
+
+  .review-comment p {
+    font-size: 14px;
+  }
+
+  .review-name p {
+    font-size: 12px;
+  }
+}
+
+
+
 </style>

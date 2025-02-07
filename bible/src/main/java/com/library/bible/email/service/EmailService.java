@@ -57,6 +57,9 @@ public class EmailService {
         String savedCode = redisTemplate.opsForValue().get(email);
         if(!code.equals(savedCode))
         	throw new CustomException(ExceptionCode.NOT_MATCH_AUTHNUM);
+
+        // 인증받은 Redis에 저장 (60분 유효)
+        redisTemplate.opsForValue().set("VERIFIED_"+email, code, Duration.ofMinutes(60));
     }
     
     // 6자리 랜덤 숫자 생성
@@ -64,6 +67,7 @@ public class EmailService {
         return String.format("%06d", new Random().nextInt(1000000));
     }
     
+    // 이메일 전송
     private void sendEmail(String email, String title, String content) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);
@@ -74,8 +78,6 @@ public class EmailService {
     
     //이메일 전송 설정 메서드
     private void emailConfig(String toMail, String title, String content) {
-    	System.out.println("FROM_MAIL: " + FROM_MAIL);
-
         MimeMessage message = emailSender.createMimeMessage();
 
         // true 매개값을 전달하면 multipart 형식의 메세지 전달이 가능.문자 인코딩 설정도 가능

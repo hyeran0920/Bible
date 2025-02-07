@@ -107,7 +107,8 @@ public enum ExceptionCode {
 	
 	// 이메일 전송 실패
 	FAIL_SEND_EMAIL(HttpStatus.INTERNAL_SERVER_ERROR, "이메일 전송에 실패하였습니다."),
-	NOT_MATCH_AUTHNUM(HttpStatus.INTERNAL_SERVER_ERROR, "이메일 인증번호가 일치하지 않습니다.");
+	NOT_MATCH_AUTHNUM(HttpStatus.INTERNAL_SERVER_ERROR, "이메일 인증번호가 일치하지 않습니다."),
+	MUST_SIGNUP_IN_VERIVIED_EMAIL(HttpStatus.INTERNAL_SERVER_ERROR, "이메일 인증번호 확인 후 1시간 안에 가입해야 합니다.");
 	
     private final HttpStatus httpStatus;
     private final String message;

@@ -1,6 +1,9 @@
 package com.library.bible.rent.service;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +27,7 @@ import com.library.bible.memberrent.service.IMemberRentService;
 import com.library.bible.pageresponse.PageResponse;
 import com.library.bible.rent.config.CheckRentAbout;
 import com.library.bible.rent.config.RentProperties;
+import com.library.bible.rent.dto.RentMemberResponse;
 import com.library.bible.rent.dto.RentPageResponse;
 import com.library.bible.rent.model.Rent;
 import com.library.bible.rent.model.RentStatus;
@@ -532,4 +536,47 @@ public class RentService implements IRentService {
 			    .toList();
 		reservationService.deleteReservs(reservedIds);
 	}
+
+	//대여중인 데이터만 조회되도록
+	public List<RentMemberResponse> findActiveRents() {
+	    List<RentMemberResponse> rents = rentRepository.findActiveRents();
+	    System.out.println("조회된 대여 데이터: " + rents);
+	    return rents;
+	}
+
+
+	
+	@Override
+	public List<String> processOverdueBooks() {
+	    List<String> overdueMessages = new ArrayList<>();
+	    
+	    List<RentMemberResponse> activeRents = rentRepository.findActiveRents();
+	    
+	    for (RentMemberResponse rent : activeRents) {
+	        int overdueDays = calculateDaysOverdue(rent.getRentDueDate());
+	        
+	        if (overdueDays > 0) {
+	            String message = String.format("%s 님, %d 일 연체 되었습니다", rent.getMemName(), overdueDays);
+	            overdueMessages.add(message);
+	        }
+	    }
+	    
+	    return overdueMessages;
+	}
+
+	//연체일 계산
+	private int calculateDaysOverdue(Timestamp rentDueDate) {
+		System.out.println("연체일 계산 !!!!!!!!");
+		if(rentDueDate == null) {
+			return 0;
+		}
+		
+        LocalDate dueDate = rentDueDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		LocalDate today = LocalDate.now();
+		int overdueDays = (int)ChronoUnit.DAYS.between(dueDate, today);
+		
+		return Math.max(overdueDays, 0);
+	}
+	
+	
  }

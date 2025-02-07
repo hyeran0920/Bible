@@ -39,7 +39,7 @@ public class ReviewController {
 		return reviewService.getBookReview(bookId);
 	}
 	// 특정 사용자 리뷰 데이터 조회
-	@GetMapping("/member")
+	@GetMapping("/me")
     public ResponseEntity<List<Review>> getMembereview(@AuthMember Member member) {
         List<Review> reviewList = reviewService.getMemberReview(member.getMemId());
         return ResponseEntity.ok(reviewList);

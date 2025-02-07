@@ -600,4 +600,10 @@ public class RentService implements IRentService {
 		
 		return Math.max(overdueDays, 0);
 	}
+	
+	@Override
+	public List<Book> getRentedBooks(long memId) {
+		return rentRepository.getSelectedBooks(memId);
+	}
+	
  }

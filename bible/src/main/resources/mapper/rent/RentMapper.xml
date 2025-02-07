@@ -228,7 +228,37 @@
 	    JOIN book b ON r.book_id = b.book_id
 	    WHERE r.rent_status = 'IN_USE'
 	</select>
-	    
+	
+	
+	
+	
+	<!-- RentMemberResponse를 위한 ResultMap 정의 -->
+	<resultMap id="bookResultMap" type="com.library.bible.book.model.Book">
+	    <id property="bookId" column="book_id"/>
+	    <result property="bookTitle" column="book_title"/>
+	    <result property="bookAuthor" column="book_author"/>
+	    <result property="bookPublisher" column="book_publisher"/>
+	    <result property="bookReleaseDate" column="book_release_date"/>
+	    <result property="bookCategory" column="book_category"/>
+	    <result property="bookPrice" column="book_price"/>
+	    <result property="bookImgPath" column="book_img_path"/>
+	    <result property="bookDetail" column="book_detail"/>
+	    <result property="bookTotalStock" column="book_total_stock"/>
+	    <result property="bookRentStock" column="book_rent_stock"/>
+	    <result property="bookLocation" column="book_location"/>
+	    <result property="bookQrPath" column="book_qr_path"/>
+	</resultMap>
+	
+	<select id="getSelectedBooks" parameterType="java.lang.Long" resultMap="bookResultMap">
+    	
+		select distinct * from book where book_id in (
+		    select r.book_id as book_id 
+		        from member m join rent r 
+		        on m.mem_id=r.mem_id 
+		        where m.mem_id=#{memId} and r.rent_status='IN_USE'
+		)
+	
+	</select>
  
 
 	    

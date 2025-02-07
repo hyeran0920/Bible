@@ -137,10 +137,7 @@
         
  
 		//Insert Info
-		let orderId=orderHistoryId.toString();
-		if (orderId.length < 6) {
-		    orderId = orderId.padEnd(6, "0"); // ex) "123" → "123000"
-		 }
+
 		let customerPhone= memInfo.memPhone.replace(/\D/g, "");
 
 		
@@ -149,7 +146,7 @@
         button.addEventListener("click", async function () {
         
           await widgets.requestPayment({
-            orderId: orderId,
+            orderId: generateRandomString(),
             orderName: "책",
             successUrl: `${window.location.origin}/success?orderHistoryId=${orderHistoryId}`,
             failUrl: window.location.origin + "/fail",

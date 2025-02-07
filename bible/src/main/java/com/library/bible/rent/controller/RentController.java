@@ -1,6 +1,5 @@
 package com.library.bible.rent.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.locks.ReentrantLock;
@@ -19,9 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.library.bible.book.model.Book;
 import com.library.bible.member.model.Member;
 import com.library.bible.pageresponse.PageResponse;
-import com.library.bible.rent.dto.RentMemberResponse;
 import com.library.bible.rent.dto.RentPageResponse;
 import com.library.bible.rent.dto.RentRequest;
 import com.library.bible.rent.dto.RentResponse;
@@ -72,6 +71,15 @@ public class RentController {
 				rentService.selectRentResponses(member.getMemId(), rentStatus, PageRequest.of(page, size));
 		return ResponseEntity.ok(pageResponsees);
 	}
+	
+	@GetMapping("/member/{memId}")
+	public ResponseEntity<List<Book>> selectRentedBooks(@PathVariable long memId){
+		List<Book>books=rentService.getRentedBooks(memId);
+		System.out.println("get books="+books.size());
+		System.out.println(books);
+		return ResponseEntity.ok(books);
+	}
+
 
 	// 대여 기록 조회 - memId=0이면 모든 사용자 정보 조회
 	@GetMapping

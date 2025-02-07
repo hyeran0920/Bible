@@ -27,7 +27,7 @@
         </div>
     </div>
     
-    <div class="rent-return-btn"><button>Rent/Return</button></div>
+    <div class="rent-return-btn" @click="rentOrReturnBook(currentMember.memId)"><button>Rent/Return</button></div>
     
     <table class="books-list-table" border="1">
         <thead>
@@ -43,15 +43,16 @@
         </thead>
         <tbody>
             <tr v-for="book in rentBooks":key="book.bookId">
-                <td><input type="checkbox" :value="true"></td>
+                <td>대여중</td>
                 <td>{{ book.bookId }}</td>
                 <td>{{ book.bookTitle }}</td>
                 <td>{{ book.bookAuthor }}</td>
                 <td>{{ book.bookPublisher }}</td>
                 <td>{{ book.bookCategory }}</td>
+                <td></td>
             </tr>
             <tr v-for="book in tempBooks":key="book.bookId">
-                <td><input type="checkbox" :value="true"></td>
+                <td><input type="checkbox" :value="book.bookId" v-model="selectedBookIds" checked></td>
                 <td>{{ book.bookId }}</td>
                 <td>{{ book.bookTitle }}</td>
                 <td>{{ book.bookAuthor }}</td>
@@ -73,6 +74,7 @@ export default {
         return {
             rentBooks:[], //회원이 대여하고 있는 책들
             tempBooks:[], //qr로 찍어서 일단 리스트에 올라간 책들
+            selectedBookIds:[], //선택된 책들
             scannedData: null, // QR code data
             currentMember: {}, // 회원 정보
         };
@@ -101,21 +103,55 @@ export default {
                 const response = await axios.get(`http://localhost:8080/api/members/${memId}`,{withCredentials: true});
                 this.currentMember = response.data;
 
-                console.log("member name="+this.currentMember.memName);
-                console.log("member Id:"+response.data.memId);
+                //console.log("member name="+this.currentMember.memName);
+                //console.log("member Id:"+response.data.memId);
 
             } catch (error) {
                 console.error("회원 정보 불러오기 실패:", error);
             }
         },
 
+        async rentOrReturnBook(memId) {
+            if(!memId){
+                alert("선택된 회원이 없습니다");
+                return;
+
+            }else if(!Array.isArray(this.selectedBookIds) || this.selectedBookIds.length === 0) {
+                alert("선택된 책이 없습니다");
+                return;
+            }
+
+            try {
+                const requestData={bookIds: this.selectedBookIds};
+                //console.log("bookIds=",this.selectedBookIds);
+
+                const response = await this.$axios.put(`rents/rentals-returns`, requestData, {
+                    params: { memId: memId }, // memId를 Query Parameter로 전달????
+                });
+
+                //console.log("대여/반납 성공:", response.data);
+                alert("대여/반납 성공");
+
+                //tempBooks 갱신
+                this.tempBooks = this.tempBooks.filter(book => !this.selectedBookIds.includes(book.bookId));
+                this.selectedBookIds=[];
+                this.fetchRentList(memId); 
+            } catch (error) {
+                console.error("대여/반납 요청 실패:", error);
+            }
+        },
+
+
         
 
         async fetchRentList(memId){
             try{
-
+                console.log("대여책 항목들을 가져왔습니다");
+                const response=await this.$axios.get(`rents/member/${memId}`);
+                this.rentBooks=response.data;
+                console.log("대여항목들=",this.rentBooks);
             } catch(error){
-                console.log("회원의 대여 리스트 불러오기 실패",error);
+                console.error("회원의 대여 리스트 불러오기 실패",error);
             }
         },
 
@@ -127,10 +163,10 @@ export default {
                 if (!this.tempBooks.some(b => b.bookId === book.bookId)) {
                     this.tempBooks.push(book);
                 } else {
-                    alert("이미 추가된 책입니다. 추가되지 않습니다.");
+                    //alert("이미 추가된 책입니다. 추가되지 않습니다.");
                 }
             }catch(error){
-                console.log("반납/대여 페이지에서 책 정보 불러오기 실패:",error);
+                console.error("반납/대여 페이지에서 책 정보 불러오기 실패:",error);
             }
         },
 
@@ -172,11 +208,16 @@ export default {
         // 책 삭제 (tempBooks에서 삭제)
         removeTempBook(bookId) {
             this.tempBooks = this.tempBooks.filter(book => book.bookId !== bookId);
+            this.selectedBookIds = this.selectedBookIds.filter(id => id !== bookId);
         },
 
         //회원 삭제
         removeCurrentMember(){
             this.currentMember=this.getDefaultMember();
+            this.selectedBookIds=[];
+            this.rentBooks=[];
+            this.scannedData="";
+            this.tempBooks=[];
         }
 
     },
@@ -196,6 +237,11 @@ export default {
             // 책 QR인지 확인
             const bookId = this.extractBookId(newVal);
             if (bookId) {
+
+                if (!this.currentMember || Object.keys(this.currentMember).length === 0) {
+                    alert("회원 정보를 인식해 주세요");
+                    return;
+                }
                 console.log("책 QR 감지, 책 ID:", bookId);
                 this.fetchBook(newVal);
                 this.scannedData="";

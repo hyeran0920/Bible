@@ -1,13 +1,20 @@
 <template>
     <div class="address-search">
-        수취인 명 <input type="text" v-model="receiverName" palceholder="수취인명">
-        수취인 전화번호 <input type="text" v-model="receiverPhone" palceholder="수취인 전화 번호">
+        수취인 명 <input type="text" v-model="receiverName" placeholder="수취인명" @input="validateInputs">
+        
+        수취인 전화번호 <input type="text" v-model="receiverPhone" placeholder="010-1234-5678" 
+       @input="formatPhoneNumber" @blur="validatePhoneNumber" maxlength="13">
+
+
         <div class="input-group">
             <input type="text" v-model="postcode" placeholder="우편번호" readonly>
             <button @click="execDaumPostcode">우편번호 찾기</button>
         </div>
+        
         <input type="text" v-model="address" placeholder="주소" readonly>
+        
         <input type="text" v-model="detailAddress" placeholder="상세주소" @input="emitAddressData">
+        
         기본배송지 <input type="checkbox" v-model="defaultAddress">
     </div>
     <button @click="addAddress()">추가</button>
@@ -47,6 +54,7 @@ export default {
     },
     methods: {
         emitAddressData() {
+            this.validateInputs();
             this.$emit('address-change', {
                 postcode: this.postcode,
                 address: this.address,
@@ -122,7 +130,31 @@ export default {
             this.defaultAddress = event.target.checked ? 1 : 0;
             console.log(event.target.checked);
             console.log(this.defaultAddress);
+        },
+        formatPhoneNumber() {
+            let num = this.receiverPhone.replace(/\D/g, ""); // 숫자만 남김
+            if (num.length > 3 && num.length <= 7) {
+                this.receiverPhone = `${num.slice(0, 3)}-${num.slice(3)}`;
+            } else if (num.length > 7) {
+                this.receiverPhone = `${num.slice(0, 3)}-${num.slice(3, 7)}-${num.slice(7, 11)}`;
+            } else {
+                this.receiverPhone = num;
+            }
+        },
+        validatePhoneNumber() {
+            if (!this.isValidPhoneNumber(this.receiverPhone)) {
+                alert("올바른 전화번호 형식이 아닙니다. (예: 010-1234-5678)");
+                this.receiverPhone = ""; // 잘못된 값 초기화
+            }
+        },
+        isValidPhoneNumber(phone) {
+            return /^010-\d{4}-\d{4}$/.test(phone); // 010-XXXX-XXXX 형식 검증
+        },
+        validateInputs() {
+            if (!this.receiverName.trim()) this.receiverName = '';
+            if (!this.detailAddress.trim()) this.detailAddress = '';
         }
+
     }
 };
 </script>

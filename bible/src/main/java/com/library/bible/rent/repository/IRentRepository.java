@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.hibernate.jdbc.Expectation.OutParameter;
 import org.springframework.stereotype.Repository;
 
+import com.library.bible.book.model.Book;
 import com.library.bible.rent.dto.RentMemberResponse;
 import com.library.bible.rent.dto.RentPageResponse;
 import com.library.bible.rent.model.Rent;
@@ -48,6 +49,7 @@ public interface IRentRepository {
 	
 	List<RentMemberResponse> findActiveRents();
     List<String> processOverdueBooks();
+	List<Book> getSelectedBooks(long memId);
 
 
 }

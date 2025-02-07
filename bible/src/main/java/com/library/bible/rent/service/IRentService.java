@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.PageRequest;
 
+import com.library.bible.book.model.Book;
 import com.library.bible.pageresponse.PageResponse;
 import com.library.bible.rent.dto.RentMemberResponse;
 import com.library.bible.rent.dto.RentPageResponse;
@@ -38,4 +39,5 @@ public interface IRentService {
     List<RentMemberResponse> findActiveRents();
     // 연체일 계산
     List<String> processOverdueBooks();
+    List<Book> getRentedBooks(long memId);
 }

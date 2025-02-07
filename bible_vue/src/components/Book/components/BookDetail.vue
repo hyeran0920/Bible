@@ -304,9 +304,11 @@ h1 {
   }
 
   .cart-actions {
-    flex-direction: column;
-    align-items: center;
+    flex-direction: row; /* 가로 정렬 */
+    justify-content: center; /* 가운데 정렬 */
+    flex-wrap: wrap; /* 버튼이 너무 길어질 경우 줄바꿈 */
   }
+
 
   .quantity-input {
     width: 100%;
@@ -324,10 +326,10 @@ h1 {
     width: 60px;
     font-size: 16px;
   }
-
   .add-to-cart-btn, 
   .rent-btn {
-    width: 90%;
+    width: 48%; /* 버튼을 양옆으로 배치 */
+    min-width: 140px;
     font-size: 16px;
     padding: 12px;
     text-align: center;

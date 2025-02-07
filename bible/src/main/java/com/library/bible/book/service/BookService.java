@@ -219,6 +219,7 @@ public class BookService implements IBookService {
     
     @Override
     public List<Map<String, Object>> getBestSellerBookListMap(){
+    	System.out.println("베스트셀러");
     	return bookRepository.getBestSellerBookListMap();
     }
 }

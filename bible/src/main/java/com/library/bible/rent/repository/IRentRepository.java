@@ -1,11 +1,13 @@
 package com.library.bible.rent.repository;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.hibernate.jdbc.Expectation.OutParameter;
 import org.springframework.stereotype.Repository;
 
+import com.library.bible.rent.dto.RentMemberResponse;
 import com.library.bible.rent.dto.RentPageResponse;
 import com.library.bible.rent.model.Rent;
 
@@ -43,4 +45,9 @@ public interface IRentRepository {
 		@Param("memId") long memId, 
 		@Param("rentStatus") String rentStatus
 	);
+	
+	List<RentMemberResponse> findActiveRents();
+    List<String> processOverdueBooks();
+
+
 }

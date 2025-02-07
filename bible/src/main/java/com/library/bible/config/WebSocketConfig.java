@@ -6,7 +6,7 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
-import com.library.bible.websocket.handler.WebSocketHandler;
+import com.library.bible.alarm.WebSocketHandler;
 
 @Configuration
 @EnableWebSocket

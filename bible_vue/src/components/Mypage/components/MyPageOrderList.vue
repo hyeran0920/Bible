@@ -1,16 +1,16 @@
 <template>
     <div class="order-list">
-        <h1>구매 기록</h1>
+        <h1>{{ $t('mypage.order.orderHistory') }}</h1>
 
         <!--구매 기록!!-->
         <div class="order-history-items">
             <table>
                 <thead>
                     <tr>
-                        <td>구매 날짜</td>
-                        <td>수취인</td>
-                        <td>결제 금액</td>
-                        <td>결제 상태</td>
+                        <td>{{ $t('mypage.order.orderDate') }}</td>
+                        <td>{{ $t('mypage.order.receiver') }}</td>
+                        <td>{{ $t('mypage.order.amount') }}</td>
+                        <td>{{ $t('mypage.order.checkout') }}</td>
                     </tr>                    
                 </thead>
                 <tbody>
@@ -29,7 +29,7 @@
     <div v-if="orderModalVisible" class="order-modal">
         <!--구매 기록 상세 정보-->
         <div class="order-hisotry-detail" v-if="addresses[selectedOrderHistory.addressId]">
-            <h2>주문 내역 상세</h2>
+            <h2>주문 상세</h2>
             <p>주문번호: {{ selectedOrderHistory.orderHistoryId }}</p>
             <p>주소:</p>
             <p>{{ addresses[selectedOrderHistory.addressId].postcode }}</p>

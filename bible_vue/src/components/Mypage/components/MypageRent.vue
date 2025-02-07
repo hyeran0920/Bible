@@ -24,7 +24,7 @@
               <button @click="this.cancelRentRequest(item)" 
                 class="rent-cancel" 
                 v-if="item.rentStatus=='REQUESTED'">
-                신청 취소
+                {{ $t('mypage.rent.cancelBtn') }}
               </button>
             </td>
           </tr>

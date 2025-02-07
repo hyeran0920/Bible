@@ -58,7 +58,15 @@
             "cancle": "CANCLED",
             "inUse": "IN USE",
             "returned": "RETURNED",
-            "none": "None"
+            "none": "None",
+            "cancelBtn":"cancel"
+        },
+        "order":{
+            "orderHistory":"Order History",
+            "orderDate":"order date",
+            "receiver":"receiver",
+            "amount":"amount",
+            "checkout":"checkout"
         }
     }
 }

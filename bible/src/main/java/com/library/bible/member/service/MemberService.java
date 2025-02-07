@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +30,7 @@ public class MemberService implements IMemberService{
 	private final IMemberRentService memberRentService;
     private final BCryptPasswordEncoder passwordEncoder;
     private final UploadService uploadService;
+    private final RedisTemplate<String, String> redisTemplate;
     
 	@Override
 	public Member selectMember(long memId) {
@@ -52,7 +54,12 @@ public class MemberService implements IMemberService{
 	// 회원가입
 	@Override
 	@Transactional
-	public Member insertMember(Member member, String role) {
+	public Member insertMember(Member member, String role, String verifiedCode) {
+		// 이메일 코드 검증(인증번호 확인 후 1시간 안에 회원가입해야함)
+        String savedCode = redisTemplate.opsForValue().get("VERIFIED_" + member.getMemEmail());
+        if(!verifiedCode.equals(savedCode))
+        	throw new CustomException(ExceptionCode.MUST_SIGNUP_IN_VERIVIED_EMAIL);
+		
 		try {
 			// role 이외의 컬럼 저장
 			member.setMemPassword(passwordEncoder.encode(member.getMemPassword())); // 비밀번호 암호화

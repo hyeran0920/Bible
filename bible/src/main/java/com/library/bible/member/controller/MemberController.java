@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.library.bible.member.dto.MemberRequest;
 import com.library.bible.member.dto.MemberResponseDto;
 import com.library.bible.member.mapper.MemberMapper;
 import com.library.bible.member.model.Member;
@@ -35,15 +36,17 @@ public class MemberController {
 	
 	// 일반 사용자 생성
 	@PostMapping("/user")
-	public ResponseEntity<MemberResponseDto> insertMember(@RequestBody @Valid Member member) {
-		memberService.insertMember(member, "user");
+	public ResponseEntity<MemberResponseDto> insertMember(@RequestBody @Valid MemberRequest request) {
+		Member member = memberMapper.memberRequestToMember(request);
+		memberService.insertMember(member, "user", request.getVerifiedCode());
 		return ResponseEntity.status(HttpStatus.CREATED).body(memberMapper.memberToMemberResponseDto(member));
 	}	
 	
 	// 관리자 생성
 	@PostMapping("/admin")
-	public ResponseEntity<MemberResponseDto> insertAdminMember(@RequestBody @Valid Member member) {
-		memberService.insertMember(member, "admin");
+	public ResponseEntity<MemberResponseDto> insertAdminMember(@RequestBody @Valid MemberRequest request) {
+		Member member = memberMapper.memberRequestToMember(request);
+		memberService.insertMember(member, "admin", request.getVerifiedCode());
 		return ResponseEntity.status(HttpStatus.CREATED).body(memberMapper.memberToMemberResponseDto(member));
 	}
 	

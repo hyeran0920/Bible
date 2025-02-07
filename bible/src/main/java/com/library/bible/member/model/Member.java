@@ -4,8 +4,7 @@ import java.util.List;
 
 import com.library.bible.role.model.Role;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,12 +15,14 @@ import lombok.NoArgsConstructor;
 public class Member {
 	private long memId;
 	private String memName;
+	
+	@Valid
 	private String memPassword;
 	
-    @Email(message = "유효한 이메일 형식이 아닙니다.")
+    @Valid
 	private String memEmail;
 
-	@Pattern(regexp = "^010-\\d{4}-\\d{4}$", message = "전화번호 형식이 올바르지 않습니다. (010-XXXX-XXXX)")
+    @Valid
 	private String memPhone;
 	
 	private String memQrPath; // QR 이미지 경로

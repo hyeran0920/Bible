@@ -320,6 +320,32 @@
 	        </foreach>
 	</select>
 
-	
+	<select id="getBestSellerBookIdArray" resultType="int">
+		WITH weekly_rent AS (
+			SELECT
+				r.book_id,
+				COUNT(*) AS rent_count
+			FROM rent r
+			WHERE r.rent_date >= TRUNC(SYSDATE) - 7
+			GROUP BY r.book_id
+		),
+		weekly_order AS (
+			SELECT
+				o.book_id,
+				COUNT(*) AS order_count
+			FROM orders o
+			JOIN order_history oh ON o.order_history_id = oh.order_history_id
+			WHERE oh.order_history_date >= TRUNC(SYSDATE) - 7
+			GROUP BY o.book_id
+		)
+		SELECT b.book_id FROM (
+			SELECT book_id FROM weekly_rent
+			UNION
+			SELECT book_id FROM weekly_order
+		) b
+		LEFT JOIN weekly_rent r ON b.book_id = r.book_id
+		LEFT JOIN weekly_order o ON b.book_id = o.book_id
+		ORDER BY (COALESCE(r.rent_count, 0) + COALESCE(o.order_count, 0)) DESC
+	</select>
 
 </mapper>

@@ -1,6 +1,7 @@
 package com.library.bible.book.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +38,18 @@ public class BookController {
 	public List<Map<String, Object>> getAllBooks() {
 		System.out.println("get all books function");
 		return bookService.getBookListMap();
+	}
+	
+	@GetMapping("/best")
+	public List<Map<String, Object>> getBestSellerBookListMap(){
+		//베스트셀러 북 리스트 가져오기
+		int[] bookIdArr = bookService.getBestSellerBookIdArray();	// 순위별 bookId Array => [ 1, 2, 3, 4, ..]
+		List<Map<String, Object>> bestSellerList = new ArrayList<>();
+		
+		for(int bookId : bookIdArr) {
+			bestSellerList.add(bookService.getBookInfoMap(bookId));
+		}
+		return bestSellerList;
 	}
 	
 	@GetMapping("/{bookid}") 

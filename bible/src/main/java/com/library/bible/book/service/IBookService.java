@@ -39,5 +39,5 @@ public interface IBookService {
 	List<Map<String, Object>> searchBooks(String keyword);
 	
 	List<Map<String, Object>> getBestSellerBookListMap();
-	int[] getBestSellerBookIdArray();
+	long[] getBestSellerBookIdArray();
 }

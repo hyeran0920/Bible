@@ -320,7 +320,7 @@
 	        </foreach>
 	</select>
 
-	<select id="getBestSellerBookIdArray" resultType="int">
+	<select id="getBestSellerBookIdArray" resultType="long">
 		WITH weekly_rent AS (
 			SELECT
 				r.book_id,

@@ -213,7 +213,7 @@ public class BookService implements IBookService {
 
     //베스트 셀러 북 리스트 리턴
     @Override
-    public int[] getBestSellerBookIdArray() {
+    public long[] getBestSellerBookIdArray() {
     	return bookRepository.getBestSellerBookIdArray();
     }
     

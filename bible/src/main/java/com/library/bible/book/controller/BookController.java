@@ -43,10 +43,10 @@ public class BookController {
 	@GetMapping("/best")
 	public List<Map<String, Object>> getBestSellerBookListMap(){
 		//베스트셀러 북 리스트 가져오기
-		int[] bookIdArr = bookService.getBestSellerBookIdArray();	// 순위별 bookId Array => [ 1, 2, 3, 4, ..]
+		long[] bookIdArr = bookService.getBestSellerBookIdArray();	// 순위별 bookId Array => [ 1, 2, 3, 4, ..]
 		List<Map<String, Object>> bestSellerList = new ArrayList<>();
 		
-		for(int bookId : bookIdArr) {
+		for(long bookId : bookIdArr) {
 			bestSellerList.add(bookService.getBookInfoMap(bookId));
 		}
 		return bestSellerList;

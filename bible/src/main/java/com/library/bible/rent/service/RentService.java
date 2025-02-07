@@ -132,7 +132,7 @@ public class RentService implements IRentService {
 		// 실제 존재하는 책인지 확인
 		List<Book> books = bookService.getBookListByBookIds(bookIds);
 		// 대여 신청할 도서 상태 변경 & 대여 생성
-		List<Rent> rents = updateBookRentStatusAndcreateRent(books, memberRent, currentRents, rentStatus);
+		List<Rent> rents = updateBookRentStatusAndcreateRent(books, memberRent, currentRents, rentStatus, this.geCurrentTimestamps());
 		
 		// 대여 정보 변경사항 반영
 		memberRentService.updateMemberRent(memberRent);
@@ -168,13 +168,16 @@ public class RentService implements IRentService {
 		    throw new CustomException(ExceptionCode.ALREADY_RENTED);
 		}
 		
+		// 대여 시간과 반납 시간 설정
+		List<Timestamp> dates = this.geCurrentTimestamps();
+		
 		// 대여 신청한 도서의 대여
 		List<Rent> rents = currentRents.stream()
 			    .filter(rent -> bookIds.contains(rent.getBookId()) && RentStatus.REQUESTED == rent.getRentStatus())
 			    .collect(Collectors.toList());
 		// 대여 신청 중인 도서를 대여 중으로 변경
 		if(!rents.isEmpty()) {
-			this.updateRentedRentInfo(memId, rents);
+			this.updateRentedRentInfo(memId, rents, dates);
 			this.updateRents(rents); // DB에 저장
 		}
 				
@@ -195,7 +198,7 @@ public class RentService implements IRentService {
 			List<Book> nonRequestBooks = bookService.getBookListByBookIds(nonRequestBookIds);
 
 			// 대여 신청 안한 도서의 상태 변경 & 대여 생성
-			rents.addAll(updateBookRentStatusAndcreateRent(nonRequestBooks, memberRent, currentRents, rentStatus));
+			rents.addAll(updateBookRentStatusAndcreateRent(nonRequestBooks, memberRent, currentRents, rentStatus, dates));
 
 			// 도서 업데이트
 			bookService.updateBookRentStocks(nonRequestBooks);
@@ -254,10 +257,9 @@ public class RentService implements IRentService {
 	}
 	
 	// 대여 신청한 도서의 대여하기
-	@Override
 	@Transactional
 	@CachePut(value = "rent", key = "#rentIds")
-	public List<Rent> updateRentedRentInfo(long memId, List<Rent> rents) {
+	public List<Rent> updateRentedRentInfo(long memId, List<Rent> rents, List<Timestamp> dates) {
 		// 대여할 대여 id값들이 없는 경우
 		if(rents == null || rents.isEmpty()) return rents;
 
@@ -265,7 +267,11 @@ public class RentService implements IRentService {
 		CheckRentAbout.checkCancledRentPossible(memId, rents, RentStatus.REQUESTED, ExceptionCode.NOT_RENT_STATE);
 
 		// 대여 내역을 대여 상태로 변경
-		rents.stream().forEach(rent -> rent.setRentStatus(RentStatus.IN_USE));
+		rents.stream().forEach(rent -> {
+			rent.setRentStatus(RentStatus.IN_USE);
+			rent.setRentDate(dates.get(0));
+			rent.setRentDueDate(dates.get(1));
+		});
 
 		return rents;
 	}	
@@ -307,7 +313,7 @@ public class RentService implements IRentService {
 		books.stream().forEach(book -> book.setBookRentStock(book.getBookRentStock() - 1));		
 
 		// 반납 시 예약 삭제 및 rent 생성
-		deleteReservationAndInsertRent(bookIds, books);
+		deleteReservationAndInsertRent(bookIds, books, this.geCurrentTimestamps().get(0));
 		
 		// 도서 업데이트
 		bookService.updateBookRentStocks(books);	
@@ -367,10 +373,13 @@ public class RentService implements IRentService {
 		if(isListNullOrEmpty(bookIds))
 			throw new CustomException(ExceptionCode.RENT_OR_BOOK_ID_NOT_INPUT);
 
-		// 같은 도서가 2권 이상 들어왔을 겨우
+		// 같은 도서가 2권 이상 들어왔을 경우
 		if(bookIds.stream().distinct().count() != bookIds.size())
 			throw new CustomException(ExceptionCode.NOT_POSSIBLE_SAME_BOOK);
 
+		// 현재 시간과 반납 시간 설정
+		List<Timestamp> dates = this.geCurrentTimestamps();
+		
 		// 현재 사용자가 대여 신청 또는 대여 중인 rents 조회
 		List<Rent> memberRents = rentRepository.selectRentsByMemIdAndRentStatusList(
 				memId, 
@@ -386,20 +395,19 @@ public class RentService implements IRentService {
 		// 반납할 도서가 있을 경우
 		if(returedRents != null && !returedRents.isEmpty()) {
 			// 대여 내역을 반납 상태로 변경 & 반납 시간
-			Timestamp rentFinishDate = new Timestamp(System.currentTimeMillis());
 			returedRents.stream().forEach(rent -> {
 				rent.setRentStatus(RentStatus.RETURNED);
-				rent.setRentFinishDate(rentFinishDate);
+				rent.setRentFinishDate(dates.get(0));
 			});
 			
-			// 대여 신청한 도서 조회
+			// 대여한 도서 조회
 			List<Long> returedBookIds = returedRents.stream().map(Rent::getBookId).collect(Collectors.toList());
 			returedBooks = bookService.getBookListByBookIds(returedBookIds);
 			// book에 대여 중인 도서수 감소
 			returedBooks.stream().forEach(book -> book.setBookRentStock(book.getBookRentStock() - 1));		
 			
 			// 반납 시 예약 삭제 및 rent 생성
-			deleteReservationAndInsertRent(returedBookIds, returedBooks);	
+			deleteReservationAndInsertRent(returedBookIds, returedBooks, dates.get(0));
 		}
 
 		// 대여하기 --------------------------------------------------------------------------
@@ -408,7 +416,7 @@ public class RentService implements IRentService {
 			    .filter(rent -> bookIds.contains(rent.getBookId()) && RentStatus.REQUESTED == rent.getRentStatus())
 			    .collect(Collectors.toList());
 		// 대여 신청 중인 도서를 대여 중으로 변경
-		if(!requestRents.isEmpty()) this.updateRentedRentInfo(memId, requestRents);
+		if(!requestRents.isEmpty()) this.updateRentedRentInfo(memId, requestRents, dates);
 		if(!returedBooks.isEmpty()) requestRents.addAll(returedRents); // 반납한 값을 반환값에 넣기
 		if(!requestRents.isEmpty()) this.updateRents(requestRents); // rent 업데이트(반납한 도서 대여 + 대여 신청한 대여)
 		
@@ -429,7 +437,7 @@ public class RentService implements IRentService {
 			// 실제 존재하는 책인지 확인
 			nonRequestBooks = bookService.getBookListByBookIds(nonRequestBookIds);
 
-			requestRents.addAll(updateBookRentStatusAndcreateRent(nonRequestBooks, memberRent, requestRents, RentStatus.IN_USE));			
+			requestRents.addAll(updateBookRentStatusAndcreateRent(nonRequestBooks, memberRent, requestRents, RentStatus.IN_USE, dates));			
 		}
 
 		// 대여 정보 변경사항 반영
@@ -455,13 +463,14 @@ public class RentService implements IRentService {
 	}
 	
 	// list가 비어있는지 확인
-	public boolean isListNullOrEmpty(List<Long> list) {
+	private boolean isListNullOrEmpty(List<Long> list) {
 		if(list == null || list.isEmpty()) return true;
 		return false;
 	}
 	
 	// 도서 상태 변경 & 대여 생성 -> 대여 신청 또는 대여할 도서에만 해당
-	public List<Rent> updateBookRentStatusAndcreateRent(List<Book> books, MemberRent memberRent, List<Rent> currentRents, RentStatus rentStatus) {
+	private List<Rent> updateBookRentStatusAndcreateRent(List<Book> books, MemberRent memberRent, 
+			List<Rent> currentRents, RentStatus rentStatus, List<Timestamp> dates) {
 		List<Rent> rents = new ArrayList<>();
 
 		for(Book book : books) {
@@ -469,16 +478,12 @@ public class RentService implements IRentService {
 			CheckRentAbout.checkRentBookPossible(book, memberRent, currentRents);
 			book.setBookRentStock(book.getBookRentStock()+1); // 대여 중인 도서개수 추가
 
-			// 시간
-			Timestamp rentDate = new Timestamp(System.currentTimeMillis());
-			Timestamp rentDueDate = new Timestamp(rentDate.getTime() + TimeUnit.DAYS.toMillis(RentProperties.RENT_DATE.getValue()));
-
 			// rent 생성
 			Rent rent = new Rent();
 			rent.setBookId(book.getBookId());
 			rent.setMemId(memberRent.getMemId());
-			rent.setRentDate(rentDate);
-			rent.setRentDueDate(rentDueDate);
+			rent.setRentDate(dates.get(0));
+			rent.setRentDueDate(dates.get(1));
 			rent.setRentStatus(rentStatus);
 			rents.add(rent);
 
@@ -491,7 +496,7 @@ public class RentService implements IRentService {
 	
 	// 반납 시 예약 삭제 및 rent 생성
 	@Transactional
-	public void deleteReservationAndInsertRent(List<Long> bookIds, List<Book> books) {
+	private void deleteReservationAndInsertRent(List<Long> bookIds, List<Book> books, Timestamp rentDate) {
 		// 반납할 도서의 예약 정보 가져오기
 		List<Reservation> reservations = new ArrayList<>();
 		reservations = reservationService.selectReservByBookIds(bookIds);
@@ -510,8 +515,7 @@ public class RentService implements IRentService {
 		    // 대여 중인 도서개수 추가
 			book.setBookRentStock(book.getBookRentStock()+1); 
 
-			// 시간
-			Timestamp rentDate = new Timestamp(System.currentTimeMillis());
+			// 예약 가능 시간
 			Timestamp rentDueDate = new Timestamp(rentDate.getTime() + TimeUnit.DAYS.toMillis(RentProperties.RENT_DATE.getValue()));
 
 			// rent 생성
@@ -531,5 +535,16 @@ public class RentService implements IRentService {
 			    .map(Reservation::getReservId)
 			    .toList();
 		reservationService.deleteReservs(reservedIds);
+	}
+	
+	// 현재 시간과 반납 시간 계산
+	private List<Timestamp> geCurrentTimestamps() {
+		// 대여 시간과 반납 시간 설정
+		List<Timestamp> dates = new ArrayList<>();
+		Timestamp rentDate = new Timestamp(System.currentTimeMillis());
+		Timestamp rentDueDate = new Timestamp(rentDate.getTime() + TimeUnit.DAYS.toMillis(RentProperties.RENT_DATE.getValue()));
+		dates.add(rentDate);
+		dates.add(rentDueDate);
+		return dates;
 	}
  }

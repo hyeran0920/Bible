@@ -28,13 +28,13 @@
 
     <div v-if="orderModalVisible" class="order-modal">
         <!--구매 기록 상세 정보-->
-        <div class="order-hisotry-detail" v-if="addresses[selectedOrderHistory.addressId]">
+        <div class="order-hisotry-detail" >
             <h2>주문 상세</h2>
             <p>주문번호: {{ selectedOrderHistory.orderHistoryId }}</p>
             <p>주소:</p>
-            <p>{{ addresses[selectedOrderHistory.addressId].postcode }}</p>
-            <p>{{ addresses[selectedOrderHistory.addressId].address }}</p>
-            <p>{{ addresses[selectedOrderHistory.addressId].detailAddress }}</p> 
+            <p>{{ addresses[selectedOrderHistory.addressId].postcode || "삭제된 우편번호"}}</p>
+            <p>{{ addresses[selectedOrderHistory.addressId].address || "삭제된 주소"}}</p>
+            <p>{{ addresses[selectedOrderHistory.addressId].detailAddress || "삭제된 상세 주소"}}</p> 
             <p>수취인: {{ selectedOrderHistory.orderHistoryReceivedName }}</p>
             <p>결제 수단: {{ selectedOrderHistory.orderPaymentMethod }}</p>
             <p>결제 상태: {{ selectedOrderHistory.orderPaymentStatus ? "결제 완료":"결제 전" }}</p>

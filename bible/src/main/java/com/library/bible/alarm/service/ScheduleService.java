@@ -17,18 +17,25 @@ import lombok.RequiredArgsConstructor;
 public class ScheduleService {
 
     private final RentService rentService;
-
-    public ScheduleService(RentService rentService) {
+    private final NotificationService notificationService;
+    
+    
+    public ScheduleService(RentService rentService, NotificationService notificationService) {
         this.rentService = rentService;
+        this.notificationService = notificationService;
     }
 
     @Scheduled(cron = "0 0 0 * * ?") // 매일 자정에 실행
     public void scheduleOverdueCheck() {
-        List<String> overdueMessages = rentService.processOverdueBooks();
-        // 여기서 overdueMessages를 처리합니다 (예: 로깅, 알림 발송 등)
-        for (String message : overdueMessages) {
-            System.out.println(message); // 또는 로그로 기록
-        }
+    	System.out.println("연체 확인");
+    	notificationService.sendOverdueNotifications();
     }
-	
+    
+    @Scheduled(cron = "0 0 11 * * ?") // 매일 자정에 실행
+    public void scheduleOverdueSms() {
+    	System.out.println("연체 메세지 전송");
+        notificationService.sendOverdueCheck();
+    	
+    }
+
 }

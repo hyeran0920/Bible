@@ -1,16 +1,16 @@
 <template>
     <div class="order-list">
-        <h1>구매 기록</h1>
+        <h1>{{ $t('mypage.order.orderHistory') }}</h1>
 
         <!--구매 기록!!-->
         <div class="order-history-items">
             <table>
                 <thead>
                     <tr>
-                        <td>구매 날짜</td>
-                        <td>수취인</td>
-                        <td>결제 금액</td>
-                        <td>결제 상태</td>
+                        <td>{{ $t('mypage.order.orderDate') }}</td>
+                        <td>{{ $t('mypage.order.receiver') }}</td>
+                        <td>{{ $t('mypage.order.amount') }}</td>
+                        <td>{{ $t('mypage.order.checkout') }}</td>
                     </tr>                    
                 </thead>
                 <tbody>
@@ -19,7 +19,7 @@
                         <td>{{ orderHis.orderHistoryDate }}</td>
                         <td>{{ orderHis.orderHistoryReceivedName || "수취인" }}</td>
                         <td>{{ orderHis.orderHistoryTotalPrice }}</td>
-                        <td>{{ orderHis.orderPaymentStatus }}</td>
+                        <td>{{ orderHis.orderPaymentStatus?"결제 완료":"결제 전" }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -29,7 +29,7 @@
     <div v-if="orderModalVisible" class="order-modal">
         <!--구매 기록 상세 정보-->
         <div class="order-hisotry-detail" v-if="addresses[selectedOrderHistory.addressId]">
-            <h2>주문 내역 상세</h2>
+            <h2>주문 상세</h2>
             <p>주문번호: {{ selectedOrderHistory.orderHistoryId }}</p>
             <p>주소:</p>
             <p>{{ addresses[selectedOrderHistory.addressId].postcode }}</p>
@@ -86,22 +86,41 @@ export default {
     data() {
         return {
             orderHistories: [],
-            orders: [],
+            orders: {},
             books: {},
-            addresses: [],             
+            addresses: {},             
             selectedOrderHistory: null,
             orderModalVisible: false
         };
     },
     mounted() {
-        this.fetchOrderHistory();
+        this.fetchAllData();
+        
     },
     methods: {
+        async fetchAllData(){
+            try{
+                this.fetchOrderHistory();
+                
+                
+
+            }catch(error){
+                console.log("fetch all data = ",error);
+            }
+        },
+
         async fetchOrderHistory() {
             try {
+
+                //get order hisotries
                 const response = await axios.get('http://localhost:8080/api/orderhistory/me', { withCredentials: true });
                 this.orderHistories = response.data;
-               
+
+                //get address
+                this.orderHistories.forEach(oh => {
+                    if(!this.addresses[oh.addressId]){this.fetchAddress(oh.addressId);}
+                });
+
             } catch (error) {
                 console.error("구매 기록 불러오는 중 오류 발생:", error);
             }
@@ -143,7 +162,7 @@ export default {
             }
         },
 
-        async fetchAddresses(addressId) {
+        async fetchAddress(addressId) {
             try {
                 const response = await axios.get(`http://localhost:8080/api/members/addresses/${addressId}`);
                 this.addresses[addressId] = response.data;
@@ -161,7 +180,7 @@ export default {
             this.selectedOrderHistory = orderHistory;
             this.orderModalVisible = true;
             this.fetchOrder(orderHistory.orderHistoryId);
-            this.fetchAddresses(orderHistory.addressId)
+            
         }
     }
 };

@@ -1,7 +1,6 @@
 <template>
   <div class="container">
     <h2>{{ $t('mypage.rent.title') }}</h2>
-
     <div v-for="date in rentList" :key="date.rentDate" class="rent-group">
       <h3>{{ $t('mypage.rent.rentDate') }}: {{ changeDateFormat(date.rentDate) }}</h3>
       <table class="rentTable">
@@ -20,6 +19,13 @@
             <td>{{ changeDateFormat(item.rentFinishDate) }}</td>
             <td :class="getStatusClass(item.rentStatus)">
               {{ getRentStatusLabel(item.rentStatus) }}
+              
+              <!--대여 신청 취소-->
+              <button @click="this.cancelRentRequest(item)" 
+                class="rent-cancel" 
+                v-if="item.rentStatus=='REQUESTED'">
+                {{ $t('mypage.rent.cancelBtn') }}
+              </button>
             </td>
           </tr>
         </tbody>
@@ -68,15 +74,30 @@ export default {
         returned: status === "RETURNED",
       };
     },
+    async cancelRentRequest(item){
+      try{
+        //cancel
+        const response= await this.$axios.put(`rents/cancels/me`,{
+          "bookIds":[item.bookId],
+          "rentIds":[item.rentId]
+        });
+
+        //fetch
+        item.rentStatus="CANCLED";
+      }catch(error){
+        console.error("대여 신청 취소 - ",error);
+      }
+    },
   },
   async mounted() {
     try {
       const rentInfo = await this.$axios.get(RENT_BASEURL);
       this.rentList = rentInfo.data.content;
     } catch (error) {
-      console.error("에러 발생:", error);
+      console.error("대여 정보 가져오기 에러 발생:", error);
     }
   },
+  
 };
 </script>
 

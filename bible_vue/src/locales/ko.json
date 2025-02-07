@@ -59,7 +59,15 @@
             "cancle": "대여취소",
             "inUse": "대여중",
             "returned": "반납",
-            "none": "알 수 없음"
+            "none": "알 수 없음",
+            "cancelBtn":"신청 취소"
+        },
+        "order":{
+            "orderHistory":"구매 기록",
+            "orderDate":"구매 날짜",
+            "receiver":"수취인",
+            "amount":"결제 금액",
+            "checkout":"결제 상태"
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.library.bible.rent.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.locks.ReentrantLock;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.library.bible.member.model.Member;
 import com.library.bible.pageresponse.PageResponse;
+import com.library.bible.rent.dto.RentMemberResponse;
 import com.library.bible.rent.dto.RentPageResponse;
 import com.library.bible.rent.dto.RentRequest;
 import com.library.bible.rent.dto.RentResponse;
@@ -172,4 +174,14 @@ public class RentController {
 	public void deleteRent(@PathVariable @Positive long rentId) {
 		rentService.deleteRent(rentId);
 	}
+	
+	//연체일 체크
+	@GetMapping("/check")
+	public ResponseEntity<List<String>> checkOverdueBooks() {
+	    List<String> overdueMessages = rentService.processOverdueBooks();
+	    return ResponseEntity.ok(overdueMessages);
+	}
+
+	
+	
 }

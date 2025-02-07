@@ -4,8 +4,9 @@
             "title": "MYPAGE",
             "backHome": "Return to Main Screen",
             "myInfo": "My information",
-            "rentHistory": "rental History",
-            "orderHistory": "order History"
+            "rentHistory": "Rental History",
+            "review": "Review",
+            "orderHistory": "Order History"
         },
         "member":{
             "title": "Manage My Information",

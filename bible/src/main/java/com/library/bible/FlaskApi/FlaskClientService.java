@@ -21,17 +21,22 @@ public class FlaskClientService {
     
     public FlaskClientService() {
         this.FLASK_API_URL = getNgrokUrl() + "/recommend";
+        System.out.println("🚀 최종 Flask API URL: " + this.FLASK_API_URL);//
     }
    
     private String getNgrokUrl() {
         String ngrokApiUrl = "http://127.0.0.1:4040/api/tunnels";
         try {
+        	System.out.println("🔍 Ngrok API 호출: " + ngrokApiUrl); //ss
             ResponseEntity<Map> response = restTemplate.getForEntity(ngrokApiUrl, Map.class);
+            System.out.println("📡 응답 데이터: " + response.getBody());//ss
             if (response.getBody() != null) {
                 for (Object tunnel : (Iterable<?>) response.getBody().get("tunnels")) {
                     Map<String, String> tunnelInfo = (Map<String, String>) tunnel;
                     if ("https".equals(tunnelInfo.get("proto"))) {
-                        return tunnelInfo.get("public_url"); // ngrok의 HTTPS URL 반환
+                    	String ngrokUrl = tunnelInfo.get("public_url");
+                        System.out.println("✅ 발견된 Ngrok HTTPS URL: " + ngrokUrl);
+                        return ngrokUrl;
                     }
                 }
             }

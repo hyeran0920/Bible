@@ -1,7 +1,9 @@
 package com.library.bible.alarm.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import jakarta.annotation.PostConstruct;
 import net.nurigo.sdk.NurigoApp;
 import net.nurigo.sdk.message.exception.NurigoMessageNotReceivedException;
 import net.nurigo.sdk.message.model.Message;
@@ -9,10 +11,30 @@ import net.nurigo.sdk.message.service.DefaultMessageService;
 
 @Service
 public class SmsService {
+	
+	@Value("${bible.sms.key}")
+    private String smsKeyTemp;
+    
+    @Value("${bible.sms.secret.key}")
+    private String smsSecretKeyTemp;
+
+    private static String smsKey;
+    private static String smsSecretKey;
+
+    @PostConstruct
+    public void init() {
+    	System.out.println("smsKey="+smsKeyTemp+"    smsSecretKey="+smsSecretKeyTemp);
+        //smsKey = smsKeyTemp;
+        smsKey="NCSMCSRDHDXMWNOA";
+    	//smsSecretKey = smsSecretKeyTemp;
+    	smsSecretKey="BSRCNYR2U5UEXLOQBZAGSCIJLWNRBAU6";
+    }
+
+
 
     public static void sendSms(String to, String text) {
     	DefaultMessageService messageService 
-    		=  NurigoApp.INSTANCE.initialize("NCSMCSRDHDXMWNOA", "BSRCNYR2U5UEXLOQBZAGSCIJLWNRBAU6", "https://api.coolsms.co.kr");
+    		=  NurigoApp.INSTANCE.initialize(smsKey, smsSecretKey, "https://api.coolsms.co.kr");
     	// Message 패키지가 중복될 경우 net.nurigo.sdk.message.model.Message로 치환
     	
     	Message message = new Message();

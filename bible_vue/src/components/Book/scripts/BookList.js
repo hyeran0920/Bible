@@ -90,6 +90,9 @@ export default {
         this.selectedFile = null;
         this.closeModal();
       } catch (error) {
+        this.selectedFile = null;
+        this.closeModal();
+        alert("책 추가 실패");
         console.error("Error adding book:", error);
       }
     },

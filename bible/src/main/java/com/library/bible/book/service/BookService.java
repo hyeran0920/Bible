@@ -124,29 +124,32 @@ public class BookService implements IBookService {
 
     @Override
     //@CachePut(value = "books", key = "#book.bookId")
+    @Transactional(rollbackFor = Exception.class)
     public void insertBook(Book book, MultipartFile file) {
-    	
-    	System.out.println("book insert - bookService=");
-    	
-    	//insert book in database
-    	try {
-            bookRepository.insertBook(book);
-            System.out.println("Book inserted successfully: " );
-        } catch (Exception e) {
-            System.err.println("Error inserting book: " + e.getMessage());
-            e.printStackTrace();
-        }
-    	
-    	long bookId=book.getBookId();
 
-    	//book QR img
-    	uploadService.createBookQRImage(book,bookId);
-    	
-    	//book cover img
-    	if (file != null && !file.isEmpty()) {
-        	uploadService.uploadBookImage(bookId,file);
-        }
+       System.out.println("book insert - bookService=");
+
+       try {
+           // 책 정보를 데이터베이스에 저장
+           bookRepository.insertBook(book);
+           System.out.println("Book inserted successfully");
+
+           long bookId = book.getBookId();
+
+           // 책 QR 코드 이미지 생성
+           uploadService.createBookQRImage(book, bookId);
+
+           // 책 표지 이미지 업로드 (파일이 있을 경우에만 실행)
+           if (file != null && !file.isEmpty()) {
+               uploadService.uploadBookImage(bookId, file);
+           }
+       } catch (Exception e) {
+           System.err.println("Error inserting book: " + e.getMessage());
+           e.printStackTrace();
+           throw new RuntimeException("Book insertion failed, rolling back transaction", e);
+       }
     }
+
 
     
 

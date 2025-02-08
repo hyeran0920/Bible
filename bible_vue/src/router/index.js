@@ -11,6 +11,7 @@ import AdminPage from "../components/Admin/AdminPage.vue";
 import CartPage from "../components/Cart/components/CartPage.vue";
 import OrderPage from "../components/Order/components/OrderPage.vue";
 
+import BookRecommendation from "../components/BookRecommendation/BookRecommendation.vue";
 
 import AddBookExcel from "../components/Admin/AdminAddBookExcel.vue";
 
@@ -34,6 +35,7 @@ const routes = [
   { path: "/cart", name:"cart", component:CartPage},
   { path: "/order/:cartIds", name:"order", component:OrderPage, props:true},
 
+  { path: "/bookRecommendation", name: "bookRecommendation", component: BookRecommendation },
 
   { path: "/book/excel", name:"addBookExcel", component: AddBookExcel},
 

@@ -31,7 +31,7 @@
     <nav class="nav">
       <ul class="nav-links">
         <li><a href="/book">베스트셀러</a></li>
-        <li><a href="#">추천도서</a></li>
+        <li><a href="/bookRecommendation">추천도서</a></li>
         <li><a href="#">신간 도서</a></li>
         <li><a href="#">내 서재</a></li>
       </ul>

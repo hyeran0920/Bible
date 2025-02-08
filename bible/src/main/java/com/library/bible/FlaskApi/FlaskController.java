@@ -22,17 +22,17 @@ public class FlaskController {
 	}
 	
 	@GetMapping("/recommend")
-    public ResponseEntity<String> getFlaskRecommendation(@RequestParam int user_id, @RequestParam(defaultValue = "5") int n) {
-        String response = flaskClientService.getRecommendation(user_id, n);
+    public ResponseEntity<String> getFlaskRecommendation(@RequestParam int mem_id, @RequestParam(defaultValue = "5") int n) {
+        String response = flaskClientService.getRecommendation(mem_id, n);
         return ResponseEntity.ok(response);
     }
 	
 	@PostMapping("/recommend")
     public ResponseEntity<String> postFlaskRecommendation(@RequestBody Map<String, Object> request) {
-        int userId = (int) request.get("user_id");
+        int memId = (int) request.get("mem_id");
         int n = request.containsKey("n") ? (int) request.get("n") : 5;
 
-        String response = flaskClientService.postRecommendation(userId, n);
+        String response = flaskClientService.postRecommendation(memId, n);
         return ResponseEntity.ok(response);
     }
 }

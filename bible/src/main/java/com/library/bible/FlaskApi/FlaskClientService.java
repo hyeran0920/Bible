@@ -46,14 +46,14 @@ public class FlaskClientService {
         return "http://127.0.0.1:5000"; // ngrok이 실행되지 않았을 경우 기본 로컬 URL
     }
     @GetMapping
-    public String getRecommendation(int userId, int n) {
-        String requestUrl = FLASK_API_URL + "?user_id=" + userId + "&n=" + n;
+    public String getRecommendation(int memId, int n) {
+        String requestUrl = FLASK_API_URL + "?mem_id=" + memId + "&n=" + n;
         return restTemplate.getForObject(requestUrl, String.class);
     }
     @PostMapping
-    public String postRecommendation(int userId, int n) {
+    public String postRecommendation(int memId, int n) {
         Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("user_id", userId);
+        requestBody.put("mem_id", memId);
         requestBody.put("n", n);
 
         HttpHeaders headers = new HttpHeaders();

@@ -68,7 +68,7 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 # ngrok 터널 열기
 ngrok.set_auth_token("2gAz8iHMKHDtlgbxaand8ce6EAu_2pSR9fiiFYRnhBPUHT1Vz") # ngrok Authtoken
 public_url = ngrok.connect(5000)
-print(f"🚀 Public URL: {public_url}")
+print(f"Public URL: {public_url}")
 
 #저장 모드 load
 PATH = "C:/dev/metanet/workspace/meta3/Bible/bible_flask/"
@@ -81,9 +81,9 @@ try:
     with open(DATASET_PATH, "rb") as f:
         dataset = pickle.load(f)
 
-    print("✅ 모델과 데이터셋 로드 성공!")
+    print("모델과 데이터셋 로드 성공!")
 except Exception as e:
-    print(f"❌ 모델 로드 실패: {e}")
+    print(f"모델 로드 실패: {e}")
     model = None
     dataset = None
 
@@ -91,43 +91,52 @@ except Exception as e:
 def home():
     return "Flask API is running!"
 def recommend_books(model, dataset, mem_id , n=5):
+    print(f"recommend_books() 실행: mem_id={mem_id}, n={n}")
+
     mem_index = dataset.mapping()[0].get(mem_id , None)
+    if mem_index is None:
+        return []
 
     all_items = list(dataset.mapping()[2].keys())
-    scores = model.predict(mem_id , index, list(range(len(all_items))))
+    scores = model.predict(mem_index, list(range(len(all_items))))
     top_books = sorted(zip(all_items, scores), key=lambda x: x[1], reverse=True)[:n]
 
+    print(f"추천 결과: {top_books}")
     return [{"title": book, "score": score} for book, score in top_books]
 
 @app.route("/recommend", methods=["POST"])
 def recommend_post():
     data = request.get_json()
-    user_id = data.get("user_id")
+    mem_id = data.get("mem_id")
     n = data.get("n", 5)
-    recommendations = recommend_books(model, dataset, user_id, n)
-    recommendations = [f"Book {i+1}" for i in range(n)]
+    #mem_id 없을 시
+    if not mem_id:
+        return jsonify({"error": "mem_id가 필요합니다."}), 400
+    
+    recommendations = recommend_books(model, dataset, mem_id, n)
+    #recommendations = [f"Book {i+1}" for i in range(n)]
 
-    return jsonify({"user_id": user_id, "recommendations": recommendations})
+    return jsonify({"mem_id": mem_id, "recommendations": recommendations})
 
 @app.route("/recommend", methods=["GET"])
 def recommend_get():
-    mem_id  = request.args.get("mem_id ", type=int)
+    mem_id  = request.args.get("mem_id", type=int)
     n = request.args.get("n", default=5, type=int)
 
-    if not user_id:
+    if not mem_id:
         return jsonify({"error": "mem_id 필요합니다."}), 400
 
-    recommendations = recommend_books(model, dataset, mem_id , n)
-    mem_id  = request.args.get("mem_id ", type=int)
+    recommendations = recommend_books(model, dataset, mem_id, n)
+    mem_id = request.args.get("mem_id", type=int)
     n = request.args.get("n", default=5, type=int)
 
     recommendations = [f"Book {i+1}" for i in range(n)]  # 임시 결과
 
-    return jsonify({"mem_id ": mem_id , "recommendations": recommendations})
+    return jsonify({"mem_id": mem_id, "recommendations": recommendations})
 
 # Flask 서버 실행
 if __name__ == "__main__":
 
     app.run(host="0.0.0.0", port=5000) #모든 네트워크 실행 0.0.0.0
 
-    app.run()
+    #app.run()

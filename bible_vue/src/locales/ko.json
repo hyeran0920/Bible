@@ -62,6 +62,7 @@
             "expectedDate": "반납 예정일",
             "returnDate": "반납일",
             "status": "상태",
+            "all": "전체",
             "requested": "대여신청",
             "cancle": "대여취소",
             "inUse": "대여중",

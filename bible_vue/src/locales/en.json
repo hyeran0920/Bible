@@ -62,6 +62,7 @@
             "expectedDate": "Expected Date",
             "returnDate": "Expiry Date",
             "status": "Status",
+            "all": "ALL",
             "requested": "REQUESTED",
             "cancle": "CANCLED",
             "inUse": "IN USE",

@@ -47,20 +47,20 @@ public class WebSocketHandler extends TextWebSocketHandler implements Initializi
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
     	
-    	System.out.println("after connection++++++++++++++++++++++++++++++++++");
     	System.out.println("세션 개수="+sessionSet.size());
         
         super.afterConnectionEstablished(session);
-        sessionSet.add(session);
-        
+
         // JWT 토큰에서 memId 추출
         Long memId = extractMemIdFromJwt(session);
         
         if (memId != null) {
+        	sessionSet.add(session);
             jwtSessionMap.put(memId, session);
             logger.info("사용자 {} WebSocket 세션 등록 완료", memId);
         } else {
             logger.warn("JWT에서 memId를 추출할 수 없음, 세션 등록 안됨");
+            session.close();
         }
     }
 
@@ -83,24 +83,6 @@ public class WebSocketHandler extends TextWebSocketHandler implements Initializi
         
     	//System.out.println("jwt session 개수"+jwtSessionMap.size());
     	
-    	
-        /*
-        for (Map.Entry<Long, WebSocketSession> entry : jwtSessionMap.entrySet()) {
-            Long key = entry.getKey();
-            WebSocketSession session = entry.getValue();
-            
-            System.out.println("memId: " + key + ", WebSocketSession ID: " + session.getId());
-            
-            if(key==memId) {
-            	try{session.sendMessage(new TextMessage(messageContent));}
-            	catch(Exception e) {
-            		logger.error("사용자 {} 에게 메시지 전송 실패", memId, e);
-            	}
-            	break;
-            }
-        }
-        */
-    	
     	WebSocketSession session = jwtSessionMap.get(Long.valueOf(memId));
     	if (session != null && session.isOpen()) {
 	    	try{session.sendMessage(new TextMessage(messageContent));}
@@ -108,26 +90,9 @@ public class WebSocketHandler extends TextWebSocketHandler implements Initializi
 	    		logger.error("사용자 {} 에게 메시지 전송 실패", memId, e);
 	    	}
     	}else {
-    		logger.error("사용자 {}의 WebSocket session 없음",memId);
+    		//logger.error("사용자 {}의 WebSocket session 없음",memId);
     	}
-        /*
-        WebSocketSession session = jwtSessionMap.get(memId);
-        if(session==null || !session.isOpen()) {
-        	System.out.println("websocket 세션이 없스니다");
-        }
-    	*/
-        /*
-        if (session != null && session.isOpen()) {
-            try {
-                session.sendMessage(new TextMessage(messageContent));
-                logger.info("사용자 {} 에게 메시지 전송: {}", memId, messageContent);
-            } catch (Exception e) {
-                logger.error("사용자 {} 에게 메시지 전송 실패", memId, e);
-            }
-        } else {
-            logger.warn("사용자 {} 의 WebSocket 세션이 없음", memId);
-        }
-        */
+
     }
 
     // 모든 사용자에게 알람 전송
@@ -201,12 +166,12 @@ public class WebSocketHandler extends TextWebSocketHandler implements Initializi
                     sendMessageToAll(messageContent);
 
                     
-                    //Send User Messages
-                    String messageContent2 = "{\"alarmTitle\":\"" + "헐" + "\",\"alarmText\":\"" + "되나요" + "\"}";
-                    sendMessageToUser((long) 62, messageContent2);
+                    //Send User Messages Example
+                    //String messageContent2 = "{\"alarmTitle\":\"" + "헐" + "\",\"alarmText\":\"" + "되나요" + "\"}";
+                    //sendMessageToUser((long) 62, messageContent2);
                     
                     
-                    Thread.sleep(5000); // 간격으로 메시지 전송
+                    Thread.sleep(10000); // 이 간격으로 메시지 전송
                 } catch (InterruptedException e) {
                     logger.error("쓰레드 중단!", e);
                     break;

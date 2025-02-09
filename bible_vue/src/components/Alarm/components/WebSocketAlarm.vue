@@ -47,9 +47,15 @@ export default {
     removeAlarm(index) {
       this.alarmList.splice(index, 1);
     },
+
+    //전체 비움
+    removeAllAlarm(){
+      this.alarmList=[];
+    },
   },
   beforeDestroy() {
     // WebSocket 연결 종료
+    this.removeAllAlarm();
     webSocketService.disconnect();
   },
 };

@@ -154,6 +154,7 @@
 	    <collection property="rents" ofType="RentDetailResponse">
 	        <id property="rentId" column="rent_id"/>
 	        <result property="bookId" column="book_id"/>
+	        <result property="memId" column="mem_id"/>
 	        <result property="rentDueDate" column="rent_due_date"/>
 	        <result property="rentFinishDate" column="rent_finish_date"/>
 	        <result property="rentStatus" column="rent_status"/>
@@ -169,6 +170,7 @@
 	        r.rent_date,
 	        r.rent_id,
 	        r.book_id,
+	        r.mem_id,
 	        r.rent_due_date,
 	        r.rent_finish_date,
 	        r.rent_status,

@@ -7,14 +7,21 @@ import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
 import com.library.bible.alarm.WebSocketHandler;
+import com.library.bible.security.jwt.JwtProvider;
 
 @Configuration
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
 
-    @Bean
+	private final JwtProvider jwtProvider;
+	
+	public WebSocketConfig(JwtProvider jwtProvider) {
+        this.jwtProvider = jwtProvider;
+    }
+	
+	@Bean
     public WebSocketHandler webSocketHandler() {
-        return new WebSocketHandler();
+        return new WebSocketHandler(jwtProvider); // JwtProvider를 생성자를 통해 주입
     }
 
     @Override

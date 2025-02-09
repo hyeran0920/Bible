@@ -24,4 +24,13 @@ public class AlarmService {
             e.printStackTrace();
         }
     }
+    
+    public void sendUserAlarm(long memId, AlarmMessage alarmMessage) {
+    	try {
+    		String jsonMessage = objectMapper.writeValueAsString(alarmMessage);
+            webSocketHandler.sendMessageToUser(memId,jsonMessage);
+    	}catch(Exception e) {
+    		e.printStackTrace();
+    	}
+    }
 }

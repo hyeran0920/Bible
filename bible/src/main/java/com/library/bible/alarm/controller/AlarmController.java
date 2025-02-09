@@ -19,8 +19,13 @@ public class AlarmController {
 
     @PostMapping("/send")
     public String sendAlarm(@RequestBody AlarmMessage alarmMessage) {
-        alarmService.sendAlarm(alarmMessage);
-        return "알람 전송 완료";
+    	try {
+    		alarmService.sendAlarm(alarmMessage);
+            return "전체 알람 전송 완료";
+    	}catch(Exception e) {
+    		return "전체 알람 전송 실패";
+    	}
+        
     }
     
     @PostMapping
@@ -28,7 +33,12 @@ public class AlarmController {
     		@RequestBody AlarmMessage alarmMessage,
     		@RequestParam long memId) {
     	
-    	alarmService.sendUserAlarm(memId,alarmMessage);
-    	return "유저에게 알람 전송 완료";
+    	try {
+    		alarmService.sendUserAlarm(memId,alarmMessage);
+        	return "유저에게 알람 전송 완료";
+    	}catch(Exception e) {
+    		return "알람 전송 실패";
+    	}
+    	
     }
 }

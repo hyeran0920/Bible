@@ -15,10 +15,10 @@ class FlaskClientServiceTest {
 
     @Test
     void testFlaskApiCall() {
-        // Flask API에서 응답을 받아오는 메서드를 호출
+        // Flask API에서 응답을 받아오는 메서드를 호출 //
         String response = flaskClientService.getRecommendation(1, 5);
         
         assertNotNull(response, "not Null.");
-        assertTrue(response.startsWith("http"), "유효한 URL이 아닙니다.");
+        assertTrue(response.startsWith("http"), "유효한 URL이 아닙니다.");   
     }
 }

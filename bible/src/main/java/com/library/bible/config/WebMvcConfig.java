@@ -50,7 +50,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
             .allowedOrigins(corsConfiguration.getAllowedOrigins().toArray(String[]::new))
             .allowedMethods(corsConfiguration.getAllowedMethods().toArray(String[]::new))
             .allowedHeaders(corsConfiguration.getAllowedHeaders().toArray(String[]::new))
-            .allowCredentials(corsConfiguration.getAllowCredentials());
+            .allowCredentials(corsConfiguration.getAllowCredentials())
+            .exposedHeaders(corsConfiguration.getExposedHeaders().toArray(String[]::new)); // 설정된 exposedHeaders 사용
     }
     
     @Override

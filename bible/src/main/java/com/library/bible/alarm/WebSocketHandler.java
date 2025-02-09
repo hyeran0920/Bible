@@ -13,6 +13,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.library.bible.security.jwt.JwtProvider;
 
 import java.util.List;
@@ -166,7 +167,8 @@ public class WebSocketHandler extends TextWebSocketHandler implements Initializi
                         System.out.println("추출된 JWT: " + jwtToken); // 디버깅용 출력
 
                         // JWT 검증 및 memId 추출
-                        return (long) jwtProvider.getMemIdAndVerify(jwtToken);
+                        DecodedJWT decodedJWT = jwtProvider.getClaimsAndVerifyAccessToken(jwtToken);
+                        return Long.valueOf(decodedJWT.getSubject());
                     }
                 }
             }

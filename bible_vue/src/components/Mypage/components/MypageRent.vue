@@ -1,6 +1,17 @@
 <template>
   <div class="container">
     <h2>{{ $t('mypage.rent.title') }}</h2>
+    <!-- 상태 필터 추가 -->
+    <div class="status-filter">
+      <select v-model="selectedStatus" @change="resetAndFetch">
+        <option value="" selected>{{ $t('mypage.rent.all') }}</option>
+        <option value="REQUESTED">{{ $t('mypage.rent.requested') }}</option>
+        <option value="CANCLED">{{ $t('mypage.rent.cancle') }}</option>
+        <option value="IN_USE">{{ $t('mypage.rent.inUse') }}</option>
+        <option value="RETURNED">{{ $t('mypage.rent.returned') }}</option>
+      </select>
+    </div>
+
     <div v-for="date in rentList" :key="date.rentDate" class="rent-group">
       <h3>{{ $t('mypage.rent.rentDate') }}: {{ changeDateTimeFormat(date.rentDate) }}</h3>
       <div class="rent-cards">
@@ -51,8 +62,7 @@
       <button 
         :disabled="currentPage === 0"
         @click="changePage(currentPage - 1)"
-        class="page-btn"
-      >
+        class="page-btn">
         &lt;
       </button>
       
@@ -63,8 +73,7 @@
       <button 
         :disabled="isLastPage"
         @click="changePage(currentPage + 1)"
-        class="page-btn"
-      >
+        class="page-btn">
         &gt;
       </button>
     </div>
@@ -75,14 +84,16 @@
 const RENT_BASEURL = "/rents/me";
 
 export default {
+  name: 'MyRentHistory',
   data() {
     return {
       rentList: [], // 대여 기록
+      selectedStatus: '',
       currentPage: 0,
       totalPages: 0,
       totalElements: 0,
       isLastPage: false,
-      pageSize: 10,
+      pageSize: 5,
     };
   },
   computed: {
@@ -149,12 +160,15 @@ export default {
         alert("대여 신청이 취소에 실패했습니다.")
       }
     },
+    // 페이지 데이터 가져오기
     async fetchRentList(page) {
+      console.log(this.selectedStatus);
       try {
         const response = await this.$axios.get(RENT_BASEURL, {
           params: {
             page: page,
-            size: this.pageSize
+            size: this.pageSize,
+            rentStatus: this.selectedStatus || undefined
           }
         });
         
@@ -166,6 +180,10 @@ export default {
       } catch (error) {
         console.error("대여 정보 가져오기 에러 발생:", error);
       }
+    },
+    resetAndFetch() {
+      this.currentPage = 0; // 페이지를 첫 페이지로 리셋
+      this.fetchRentList(0); // 데이터 다시 불러오기
     },
     async changePage(newPage) {
       if (newPage >= 0 && newPage < this.totalPages) {

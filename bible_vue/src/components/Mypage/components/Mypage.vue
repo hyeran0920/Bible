@@ -93,12 +93,6 @@
         transition: transform 0.3s ease-in-out;
     }
 
-    .content-area {
-        flex: 1;
-        padding: 20px;
-        background: #ffffff;
-    }
-
     .hamburger-btn {
         display: none;
         position: absolute;
@@ -121,8 +115,16 @@
     }
     /* 반응형 스타일 */
     @media (max-width: 768px){
-        .mypage-container{
+        .content-area {
+            flex: 1;
+            padding: 20px;
+            background: #ffffff;
+            width: 85%;
+        }
+
+        .mypage-container {
             flex-direction: column;
+            
         }
         .sidebar {
             position: fixed;

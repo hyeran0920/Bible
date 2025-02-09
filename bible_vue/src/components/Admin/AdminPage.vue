@@ -8,8 +8,10 @@
         <li @click="changeMenu('rental')">대여/반납</li>
         <li @click="changeMenu('rentalList')">대여 조회</li>
         <li @click="changeMenu('reservation')">예약 조회</li>
+        <li @click="changeMenu('orderlist')">구매 조회</li>
         <li @click="changeMenu('review')">리뷰 조회</li>
         <li @click="changeMenu('alarm')">알람 전송</li>
+
       </ul>
     </aside>
 
@@ -29,6 +31,7 @@ import AdminRentalList from './AdminRentalList.vue'
 import AdminReservation from './AdminReservation.vue';
 import AdminReview from './AdminReview.vue';
 import AdminSendAlarm from './AdminSendAlarm.vue';
+import AdminOrderList from './AdminOrderList.vue';
 
 export default {
   name: "AdminDashboard",
@@ -49,6 +52,7 @@ export default {
         case 'reservation': return AdminReservation;
         case 'review': return AdminReview;
         case 'alarm': return AdminSendAlarm;
+        case 'orderlist':return AdminOrderList;
         default: return AdminMain;
       }
     }

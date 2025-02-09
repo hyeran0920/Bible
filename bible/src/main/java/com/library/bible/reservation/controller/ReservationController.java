@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.library.bible.member.model.Member;
 import com.library.bible.reservation.dto.ReservationRequest;
 import com.library.bible.reservation.dto.ReservationResponse;
 import com.library.bible.reservation.model.Reservation;
@@ -49,14 +48,14 @@ public class ReservationController {
 	
 	// 1. 예약 조회 - 사용자
 	@GetMapping("/me")
-	public ResponseEntity<List<ReservationResponse>> selectReservByMemId(@AuthMember Member member){
-		List<ReservationResponse> reservs = reservService.selectReservResponsesByMemId(member.getMemId());
+	public ResponseEntity<List<ReservationResponse>> selectReservByToken(@AuthMember Long memId) {
+		List<ReservationResponse> reservs = reservService.selectReservResponsesByMemId(memId);
 		return ResponseEntity.ok(reservs);
 	}	
 
 	// 1. 예약 조회 - 관리자
 	@GetMapping
-	public ResponseEntity<List<ReservationResponse>> selectReservByMemId(@RequestParam long memId){
+	public ResponseEntity<List<ReservationResponse>> selectReservByMemId(@RequestParam long memId) {
 		List<ReservationResponse> reservs = reservService.selectReservResponsesByMemId(memId);
 		return ResponseEntity.ok(reservs);
 	}	
@@ -75,10 +74,10 @@ public class ReservationController {
 	
 	// 2. 예약 생성 - bookIds로 예약 생성하기(사용자)
 	@PostMapping("/me")
-	public ResponseEntity<List<Reservation>> insertReservByMemId(@AuthMember Member member, @RequestBody ReservationRequest request) {
+	public ResponseEntity<List<Reservation>> insertReservByToken(@AuthMember Long memId, @RequestBody ReservationRequest request) {
 		lock.lock();
 		try {
-			List<Reservation> reservations = reservService.insertReservByBookIds(request.getBookIds(), member.getMemId());
+			List<Reservation> reservations = reservService.insertReservByBookIds(request.getBookIds(), memId);
 			System.out.println(reservations);
 
 			return ResponseEntity.status(HttpStatus.CREATED).body(reservations);
@@ -121,8 +120,8 @@ public class ReservationController {
 	
 	// 3. 여러 개의 예약 삭제 - 사용자
 	@PostMapping("/deletion/me")
-	public ResponseEntity<?> deleteReservs(@AuthMember Member member, @RequestBody ReservationRequest request) {
-		reservService.deleteReservsByMemId(request.getReservIds(), member.getMemId());
+	public ResponseEntity<?> deleteReservs(@AuthMember Long memId, @RequestBody ReservationRequest request) {
+		reservService.deleteReservsByMemId(request.getReservIds(), memId);
 		return ResponseEntity.noContent().build();
 	}
 	

@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.library.bible.address.model.Address;
 import com.library.bible.address.service.IAddressService;
-import com.library.bible.member.model.Member;
 import com.library.bible.resolver.AuthMember;
 
 import lombok.RequiredArgsConstructor;
@@ -31,8 +30,8 @@ public class AddressController {
 	
 	//GET
 	@GetMapping("/me" + ADDRESS_PATH)
-	public ResponseEntity<List<Address>> selectAddresses(@AuthMember Member member) {
-		List<Address> addresses = addressService.selectAddressesByMemId(member.getMemId());
+	public ResponseEntity<List<Address>> selectAddresses(@AuthMember Long memId) {
+		List<Address> addresses = addressService.selectAddressesByMemId(memId);
 		return ResponseEntity.ok(addresses);
 	}
 
@@ -49,16 +48,16 @@ public class AddressController {
 	}
 	
 	@GetMapping(ADDRESS_PATH+"/default")
-	public ResponseEntity<Address> selectAddress(@AuthMember Member member){
-		Address address=addressService.selectDefaultAddress(member.getMemId());
+	public ResponseEntity<Address> selectAddress(@AuthMember Long memId){
+		Address address=addressService.selectDefaultAddress(memId);
 		return ResponseEntity.ok(address);
 	}
 	
 	//POST
 	@PostMapping("/me/addresses")
-	public ResponseEntity<Address> insertAddress(@AuthMember Member member, @Valid @RequestBody Address address) {
+	public ResponseEntity<Address> insertAddress(@AuthMember Long memId, @Valid @RequestBody Address address) {
 		System.out.println(address.toString());
-		address.setMemId(member.getMemId());
+		address.setMemId(memId);
 		address = addressService.insertAddress(address);
 		return ResponseEntity.status(HttpStatus.CREATED).body(address);
 	}
@@ -75,24 +74,24 @@ public class AddressController {
 	
 	//PUT
 	@PutMapping(ADDRESS_PATH + "/{addressId}")
-	public ResponseEntity<Address> updateAddress(@PathVariable long addressId, @Valid @RequestBody Address address, @AuthMember Member member) {
-		address.setMemId(member.getMemId());
+	public ResponseEntity<Address> updateAddress(@PathVariable long addressId, @Valid @RequestBody Address address, @AuthMember Long memId) {
+		address.setMemId(memId);
 		address.setAddressId(addressId);
 		addressService.updateAddress(address);
 		return ResponseEntity.ok(address);
 	}
 	
 	@PutMapping(ADDRESS_PATH + "/default/{addressId}")
-	public ResponseEntity<?> updateDefaultAddress(@PathVariable long addressId, @AuthMember Member member){
-		addressService.setDefaultAddress(member.getMemId(), addressId);
+	public ResponseEntity<?> updateDefaultAddress(@PathVariable long addressId, @AuthMember Long memId) {
+		addressService.setDefaultAddress(memId, addressId);
 		return ResponseEntity.noContent().build();
 	}
 	
 	
 	//DELETE
 	@DeleteMapping("/me" + ADDRESS_PATH)
-	public ResponseEntity<?> deleteAddress(@AuthMember Member member) {
-		addressService.deleteAddressesByMemId(member.getMemId());
+	public ResponseEntity<?> deleteAddress(@AuthMember Long memId) {
+		addressService.deleteAddressesByMemId(memId);
 		return ResponseEntity.noContent().build();
 	}
 

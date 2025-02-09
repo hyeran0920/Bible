@@ -58,7 +58,8 @@ public class MemberController {
 	}
 	
 	@GetMapping("/me")
-	public ResponseEntity<MemberResponseDto> getMyInfo(@AuthMember Member member) {
+	public ResponseEntity<MemberResponseDto> getMyInfo(@AuthMember Long memId) {
+		Member member = memberService.selectMember(memId);
 	    return ResponseEntity.ok(memberMapper.memberToMemberResponseDto(member));
 	} 
 
@@ -78,8 +79,8 @@ public class MemberController {
 	}
 
 	@PutMapping("/me")
-	public ResponseEntity<MemberResponseDto> updateMember(@RequestBody @Valid Member updateMember, @AuthMember Member member){
-		updateMember.setMemId(member.getMemId());
+	public ResponseEntity<MemberResponseDto> updateMember(@RequestBody @Valid Member updateMember, @AuthMember Long memId){
+		updateMember.setMemId(memId);
 		memberService.updateMember(updateMember);
 		return ResponseEntity.ok(memberMapper.memberToMemberResponseDto(updateMember));
 	}
@@ -91,17 +92,15 @@ public class MemberController {
 	}
 
 	@DeleteMapping("/me")
-	public void deleteMemberByToken(@AuthMember Member member) {
-		memberService.deleteMember(member.getMemId());
+	public void deleteMemberByToken(@AuthMember Long memId) {
+		memberService.deleteMember(memId);
 	}
 	
 	@GetMapping("/admin-page")
 	@PreAuthorize("hasRole('ADMIN')") // 권한 체크 확인용
-	public ResponseEntity<Map<String, String>> adminOnlyPage(@AuthMember Member member) { // ✅ @AuthMember로 현재 회원 정보 받기
-	    String adminName = member.getMemName(); // 현재 로그인한 관리자 이름 가져오기
-
+	public ResponseEntity<Map<String, String>> adminOnlyPage(@AuthMember Long memId) { // ✅ @AuthMember로 현재 회원 정보 받기
 	    Map<String, String> response = new HashMap<>();
-	    String message = "관리자 " + adminName + "님 관리자 페이지 접속 성공!!!";
+	    String message = "관리자 페이지 접속 성공!!!";
 	    response.put("message", message);
 
 	    System.out.println(message); // 콘솔에 출력

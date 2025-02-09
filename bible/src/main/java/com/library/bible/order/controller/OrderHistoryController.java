@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.library.bible.member.model.Member;
 import com.library.bible.order.model.OrderHistory;
 import com.library.bible.order.service.IOrderHistoryService;
 import com.library.bible.resolver.AuthMember;
@@ -32,8 +31,8 @@ public class OrderHistoryController {
 
     // Get order histories by authenticated member
     @GetMapping("/me")
-    public ResponseEntity<List<OrderHistory>> getOrderHistory(@AuthMember Member member) {
-        List<OrderHistory> orderHistories = orderHistoryService.getOrderHistoryByMemId(member.getMemId());
+    public ResponseEntity<List<OrderHistory>> getOrderHistoryByToken(@AuthMember Long memId) {
+        List<OrderHistory> orderHistories = orderHistoryService.getOrderHistoryByMemId(memId);
         return ResponseEntity.ok(orderHistories);
     }
     
@@ -66,9 +65,9 @@ public class OrderHistoryController {
     @PostMapping
     public ResponseEntity<Long> insertOrderHistory(
     		@RequestBody @Valid OrderHistory orderHistory, 
-    		@AuthMember Member member) 
+    		@AuthMember Long memId) 
     {
-    	orderHistory.setMemId(member.getMemId());
+    	orderHistory.setMemId(memId);
     	long orderHisId=orderHistoryService.insertOrderHistory(orderHistory);
     	return ResponseEntity.ok(orderHisId);
     }

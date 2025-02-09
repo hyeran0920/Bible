@@ -57,7 +57,7 @@ public class MemberService implements IMemberService{
 	public Member insertMember(Member member, String role, String verifiedCode) {
 		// 이메일 코드 검증(인증번호 확인 후 1시간 안에 회원가입해야함)
         String savedCode = redisTemplate.opsForValue().get("VERIFIED_" + member.getMemEmail());
-        if(!verifiedCode.equals(savedCode))
+        if(savedCode == null || !verifiedCode.equals(savedCode))
         	throw new CustomException(ExceptionCode.MUST_SIGNUP_IN_VERIVIED_EMAIL);
 		
 		try {

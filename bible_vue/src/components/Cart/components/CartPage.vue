@@ -65,13 +65,9 @@
 
 
 <script>
-import axios from 'axios';
 import Header from '../../MainPage/components/Header.vue';
 import Footer from '../../MainPage/components/Footer.vue';
 import '../styles/CartStyle.css';
-import { RouterLink } from 'vue-router';
-
-
 
 export default {
   data() {
@@ -92,8 +88,8 @@ export default {
   methods: {
 
     //Fetch Data---------------------------------------------------------------
-    fetchCarts() {
-      axios.get('http://localhost:8080/api/carts', { withCredentials: true })
+    async fetchCarts() {
+      await this.$axios.get('/carts', { withCredentials: true })
         .then(response => {
           this.carts = response.data;
           this.carts.forEach(cart => {
@@ -106,8 +102,8 @@ export default {
           console.error("장바구니 목록을 불러오는 중 오류 발생:", error);
         });
     },
-    fetchBook(bookId) {
-      axios.get(`http://localhost:8080/api/books/${bookId}`)
+    async fetchBook(bookId) {
+      await this.$axios.get(`/books/${bookId}`)
         .then(response => {
           this.books[bookId] = response.data;
         })
@@ -137,8 +133,8 @@ export default {
       });
       this.totalPayPrice = total;
     },
-    calculateBookPrice(cartId, newCount, bookId) {
-      axios.put(`http://localhost:8080/api/carts/${cartId}`, {
+    async calculateBookPrice(cartId, newCount, bookId) {
+      await this.$axios.put(`/carts/${cartId}`, {
         bookCount: newCount
       })
       .then(response => {
@@ -148,8 +144,8 @@ export default {
         console.error("Error - cart:", error);
       });
     },
-    deleteCart(cartId) {
-      axios.delete(`http://localhost:8080/api/carts/${cartId}`, { withCredentials: true })
+    async deleteCart(cartId) {
+      await this.$axios.delete(`/carts/${cartId}`, { withCredentials: true })
         .then(response => {
           alert(response.data);
           this.carts = this.carts.filter(cart => cart.cartId !== cartId);
@@ -163,7 +159,7 @@ export default {
     
 
     // Book Img------------------------------------------------------------
-    getBookImageUrl(bookId) {
+    async getBookImageUrl(bookId) {
       return `http://localhost:8080/api/uploads/book-image?bookid=${bookId}`;
     },
 
@@ -178,7 +174,7 @@ export default {
     },
 
     // Rent ---------------------------------------------------------------
-    rentAll(){
+    async rentAll(){
       //선택한 책 ID 가져오기
       const selectedBookIds = this.carts
           .filter(i => this.selectedCartIds.includes(i.cartId)).map(i=> i.bookId);
@@ -186,7 +182,7 @@ export default {
       const bookJson = { "bookIds": selectedBookIds };
 
       //대여하기
-      axios.post("http://localhost:8080/api/rents/requests/me", bookJson, { withCredentials: true })
+      await this.$axios.post("/rents/requests/me", bookJson, { withCredentials: true })
         .then(response => {
           alert("대여 신청이 완료되었습니다.");
         })

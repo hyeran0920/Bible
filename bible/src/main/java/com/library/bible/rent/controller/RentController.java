@@ -2,7 +2,6 @@ package com.library.bible.rent.controller;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.locks.ReentrantLock;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.library.bible.book.model.Book;
-import com.library.bible.member.model.Member;
 import com.library.bible.pageresponse.PageResponse;
 import com.library.bible.rent.dto.RentPageResponse;
 import com.library.bible.rent.dto.RentRequest;
@@ -62,12 +60,12 @@ public class RentController {
 	// 현재 사용자의 대여 기록 조회
 	@GetMapping("/me")
 	public ResponseEntity<PageResponse<RentPageResponse>> selectRentHistoryResponse(
-			@AuthMember Member member,
+			@AuthMember Long memId,
 			@RequestParam(required = false) Optional<RentStatus> rentStatus,
 			@RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 		PageResponse<RentPageResponse> pageResponsees = 
-				rentService.selectRentResponses(member.getMemId(), rentStatus, PageRequest.of(page, size));
+				rentService.selectRentResponses(memId, rentStatus, PageRequest.of(page, size));
 		return ResponseEntity.ok(pageResponsees);
 	}
 	
@@ -101,8 +99,8 @@ public class RentController {
 	
 	// 1. 대여 신청하기 - 사용자
 	@PostMapping("/requests/me")
-	public ResponseEntity<List<RentResponse>> insertRents(@AuthMember Member member, @RequestBody RentRequest request) {
-		List<Rent> rentHistoryResponse = rentService.insertRequestRents(member.getMemId(), request.getBookIds(), RentStatus.REQUESTED);
+	public ResponseEntity<List<RentResponse>> insertRents(@AuthMember Long memId, @RequestBody RentRequest request) {
+		List<Rent> rentHistoryResponse = rentService.insertRequestRents(memId, request.getBookIds(), RentStatus.REQUESTED);
 		List<RentResponse> responses = rentMapper.rentsToRentResponses(rentHistoryResponse);
 		return ResponseEntity.status(HttpStatus.CREATED).body(responses);
 	}
@@ -116,8 +114,8 @@ public class RentController {
 	
 	// 2. 대여 신청 취소하기 - 사용자
 	@PutMapping("/cancels/me")
-	public ResponseEntity<List<RentResponse>> updateCancledRent(@AuthMember Member member, @RequestBody RentRequest request) {
-		List<Rent> rentHistoryResponse = rentService.updateCancledRent(member.getMemId(), request.getRentIds());
+	public ResponseEntity<List<RentResponse>> updateCancledRentByToken(@AuthMember Long memId, @RequestBody RentRequest request) {
+		List<Rent> rentHistoryResponse = rentService.updateCancledRent(memId, request.getRentIds());
 		List<RentResponse> responses = rentMapper.rentsToRentResponses(rentHistoryResponse);
 		return ResponseEntity.ok(responses);		
 	}
@@ -140,8 +138,8 @@ public class RentController {
 	
 	// 4. 연장하기 - 사용자
 	@PutMapping("/renewals/me")
-	public ResponseEntity<List<RentResponse>> updateRenewaledRent(@AuthMember Member member, @RequestBody RentRequest request) {
-		List<Rent> rentHistoryResponse = rentService.updateRenewalRent(member.getMemId(), request.getRentIds());
+	public ResponseEntity<List<RentResponse>> updateRenewaledRentByToken(@AuthMember Long memId, @RequestBody RentRequest request) {
+		List<Rent> rentHistoryResponse = rentService.updateRenewalRent(memId, request.getRentIds());
 		List<RentResponse> responses = rentMapper.rentsToRentResponses(rentHistoryResponse);
 		return ResponseEntity.ok(responses);		
 	}
@@ -176,13 +174,10 @@ public class RentController {
 		rentService.deleteRent(rentId);
 	}
 	
-	//연체일 체크
+	// 연체일 체크
 	@GetMapping("/check")
 	public ResponseEntity<List<String>> checkOverdueBooks() {
 	    List<String> overdueMessages = rentService.processOverdueBooks();
 	    return ResponseEntity.ok(overdueMessages);
-	}
-
-	
-	
+	}	
 }

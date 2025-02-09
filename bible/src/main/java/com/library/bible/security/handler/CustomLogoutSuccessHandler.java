@@ -28,7 +28,7 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
 		printLog.printInfoByRequest(request);
 		
 		// response
-    	jwtProvider.removeTokenInCookie(response);
+    	jwtProvider.removeTokenInCookie(request, response);
         response.setStatus(HttpServletResponse.SC_NO_CONTENT);
     }
 }

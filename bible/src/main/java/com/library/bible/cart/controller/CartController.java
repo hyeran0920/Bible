@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.library.bible.cart.dto.CartRequest;
 import com.library.bible.cart.model.Cart;
 import com.library.bible.cart.service.ICartService;
-import com.library.bible.member.model.Member;
 import com.library.bible.resolver.AuthMember;
 
 import lombok.RequiredArgsConstructor;
@@ -28,8 +27,8 @@ public class CartController {
 
     // 장바구니 목록 조회
     @GetMapping
-    public ResponseEntity<List<Cart>> getAllCarts(@AuthMember Member member) {
-        List<Cart> cartList = cartService.getAllCarts(member.getMemId());
+    public ResponseEntity<List<Cart>> getAllCarts(@AuthMember Long memId) {
+        List<Cart> cartList = cartService.getAllCarts(memId);
         return ResponseEntity.ok(cartList);
     }
     
@@ -43,11 +42,10 @@ public class CartController {
 
     // 장바구니에 책 추가
     @PostMapping
-    public ResponseEntity<String> addCart(@AuthMember Member member, @RequestBody CartRequest request) {
+    public ResponseEntity<String> addCart(@AuthMember Long memId, @RequestBody CartRequest request) {
        
     	long bookId = request.getBookId();
         int bookCount = request.getBookCount();
-        long memId = member.getMemId(); // 인증된 사용자 ID 가져오기
         
         // 이미 존재하는 책인지 확인
         int exists = cartService.isBookInCart(memId, bookId);

@@ -119,7 +119,7 @@
             flex: 1;
             padding: 20px;
             background: #ffffff;
-            width: 85%;
+            width: 95%;
         }
 
         .mypage-container {

@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.library.bible.member.model.Member;
 import com.library.bible.memberrent.model.MemberRent;
 import com.library.bible.memberrent.service.IMemberRentService;
 import com.library.bible.resolver.AuthMember;
@@ -25,8 +24,8 @@ public class MemberRentController {
 	private final String MEMBER_RENT_PATH = "/rent-status";
 	
 	@GetMapping("/me" + MEMBER_RENT_PATH)
-	public ResponseEntity<MemberRent> selectMemberRent(@AuthMember Member member) {
-		MemberRent memberRent = memberRentService.selectMemberRentByMemId(member.getMemId());
+	public ResponseEntity<MemberRent> selectMemberRentBytToken(@AuthMember Long memId) {
+		MemberRent memberRent = memberRentService.selectMemberRentByMemId(memId);
 		return ResponseEntity.ok(memberRent);
 	}
 
@@ -37,8 +36,8 @@ public class MemberRentController {
 	}
 	
 	@PutMapping("/me" + MEMBER_RENT_PATH)
-	public ResponseEntity<MemberRent> updateMemberRent(@AuthMember Member member, @Valid @RequestBody MemberRent memberRent) {
-		memberRent.setMemId(member.getMemId());
+	public ResponseEntity<MemberRent> updateMemberRent(@AuthMember Long memId, @Valid @RequestBody MemberRent memberRent) {
+		memberRent.setMemId(memId);
 		memberRentService.updateMemberRent(memberRent);
 		return ResponseEntity.ok(memberRent);
 	}
@@ -51,8 +50,8 @@ public class MemberRentController {
 	}
 
 	@DeleteMapping("/me" + MEMBER_RENT_PATH)
-	public ResponseEntity<?> deleteAddress(@AuthMember Member member) {
-		memberRentService.deleteMemberRent(member.getMemId());
+	public ResponseEntity<?> deleteAddress(@AuthMember Long memId) {
+		memberRentService.deleteMemberRent(memId);
 		return ResponseEntity.noContent().build();
 	}
 

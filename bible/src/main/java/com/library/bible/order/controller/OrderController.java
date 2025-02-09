@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.library.bible.member.model.Member;
 import com.library.bible.order.model.Order;
 import com.library.bible.order.service.IOrderService;
 import com.library.bible.resolver.AuthMember;
@@ -32,8 +31,8 @@ public class OrderController {
 
     // Get orders - member
     @GetMapping("/me")
-    public ResponseEntity<List<Order>> getOrders(@AuthMember Member member) {
-    	List<Order> orders = orderService.getOrderByMemId(member.getMemId());
+    public ResponseEntity<List<Order>> getOrdersByToken(@AuthMember Long memId) {
+    	List<Order> orders = orderService.getOrderByMemId(memId);
         return ResponseEntity.ok(orders);
     }
     
@@ -67,8 +66,8 @@ public class OrderController {
 
     // Get order count - member
     @GetMapping("/count/me")
-    public ResponseEntity<Integer> getOrderCount(@AuthMember Member member) {
-        int count = orderService.countMemOrders(member.getMemId());
+    public ResponseEntity<Integer> getOrderCount(@AuthMember Long memId) {
+        int count = orderService.countMemOrders(memId);
         return ResponseEntity.ok(count);
     }
     

@@ -20,7 +20,13 @@
         <a href="/login">Login</a>
         <a href="/signUp">회원가입</a>
       </template>
-      <template v-else>
+      <template v-else-if="isAdmin">
+        <a href="/cart">장바구니</a>
+        <a href="/mypage">Mypage</a>
+        <a href="/admin">관리자 페이지</a>
+        <a href="#" @click="logout">Logout</a>
+      </template>
+      <template v-else-if="isLoggedIn && !isAdmin">
         <a href="/cart">장바구니</a>
         <a href="/mypage">Mypage</a>
         <a href="#" @click="logout">Logout</a>
@@ -49,21 +55,29 @@ export default {
       isLoggedIn: false,
       showAuthMenu: false,
       searchQuery: '',
+      isAdmin: false,
     };
   },
   mounted() {
     this.isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    this.isAdmin = localStorage.getItem("isAdmin") === "true";
   },
   methods: {
     toggleAuthMenu() {
       this.showAuthMenu = !this.showAuthMenu;
     },
-    logout() {
+    async logout() {
       localStorage.removeItem("isLoggedIn");
+      localStorage.removeItem("isAdmin");
       this.isLoggedIn = false;
+      this.isAdmin = false;
 
+      this.$store.commit('logout');  // mutation 직접 호출
       WebSocket.disconnect();
 
+      await this.$axios("/logout", {
+        withCredentials: true, // 쿠키 허용
+      });
       alert("로그아웃 되었습니다.");
     },
     performSearch() {

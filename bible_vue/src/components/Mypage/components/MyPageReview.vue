@@ -3,7 +3,6 @@
     <h2>{{ $t('mypage.reviews.title') }}</h2>
 
     <div v-if="reviews.length" class="review-group">
-      <h3>{{ $t('mypage.reviews.listTitle') }}</h3>
       <div class="reviewList">
         <div v-for="review in reviews" :key="review.reviewId" class="reviewCard">
           <div class="reviewHeader">

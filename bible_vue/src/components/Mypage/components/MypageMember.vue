@@ -105,7 +105,6 @@
 </template>
 
 <script>
-    // import axios from 'axios';
     const MEMBER_BASEURL = "/members/me";
     const QR_BASEURL="http://localhost:8080/api/uploads/member-qr-image";
     const ADDRESS_BASEURL = MEMBER_BASEURL+"/addresses";
@@ -238,7 +237,9 @@
 
                         //로그아웃 처리
                         localStorage.removeItem("isLoggedIn");
+                        localStorage.removeItem("isAdmin");
                         this.isLoggedIn = false;
+                        this.isAdmin = false;
 
                         alert(this.$t('mypage.member.deleteComplete'));
 
@@ -315,25 +316,46 @@
                     alert(this.$t('mypage.address.addFail'));
                 }
             },
-        },
+            async initializeMember() {
+                try {
+                    // Member 데이터 가져오기
+                    const responseMember = await this.$axios.get(MEMBER_BASEURL);
+                    this.member = responseMember.data;
+                    this.memId = responseMember.data.memId;
+                } catch (error) {
+                    console.error("회원 정보 조회 실패:", error);
+                }
+            },
 
+            async initializeQR() {
+                try {
+                    await this.getMemberQRImage();
+                } catch (error) {
+                    console.error("QR 이미지 조회 실패:", error);
+                }
+            },
 
-        async mounted() {
-            try {
-                // Member 데이터 가져오기
-                const responseMember = await this.$axios.get(MEMBER_BASEURL);
-                this.member = responseMember.data;
-                this.memId = responseMember.data.memId;
+            async initializeAddress() {
+                try {
+                    const responseAddress = await this.$axios.get(ADDRESS_BASEURL);
+                    this.Addresslist = responseAddress.data;
+                } catch (error) {
+                    console.error("주소 정보 조회 실패:", error);
+                }
+            },
 
-                // ✅ QR 이미지 가져오기
-                this.getMemberQRImage();
+            async checkAuthAndInitialize() {
+                this.$store.dispatch('getToken');  // action 호출
 
-                // Address 데이터 가져오기
-                const responseAddress = await this.$axios.get(ADDRESS_BASEURL);
-                this.Addresslist = responseAddress.data;
-            } catch (error) {
-                console.log("에러 메시지: ", error);
+                // 데이터 초기화
+                await this.initializeAddress();
+                await this.initializeMember();
+                await this.initializeQR();
             }
+
+        },
+        async created() {
+            await this.checkAuthAndInitialize();
         }
     }
 </script>

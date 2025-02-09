@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.library.bible.book.service.IBookService;
-import com.library.bible.member.model.Member;
 import com.library.bible.resolver.AuthMember;
 import com.library.bible.upload.service.IUploadService;
 
@@ -53,7 +52,7 @@ public class UploadController {
     }
 
     @DeleteMapping("/member-qr-image")
-    public ResponseEntity<String> deleteMemberQRImageByToken(@AuthMember Member member) {
+    public ResponseEntity<String> deleteMemberQRImageByToken(@AuthMember Long memId) {
     	System.out.println("delete member qr image by token 지금 비활성화해놓음!!!");
     	return null;
         //return getDeleteResponse(uploadService.deleteMemberQRImage(member.getMemId()), "Member QR image", member.getMemId());
@@ -101,8 +100,8 @@ public class UploadController {
 
     
     @GetMapping("/member-qr-image")
-    public ResponseEntity<byte[]> getMemberQRImageByToken(@AuthMember Member member) {
-    	byte[] imageBytes = uploadService.getMemberQRImage(member.getMemId());
+    public ResponseEntity<byte[]> getMemberQRImageByToken(@AuthMember Long memId) {
+    	byte[] imageBytes = uploadService.getMemberQRImage(memId);
     	
     	if (imageBytes != null) {
     		return ResponseEntity.ok()

@@ -5,6 +5,7 @@ import BookDetail from "../components/Book/components/BookDetail.vue";
 import Main from "../components/MainPage/components/Main.vue";
 import SignUp from "../components/Member/components/SignUp.vue";
 import Login from "../components/Member/components/Login.vue";
+import AdminLogin from '../components/Member/components/AdminLogin.vue'
 import AdminFilter from "../components/Admin/AdminFilter.vue";
 import AdminPage from "../components/Admin/AdminPage.vue";
 
@@ -29,6 +30,7 @@ const routes = [
   { path: "/book/:bookId", name: "book-detail", component: BookDetail, props: true },
   { path: "/signUp", name: "SignUp", component: SignUp },
   { path: "/login", name: "Login", component: Login },
+  { path: '/admin-login', name: 'AdminLogin', component: AdminLogin },
   { path: "/admin", name: "AdminFilter", component: AdminFilter },
   { path: "/", redirect: "/login" },
 

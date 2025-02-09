@@ -76,6 +76,9 @@
             "receiver":"receiver",
             "amount":"amount",
             "checkout":"checkout"
+        },
+        "reviews":{
+            "title":"My Review"
         }
     }
 }

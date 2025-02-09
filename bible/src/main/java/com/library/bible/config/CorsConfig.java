@@ -15,6 +15,8 @@ public class CorsConfig {
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
+        config.addExposedHeader("Authorization");
+        config.addExposedHeader("authorization");
         return config;
     }
 }

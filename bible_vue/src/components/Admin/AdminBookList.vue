@@ -58,12 +58,10 @@
       userRole: String,
     },
     methods:{
-  
       getBookImageUrl(bookId){
-        return `http://localhost:8080/api/uploads/book-image?bookid=${bookId}`;
-      }
-  
-    }
+        return `${this.$axios.defaults.baseURL}/uploads/book-image?bookid=${bookId}`;
+      },
+    },
   };
   </script>
   

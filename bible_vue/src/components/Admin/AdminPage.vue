@@ -6,6 +6,7 @@
         <li @click="changeMenu('product')">상품</li>
         <li @click="changeMenu('order')">주문</li>
         <li @click="changeMenu('rental')">대여</li>
+        <li @click="changeMenu('reservation')">예약</li>
         <li @click="changeMenu('review')">리뷰</li>
         <li @click="changeMenu('alarm')">알람 전송</li>
       </ul>
@@ -23,6 +24,7 @@ import AdminMember from './AdminMember.vue';
 import AdminMain from './AdminMain.vue';
 import AdminProduct from './AdminProduct.vue';
 import AdminRental from './AdminRental.vue';
+import AdminReservation from './AdminReservation.vue';
 import AdminReview from './AdminReview.vue';
 import AdminSendAlarm from './AdminSendAlarm.vue';
 
@@ -41,6 +43,7 @@ export default {
         case 'member': return AdminMember;
         case 'product': return AdminProduct;
         case 'rental': return AdminRental;
+        case 'reservation': return AdminReservation;
         case 'review': return AdminReview;
         case 'alarm': return AdminSendAlarm;
         default: return AdminMain;

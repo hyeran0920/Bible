@@ -151,9 +151,15 @@ public class UploadService implements IUploadService {
     public void createMemberQRImage(Member member) {
         try {
         	String memId=String.valueOf(member.getMemId());
-        	
             String data = "Member ID: " + memId + ", Email: " + member.getMemEmail();
             String filePath = MEMBER_QR_DIR + memId + ".png";
+            
+            // 디렉토리 존재 여부 확인 후 생성
+            Path directoryPath = Paths.get(MEMBER_QR_DIR);
+            if (!Files.exists(directoryPath)) {
+                Files.createDirectories(directoryPath);
+            }
+            
             QRCodeGenerator.generateQRCode(data, filePath);
             log.info("Generated QR Code for member ID: {}", memId);
         } catch (WriterException | IOException e) {
@@ -173,7 +179,20 @@ public class UploadService implements IUploadService {
             		", Publisher: "+ book.getBookPublisher() +
             		", Category: "+book.getBookCategory();
             String filePath = BOOK_QR_DIR + String.valueOf(bookId) + ".png";
+            
+            // 디렉토리 존재 여부 확인 후 생성
+            Path directoryPath = Paths.get(BOOK_QR_DIR);
+            if (!Files.exists(directoryPath)) {
+                Files.createDirectories(directoryPath);
+            }
+            
+
+            //inset img transactional test
+            //if(true) {	throw new IOException("Simulated file upload failure"); }
+            	
+            
             QRCodeGenerator.generateQRCode(data, filePath);
+            
         } catch (WriterException | IOException e) {
             log.error("Error generating QR code for book ID: {}", bookId, e);
             throw new CustomException(ExceptionCode.QR_IMAGE_CREATION_FAIL);

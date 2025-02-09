@@ -40,6 +40,8 @@
 </template>
 
 <script>
+import WebSocket from "../../Alarm/websocket.js";
+
 export default {
   name: 'Header',
   data() {
@@ -59,6 +61,9 @@ export default {
     logout() {
       localStorage.removeItem("isLoggedIn");
       this.isLoggedIn = false;
+
+      WebSocket.disconnect();
+
       alert("로그아웃 되었습니다.");
     },
     performSearch() {

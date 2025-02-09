@@ -39,7 +39,6 @@ import lombok.RequiredArgsConstructor;
 public class RentController {
 	private final RentMapper rentMapper;
 	private final IRentService rentService;
-	private final ReentrantLock lock = new ReentrantLock();		//동시성 lock 처리
 	
 	// 대여 전체 조회
 //	@GetMapping
@@ -96,14 +95,8 @@ public class RentController {
 	//대여 생성
 	@PostMapping
 	public ResponseEntity<Rent> insertRent(@RequestBody @Validated Rent rent) {
-		//중복 대여 방지
-		lock.lock();
-		try {
-			rentService.insertRent(rent);
-			return ResponseEntity.status(HttpStatus.CREATED).body(rent);
-		} finally {
-			lock.unlock();
-		}
+		rentService.insertRent(rent);
+		return ResponseEntity.status(HttpStatus.CREATED).body(rent);
 	}
 	
 	// 1. 대여 신청하기 - 사용자

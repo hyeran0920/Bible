@@ -27,27 +27,25 @@
       // 로그인 상태에서 받은 JWT 토큰을 Authorization 헤더에 추가
       const token = localStorage.getItem("accessToken"); // localStorage나 다른 방법으로 토큰을 저장하고 불러올 수 있음
 
-      const response = await fetch('http://localhost:8080/api/members/admin-page', {
-        method: 'GET', // GET 메서드
-        credentials: 'include', // CORS 설정에 따라 인증 정보 포함
-      });
+      const response = await this.$axios.get('/members/admin-page');
 
-      if (response.ok) {
+      // if (response.ok) {
         this.memberData = await response.json(); // 성공적으로 받은 데이터 처리
         this.redirectMessage = "관리자 페이지로 이동합니다."; // ✅ 메시지 표시
         setTimeout(() => {
           this.$router.replace('/admin-page'); // ✅ 3초 후 관리자 페이지 이동
         }, 3000);
-      } else {
-        this.error = `Error: ${response.status}`; // 오류 상태 처리
-        this.redirectMessage = "권한이 없습니다. 5초 후 홈으로 이동합니다."; // ✅ 메시지 표시
-        setTimeout(() => {
-          this.$router.replace('/'); // ✅ 5초 후 홈으로 이동
-        }, 5000);
-      }
+      // } else {
+      //   this.error = `Error: ${response.status}`; // 오류 상태 처리
+      //   this.redirectMessage = "권한이 없습니다. 5초 후 홈으로 이동합니다."; // ✅ 메시지 표시
+      //   setTimeout(() => {
+      //     this.$router.replace('/'); // ✅ 5초 후 홈으로 이동
+      //   }, 5000);
+      // }
     } catch (err) {
       this.error = `Network Error: ${err.message}`; // 네트워크 오류 처리
     } finally {
+      this.$router.replace('/admin-page');
       this.loading = false; // 로딩 종료
     }
   },

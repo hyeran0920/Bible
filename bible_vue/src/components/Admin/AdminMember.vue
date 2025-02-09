@@ -56,8 +56,7 @@
 </template>
 
 <script>
-import axios from 'axios';
-const BASEURL = "http://localhost:8080/api/members";
+const BASEURL = "/members";
 
 export default {
     name: 'Mypage',
@@ -84,7 +83,7 @@ export default {
         },
         async updateMember() {
             try {
-                await axios.put(BASEURL + `/${this.currentMember.memId}`, this.currentMember);
+                await this.$axios.put(BASEURL + `/${this.currentMember.memId}`, this.currentMember);
                 this.closeModal();
                 // 수정 후 멤버 목록 갱신
                 this.fetchMembers();
@@ -105,7 +104,7 @@ export default {
             const isConfirmed = window.confirm(`${memEmail}` + " 회원을 탈퇴할까요?");
             if (isConfirmed) {
                 try {
-                    await axios.delete(BASEURL + `/${memId}`, { withCredentials: true });
+                    await this.$axios.delete(BASEURL + `/${memId}`);
                     // 2초 후 홈으로 이동
                     setTimeout(() => {
                         this.$router.push('/');
@@ -120,9 +119,7 @@ export default {
 
         async fetchMembers() {
             try {
-                const response = await axios.get(BASEURL, {
-                    withCredentials: true // 쿠키 포함
-                });
+                const response = await this.$axios.get(BASEURL);
                 this.members = response.data;  // 멤버 목록 업데이트
             } catch (error) {
                 console.log("에러 메시지: ", error);

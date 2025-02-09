@@ -76,6 +76,9 @@
             "receiver":"수취인",
             "amount":"결제 금액",
             "checkout":"결제 상태"
+        },
+        "reviews":{
+            "title":"나의 리뷰"
         }
     }
 }

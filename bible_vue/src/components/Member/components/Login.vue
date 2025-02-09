@@ -23,20 +23,23 @@
         </div>
         <button type="submit">로그인</button>
       </form>
+      <div class="admin-login-link">
+        <router-link to="/admin-login">관리자 페이지 로그인</router-link>
+      </div>
     </div>
     <Footer />
-  </template>
-  
-  <script>
-  import axios from "axios";
+</template>
+
+<script>
   import Header from "../../MainPage/components/Header.vue";
   import Footer from "../../MainPage/components/Footer.vue";
+
   export default {
-    name: "Login",
-    components: {
-    Header,  
-    Footer
-  },
+      name: "Login",
+      components: {
+      Header,  
+      Footer
+    },
     data() {
       return {
         login: {
@@ -46,36 +49,36 @@
       };
     },
     methods: {
-        async submitForm() {
+      async submitForm() {
         try {
-            const response = await axios.post("http://localhost:8080/login", 
-
-            {
+            const response = await this.$axios.post("/login", {
                 email: this.login.email, 
                 password: this.login.password, 
-            },
-            {
-                withCredentials: true, // 쿠키 포함
+            },{
+              withCredentials: true, // 쿠키 허용
             }
-            );
+          );
 
-            console.log("로그인 성공:", response.data);
-            alert("로그인 성공!!!");
+          console.log(response);
 
-            localStorage.setItem("isLoggedIn", "true");
-            this.$router.push("/"); 
+          this.$store.commit('setToken', response.headers['authorization']); 
+
+          console.log("로그인 성공:", response.data);
+          alert("로그인 성공!!!");
+
+          localStorage.setItem("isLoggedIn", "true");
+          this.$router.push("/"); 
         } catch (error) {
             console.error("로그인 실패:", error.response?.data || error.message);
             alert("로그인에 실패했습니다!!!");
         }
-        }
-
+      },
 
     },
   };
-  </script>
-  
-  <style>
+</script>
+
+<style>
   .login-container {
     max-width: 400px;
     margin: auto;
@@ -110,5 +113,19 @@
   button:hover {
     background-color: #0056b3;
   }
-  </style>
+  .admin-login-link {
+    text-align: center;
+    margin-top: 15px;
+  }
+
+  .admin-login-link a {
+    color: #007bff;
+    text-decoration: none;
+  }
+
+  .admin-login-link a:hover {
+    text-decoration: underline;
+  }
+
+</style>
   

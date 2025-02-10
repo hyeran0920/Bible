@@ -9,7 +9,7 @@ const store = createStore({
       state.token = token;
     },
     logout(state) {
-      state.token = '';
+      state.token = null;
     },
   },
   actions: { // 비동기
@@ -18,7 +18,7 @@ const store = createStore({
     },
     async getToken({ commit }) {
       const isLoggedIn = localStorage.getItem("isLoggedIn");
-      const token = this.$store.state.token;
+      const token = this.state.token;
       if(isLoggedIn && !token) {
         try {
           await this.generateByRefreshToken(); // 토큰 재발급

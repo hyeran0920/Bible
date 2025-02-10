@@ -13,6 +13,7 @@
             <div class="info-row">
 
                 <table class="user-info-table">
+                    <tbody>
                     <tr>
                         <td class="info-row">id</td>
                         <td class="info-row-content">{{ currentMember.memId }}</td>
@@ -29,6 +30,7 @@
                         <td class="info-row">phone</td>
                         <td class="info-row-content">{{ currentMember.memPhone }}</td>
                     </tr>
+                </tbody>
                 </table>
 
                 <br>
@@ -274,17 +276,18 @@ export default {
 <style>
 /* 공통 색상 */
 :root {
-    --primary-color: #6f90b1;
-    --secondary-color: #f9f9f9;
+    /* --primary-color: #6f90b1; */
+    --primary-color: #035482;
+    --secondary-color: #d8dfe7;
     --danger-color: #e74c3c;
+    --danger-hover-color: #b32313;
     --white-color: #ffffff;
 
     --text-color: #333333;
-    --hover-color:#5c6b7e;
+    --hover-color:#093954;
+    --hover-second-color:#5c6b7e;
 }
-.button{
-    /* background-color: var(--primary-color); */
-}
+
 
 /* 전체 컨테이너 스타일 */
 .rent-container {
@@ -295,15 +298,14 @@ export default {
     color: var(--text-color);
 }
 
-/* 제목 스타일 */
-h1 {
-    font-size: 28px;
-    color: var(--primary-color);
-    text-align: center;
-    margin-bottom: 20px;
-}
 
 
+
+
+
+
+
+/* QR */
 /* QR 스캐너와 회원 정보를 가로 정렬 */
 .qr-user-container {
     display: flex;
@@ -316,7 +318,7 @@ h1 {
 .qr-scanner {
     text-align: center;
     padding: 20px;
-    background-color: var(--secondary-color);
+    background-color: white;
     border-radius: 10px;
     border: none;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -331,7 +333,7 @@ h1 {
     width: 200px;
     height: 200px;
     border-radius: 12px;
-    border: none;
+    border: none !important;
     background-color: var(--white-color);
 }
 
@@ -356,6 +358,12 @@ h1 {
 
 
 
+
+
+
+
+
+/* User INfo */
 /* 회원 정보 스타일 */
 .user-info {
     flex: 2; /* 크기 분배 */
@@ -384,11 +392,17 @@ h1 {
     margin: 3px 0;
     font-size: 15px;
     font-weight: bold;
+    text-align: left;
 }
 .info-row-content{
-    font-size: 18px;
+    font-size: 17px;
     font-weight: lighter;
+    text-align: left;
 }
+
+
+
+
 
 
 
@@ -410,6 +424,13 @@ h1 {
     background-color: #5c6b7e;
 }
 
+
+
+
+
+
+
+
 /* 테이블 스타일 */
 .books-list-table {
     width: 100%;
@@ -430,11 +451,8 @@ h1 {
 
 .books-list-table th, 
 .books-list-table td {
-    padding: 12px 15px;
     text-align: center;
     border: 1px solid #ddd;
-
-
 }
 
 .books-list-table tbody tr:hover {

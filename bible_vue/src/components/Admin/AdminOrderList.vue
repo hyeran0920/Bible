@@ -34,12 +34,12 @@
             </div>
         </div>
     </div>
-
-    <div v-if="orderModalVisible" class="order-modal">
+    <div v-if="orderModalVisible" class="modal-overlay">
+    <div class="order-modal">
         <!-- 주문 상세 정보 -->
-        <h2>- 주문 상세 -</h2>
+        <h2>주문 상세</h2>
         <table class="order-details">
-            
+            <tbody>
             <tr>
                 <th>주문번호</th>
                 <td>{{ selectedOrderHistory.orderHistoryId }}</td>
@@ -68,6 +68,7 @@
                 <th>총 가격</th>
                 <td>{{ selectedOrderHistory.orderHistoryTotalPrice }}</td>
             </tr>
+            </tbody>
         </table>
 
         <!-- 구매 목록 -->
@@ -103,6 +104,7 @@
         <!-- close modal -->
         <button  class="order-modal-close-button" @click="orderModalVisible = false">close</button>
     </div>
+</div>
 </template>
 
 <script>
@@ -217,15 +219,7 @@ export default {
 </script>
 
 <style>
-:root {
-    --primary-color: #6f90b1;
-    --secondary-color: #f9f9f9;
-    --danger-color: #e74c3c;
-    --white-color: #ffffff;
 
-    --text-color: #333333;
-    --hover-color:#5c6b7e;
-}
 
 /* 날짜별 그룹 스타일 */
 .order-group {
@@ -241,9 +235,25 @@ export default {
     font-size: 20px;
     font-weight: bold;
     margin-bottom: 10px;
-    color: #000000;
+    color: #2e404e;
     text-align: center;
 }
+
+
+.modal-overlay
+{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
 
 
 
@@ -262,7 +272,7 @@ thead td{
     text-align: center;
     font-weight: bold;
     color: white;
-    background-color: #6f90b1;
+    background-color: var(--primary-color);
 }
 
 /* 테이블 본문 스타일 */

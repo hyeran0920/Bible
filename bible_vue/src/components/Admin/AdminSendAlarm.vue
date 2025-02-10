@@ -1,7 +1,6 @@
 <template>
-
+    <h1>알람 전송</h1>
     <SendSms/>
-    <br>
     <br>
     <SendWebSocketAlarm/>
 </template>

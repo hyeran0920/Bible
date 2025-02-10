@@ -1,8 +1,8 @@
 <template>
   <div class="reservation-container">
-    <h2>예약 관리</h2>
+    <h1>예약 관리</h1>
     <div class="reservation-list">
-      <table>
+      <table class="reservation-table">
         <thead>
           <tr>
             <th>예약 ID</th>
@@ -27,11 +27,15 @@
         </tbody>
       </table>
     </div>
+
+
+
+
     <!-- 사용자별 예약 내역 모달 -->
     <div class="modal" v-if="showModal" @click="closeModal">
       <div class="modal-content" @click.stop>
         <h3>회원 ID: {{ selectedMemberId }}의 예약 내역</h3>
-        <table>
+        <table class="reservation-modal-table">
           <thead>
             <tr>
               <th>예약 ID</th>
@@ -47,7 +51,7 @@
             </tr>
           </tbody>
         </table>
-        <button class="close-btn" @click="closeModal">닫기</button>
+        <button class="close-btn" @click="closeModal">X</button>
       </div>
     </div>
     <!-- 책 정보 모달 -->
@@ -148,10 +152,40 @@
 
 <style scoped>
     .reservation-container {
-        padding: 20px;
+
         position: relative;
+        margin-top: 20px;
+        padding: 30px;
+        max-width: 1000px; /* 최대 너비 */
+        min-width: 400px; /* 최소 너비 */
+        margin: 0 auto; /* 가운데 정렬 */
+        box-sizing: border-box; /* 패딩과 보더 포함 크기 계산 */
+    }
+    .reservation-list{
+      background-color: white;
+      border-radius: 10px;
     }
 
+    .reservation-table {
+      background-color: white;
+      border-radius: 10px;
+      overflow: hidden; /* 내용이 border-radius를 넘지 않도록 설정 */
+      border-collapse: separate; /* 테두리 둥글게 적용 */
+      border-spacing: 0; /* 셀 간격 제거 */
+      
+    }
+
+
+    .reservation-table tr{
+      padding:20px;
+    }
+    .reservation-table th{
+      padding:20px;
+    }
+
+
+
+    /*예약 취소*/
     .cancel-btn {
         background-color: #ff4444;
         color: white;
@@ -165,16 +199,10 @@
         background-color: #cc0000;
     }
 
-    .clickable-cell {
-        cursor: pointer;
-        color: #2196F3;
-    }
 
-    .clickable-cell:hover {
-        background-color: #e3f2fd;
-        color: #0D47A1;
-    }
 
+
+    /*도서 정보 */
     .modal {
         position: fixed;
         top: 50%;
@@ -200,9 +228,9 @@
     }
 
     .close-btn {
-        margin-top: 20px;
+        margin-top: 0px;
         padding: 8px 16px;
-        background-color: #4CAF50;
+        background-color: var(--danger-color);
         color: white;
         border: none;
         border-radius: 4px;
@@ -211,16 +239,24 @@
     }
 
     .close-btn:hover {
-        background-color: #45a049;
+        background-color: var(--danger-hover-color);
     }
 
     .clickable-cell {
         cursor: pointer;
-        color: #2196F3;
+        color: var(--primary-color);
     }
 
     .clickable-cell:hover {
-        background-color: #e3f2fd;
-        color: #0D47A1;
+        color: #082450;
+    }
+
+
+
+
+
+
+    .reservation-modal-table{
+      margin-bottom: 40px;
     }
 </style>

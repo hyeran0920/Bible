@@ -1,23 +1,25 @@
 <template>
-    <div class="mypage">
-        <h1>회원정보</h1>
+    <div class="memberpage">
 
         <!-- Member Info -->
-        <h3>회원 목록</h3>
+        <h1>회원 목록</h1>
+
+
         <div class="memberInfo" v-for="member in members" :key="member.memId">
             <div class="member-card">
                 <div class="member-details">
                     <div class="info-row">
-                        <label class="info">이름: </label><span>{{ member.memName }}</span>
-                    </div>
-                    <div class="info-row">
-                        <label class="info">아이디: </label><span>{{ member.memId }}</span>
-                    </div>
+                            <label class="info">이름 {{ member.memName }}</label> 
+                        <div class="info-row">
+                            <label class="info">아이디 {{ member.memId }}</label>
+                        </div>
 
-                    <div class="info-row">
-                        <label class="info">이메일: </label><span>{{ member.memEmail }}</span>
+                        <div class="info-row">
+                            <label class="info">이메일 {{ member.memEmail }}</label><span></span>
+                        </div>
                     </div>
                 </div>
+
                 <div class="member-actions">
                     <!-- 관리자인지 여부에 따라 수정 버튼 표시 -->
                     <button v-if="!isAdmin" @click="openModal(true, member)" type="button" class="btn btn-edit">정보
@@ -28,6 +30,9 @@
             </div>
         </div>
 
+
+
+        
         <!-- Edit Member Modal -->
         <div v-if="isModalVisible" class="custom-modal">
             <div class="modal-content">
@@ -134,9 +139,13 @@ export default {
 </script>
 
 <style scoped>
-.mypage {
+.memberpage {
     padding: 20px;
     font-family: Arial, sans-serif;
+    max-width: 1000px; /* 최대 너비 */
+    min-width: 450px; /* 최소 너비 */
+    margin: 0 auto; /* 가운데 정렬 */
+    box-sizing: border-box; /* 패딩과 보더 포함 크기 계산 */
 }
 
 .memberInfo {
@@ -160,7 +169,8 @@ export default {
 .member-details {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 15px;
+    margin: 15px;
 }
 
 .info-row {
@@ -241,12 +251,12 @@ export default {
 }
 
 .btn-primary {
-    background-color: #2ecc71;
+    background-color: var(--primary-color);
     color: white;
 }
 
 .btn-primary:hover {
-    background-color: #27ae60;
+    background-color: var(--hover-color);
 }
 
 .btn-secondary {

@@ -18,8 +18,33 @@
             </div>
         </div>
         <div class="InfoBtn">
+            <!-- 수정하기 -->
             <button @click="openModal(true, member)" type="button" class="btn btn-secondary">{{ $t('mypage.member.insertBtn') }}</button>
+            <!-- 탈퇴하기 -->
             <button @click="promptDelete(member.memId, member.memEmail)" type="button" class="btn btn-secondary">{{ $t('mypage.member.deleteBtn') }}</button>
+            <!-- 탈퇴 확인 모달 -->
+            <Modal 
+                v-model="isDeleteConfirmModalVisible"
+                :message="deleteModalMessage"
+                showCancel
+                @confirm="handleDeleteConfirm"
+                @cancel="isDeleteConfirmModalVisible = false">
+                <div>
+                    <p>{{ deleteModalMessage }}</p>
+                    <input 
+                        v-model="userInputEmail"
+                        type="email"
+                        placeholder="이메일을 입력하세요"
+                    />
+                </div>
+            </Modal>
+
+            <!-- 탈퇴 결과 모달 -->
+            <Modal 
+                v-model="isDeleteResultModalVisible"
+                :message="deleteModalMessage">
+                <p>{{ deleteModalMessage }}</p>
+            </Modal>
         </div>
     </div>
 
@@ -32,12 +57,6 @@
                     <label for="memName">{{ $t('mypage.member.modalName') }}: </label>
                     <input v-model="currentMember.memName" type="text" id="memName" required/>
                 </div>
-                <div class="form-group">
-                    <label for="memEmail">{{ $t('mypage.member.modalEmail') }}: </label>
-                    <input v-model="currentMember.memEmail" type="email" id="memEmail" placeholder="bible@gmail.com" :class="{ 'error-border': emailError }"  required/>
-                    <span v-if="emailError" class="error-message">{{ $t('mypage.member.modalCheckEmail') }}</span>
-                </div>
-
                 <div class="form-group">
                     <label for="memPassword">{{ $t('mypage.member.modalPassword') }}: </label>
                     <input v-model="currentMember.memPassword" type="password" id="memPassword" :class="{ 'error-border': passwordError }" required/>
@@ -64,31 +83,33 @@
         <h3>{{ $t('mypage.address.title') }}</h3>
         <hr class="hr-3">
         <!-- My Address List -->
-         <table id="address-table">
-            <thead>
-                <tr>
-                    <th>{{ $t('mypage.address.postal') }}</th>
-                    <th>{{ $t('mypage.address.road') }}</th>
-                    <th>{{ $t('mypage.address.detail') }}</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody v-if="Addresslist.length > 0">
-                <tr v-for="addressInfo in Addresslist" :key="addressInfo.addressId">
-                    <td>[{{ addressInfo.postcode}}]</td>
-                    <td>{{ addressInfo.address }}</td>
-                    <td>{{ addressInfo.detailAddress }}</td>
-                    <td>
-                        <button @click="addressDelete(addressInfo.addressId)">{{ $t('mypage.address.deleteBtn') }}</button>
-                    </td>
-                </tr>
-            </tbody>
-            <tbody v-else>
-                <tr>
-                    <td colspan="3">{{ $t('mypage.address.addressInfo1') }}</td>
-                </tr>
-            </tbody>
-         </table>
+        <!-- table 대신 div 구조로 변경 -->
+        <div class="address-list">
+            <div v-if="Addresslist.length > 0" class="address-item" v-for="addressInfo in Addresslist" :key="addressInfo.addressId">
+                <div class="address-content">
+                    <div class="address-field">
+                        <label>{{ $t('mypage.address.postal') }}:</label>
+                        <span>[{{ addressInfo.postcode}}]</span>
+                    </div>
+                    <div class="address-field">
+                        <label>{{ $t('mypage.address.road') }}:</label>
+                        <span>{{ addressInfo.address }}</span>
+                    </div>
+                    <div class="address-field">
+                        <label>{{ $t('mypage.address.detail') }}:</label>
+                        <span>{{ addressInfo.detailAddress }}</span>
+                    </div>
+                </div>
+                <div class="address-actions">
+                    <button @click="addressDelete(addressInfo.addressId)" class="btn-secondary">
+                        {{ $t('mypage.address.deleteBtn') }}
+                    </button>
+                </div>
+            </div>
+            <div v-else class="no-address">
+                {{ $t('mypage.address.addressInfo1') }}
+            </div>
+        </div>
 
         <div class="InfoBtn">
             <button @click="openAddressModal()" type="button" class="btn btn-secondary">{{ $t('mypage.address.addBtn') }}</button>
@@ -102,6 +123,12 @@
             </div>
         </div>
      </div>
+     <MessageModal v-model="isMessageModelVisible" :message="modalMessage">
+        <p>{{ modalMessage }}</p>
+    </MessageModal>
+    <DelageAddressModal v-model="isDelateAddressModelVisible" showCancel @confirm="onConfirm">
+        <p>해당 주소를 삭제하시겠습니까?</p>
+    </DelageAddressModal>
 </template>
 
 <script>
@@ -110,11 +137,17 @@
     const ADDRESS_BASEURL = MEMBER_BASEURL+"/addresses";
 
     import AddressSearch from '../../Order/components/AddressSearch.vue';
+    import MessageModal from '../../modal/CustomModal.vue';
+    import DelageAddressModal from '../../modal/CustomModal.vue';
+    import Modal from '../../modal/CustomModal.vue';
 
     export default{
         name:'Mypage',
         components: {
             AddressSearch,
+            MessageModal,
+            DelageAddressModal,
+            Modal,
         },
         data(){
             return{
@@ -136,8 +169,6 @@
                 passwordError: false,
                 phoneError: false,
                 phonePattern: /^010-\d{4}-\d{4}$/,
-                emailError: false,
-                emailPattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
 
                 // 주소
                 addressId: [],
@@ -145,6 +176,17 @@
                 address: [],
                 detailAddress: [],
                 Addresslist: [],
+
+                // message modal
+                isMessageModelVisible: false,
+                modalMessage: '',
+                isDelateAddressModelVisible: false,
+
+                // 탈퇴하기 모달
+                isDeleteConfirmModalVisible: false,
+                isDeleteResultModalVisible: false,
+                deleteModalMessage: '',
+                userInputEmail: '',
             };
         },
         watch: {
@@ -175,14 +217,6 @@
                 },
                 immediate: true
             },
-            'currentMember.memEmail': {
-                handler(newValue) {
-                    if (newValue) {
-                        this.emailError = !this.emailPattern.test(newValue);
-                    }
-                },
-                immediate: true
-            },
         },
         methods:{
             getDefaultMember(){
@@ -199,15 +233,13 @@
             handleSubmit(){
                 this.updateMember();
             },
+            // 사용자 정보 수정
             async updateMember(){
                 // 비밀번호 check
                 if (this.passwordError) return;
 
                 // 전화번호 check 
                 if (this.phoneError) return;
-
-                // 이메일 check
-                if (this.emailError) return;
 
                 // 비밀번호 패턴 check
                 if (this.passwordPatternError) return;
@@ -216,8 +248,10 @@
                     await this.$axios.put(MEMBER_BASEURL, this.currentMember);
                     this.member = this.currentMember;
                     this.closeModal();
-                }catch(error){
+                    this.showMessageModal('정보가 수정되었습니다.');
+                } catch(error){
                     console.error('Error updating member: ', error);
+                    this.showMessageModal(error);
                 }
             },
             openModal(editing=false, member=null){
@@ -229,31 +263,44 @@
                 this.isModalVisible = false;
                 this.currentMember = {};
             },
+            showMessageModal(modalMessage) {
+                this.modalMessage = modalMessage;
+                this.isMessageModelVisible = true;
+            },
+            // 탈퇴하기
             async promptDelete(memId){
-                const userInput = prompt(this.$t('mypage.member.deleteEmailInfo'));
-                if(userInput && userInput === this.member.memEmail){
-                    try{
+                this.isDeleteConfirmModalVisible = true;
+                this.deleteModalMessage = this.$t('mypage.member.deleteEmailInfo');
+            },
+            // 탈퇴 확인 처리
+            async handleDeleteConfirm() {
+                if (this.userInputEmail === this.member.memEmail) {
+                    try {
                         await this.$axios.delete(MEMBER_BASEURL);
 
-                        //로그아웃 처리
+                        // 로그아웃 처리
                         localStorage.removeItem("isLoggedIn");
                         localStorage.removeItem("isAdmin");
                         this.isLoggedIn = false;
                         this.isAdmin = false;
 
-                        alert(this.$t('mypage.member.deleteComplete'));
+                        // 성공 모달 표시
+                        this.deleteModalMessage = this.$t('mypage.member.deleteComplete');
+                        this.isDeleteResultModalVisible = true;
 
                         // 2초 후 홈으로 이동
                         setTimeout(() => {
                             this.$router.push('/');
-                        }, 500);
-                    }catch(error){
-                        console.error('Error delete member: ', error);
+                        }, 1500);
+                    } catch (error) {
+                        this.showMessageModal(error);
                     }
-                }else{
-                    alert(this.$t('mypage.member.deleteEmailError'));
+                } else {
+                    this.showMessageModal(this.$t('mypage.member.deleteEmailError'));
                 }
+                this.isDeleteConfirmModalVisible = false;
             },
+            // QR 이미지 가져오기
             async fetchQRImage() {
                 try {
                     const response = await this.$axios.get(QR_BASEURL, {
@@ -267,7 +314,6 @@
                     console.warn("QR 이미지가 존재하지 않음:", error);
                 }
             },
-
 
             async getMemberQRImage() {
                 try {
@@ -292,28 +338,33 @@
             closeAddressModal() {
                 this.showModal = false;
             },
+            // 주소 삭제
             async addressDelete(addressId){
+                this.isDelateAddressModelVisible = true;
+            },
+            async onConfirm() {
                 try{
                     await this.$axios.delete(`members/addresses/${addressId}`);
                     alert(this.$t('mypage.address.deleteAddress'));
                     this.Addresslist = this.Addresslist.filter(address => address.addressId !== addressId);
+                    this.isDelateAddressModelVisible = false;
                 }catch(error){
                     console.error("주소 삭제 중 오류 발생: ", error);
-                    alert(this.$t('mypage.address.deleteFail'));
+                    this.showMessageModal(this.$t('mypage.address.deleteFail'));
                 }
             },
             async addAddress(addressData){
                 try{
                     //DB에 추가하는 요청 보내기
                     const response = await this.$axios.post(ADDRESS_BASEURL, addressData);
-                    alert(this.$t('mypage.address.addSuccess'));
+                    this.showMessageModal(this.$t('mypage.address.addSuccess'));
                     
                     //주소 추가 후 리스트 갱신
                     this.Addresslist.push(response.data);
                     this.showModal = false;
                 }catch(error){
                     console.error("주소 추가 오류: ", error);
-                    alert(this.$t('mypage.address.addFail'));
+                    this.showMessageModal(this.$t('mypage.address.addFail'));
                 }
             },
             async initializeMember() {
@@ -323,7 +374,7 @@
                     this.member = responseMember.data;
                     this.memId = responseMember.data.memId;
                 } catch (error) {
-                    console.error("회원 정보 조회 실패:", error);
+                    this.showMessageModal("회원 정보 조회 실패:", error);
                 }
             },
 
@@ -340,7 +391,7 @@
                     const responseAddress = await this.$axios.get(ADDRESS_BASEURL);
                     this.Addresslist = responseAddress.data;
                 } catch (error) {
-                    console.error("주소 정보 조회 실패:", error);
+                    this.showMessageModal("주소 정보 조회 실패:", error);
                 }
             },
 
@@ -472,7 +523,7 @@ input {
 }
 
 input:focus {
-    border-color: #007bff;
+    border-color: #679669;
 }
 
 .modal-actions {
@@ -502,9 +553,10 @@ input:focus {
 
 /* 오버레이 배경 */
 .modal-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
+    position: fixed;  /* absolute를 fixed로 변경 */
+    top: 50%;        /* 중앙 정렬을 위한 설정 */
+    left: 50%;
+    transform: translate(-50%, -50%);
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
@@ -513,34 +565,63 @@ input:focus {
     align-items: center;
 }
 
+.modal-content {
+    position: relative;  /* 상대 위치 설정 */
+    max-height: 80vh;   /* 뷰포트 높이의 80% */
+    overflow-y: auto;   /* 내용이 많을 경우 스크롤 */
+}
+
 /* 주소록 테이블 */
-#address-table {
-    width: 100%;
+.address-list {
     margin-top: 20px;
-    border-collapse: collapse;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
-#address-table th,
-#address-table td {
-    padding: 12px;
-    text-align: center;
+.address-item {
     border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    background-color: #fff;
 }
 
-#address-table th {
-    background-color: #f4f4f4;
+.address-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.address-field {
+    display: flex;
+    gap: 10px;
+}
+
+.address-field label {
+    min-width: 100px;
     font-weight: bold;
+    color: #679669;
 }
 
-#address-table td {
-    font-size: 14px;
+.address-actions {
+    margin-top: 15px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.no-address {
+    text-align: center;
+    padding: 20px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
 }
 
 /* 주소록 추가 버튼 */
+
 .InfoBtn button {
     margin-top: 10px;
     padding: 10px 15px;
-    background-color: #007bff;
+    background-color: #679669;
     color: white;
     border: none;
     border-radius: 4px;
@@ -549,7 +630,7 @@ input:focus {
 }
 
 .InfoBtn button:hover {
-    background-color: #0056b3;
+    background-color: #679669;
 }
 
 /* QR 코드 표시 */
@@ -580,7 +661,7 @@ input:focus {
 
 .modal-content button {
     padding: 8px 15px;
-    background-color: #dc3545;
+    background-color: #679669;
     color: white;
     border: none;
     border-radius: 4px;
@@ -589,6 +670,6 @@ input:focus {
 }
 
 .modal-content button:hover {
-    background-color: #c82333;
+    background-color: #679669;
 }
 </style>

@@ -78,7 +78,9 @@
             "checkout":"결제 상태"
         },
         "reviews":{
-            "title":"나의 리뷰"
+            "title":"나의 리뷰",
+            "noReviews":"리뷰가 존재하지 않습니다.",
+            "errorMessage":"리뷰를 가져오는 데 실패했습니다."
         }
     }
 }

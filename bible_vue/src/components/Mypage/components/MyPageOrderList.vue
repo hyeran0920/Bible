@@ -75,11 +75,25 @@
 
         <!--close modal-->
         <button @click="orderModalVisible=false">close</button>
+
+        
+        <!-- 에러 모달 추가 -->
+        <Modal 
+            v-model="isErrorModalVisible"
+            :message="errorMessage"
+        >
+            <p>{{ errorMessage }}</p>
+        </Modal>
     </div>
 </template>
 
 <script>
+import Modal from '../../modal/CustomModal.vue';
+
 export default {
+    components: {
+        Modal
+    },
     data() {
         return {
             orderHistories: [],
@@ -87,7 +101,11 @@ export default {
             books: {},
             addresses: {},             
             selectedOrderHistory: null,
-            orderModalVisible: false
+            orderModalVisible: false,
+
+            // 모달
+            isErrorModalVisible: false,
+            errorMessage: '',
         };
     },
     mounted() {
@@ -98,9 +116,6 @@ export default {
         async fetchAllData(){
             try{
                 this.fetchOrderHistory();
-                
-                
-
             }catch(error){
                 console.log("fetch all data = ",error);
             }
@@ -108,7 +123,6 @@ export default {
 
         async fetchOrderHistory() {
             try {
-
                 //get order hisotries
                 const response = await this.$axios.get('/orderhistory/me');
                 this.orderHistories = response.data;
@@ -119,13 +133,23 @@ export default {
                 });
 
             } catch (error) {
-                console.error("구매 기록 불러오는 중 오류 발생:", error);
+                console.error("Failed to load order history:", error);
+                this.errorMessage = "Failed to load order history.";
+                this.isErrorModalVisible = true;
+                
+                setTimeout(() => {
+                    this.isErrorModalVisible = false;
+                }, 3000);
             }
         },
 
         async fetchOrder(orderHistoryId) {
             if (!orderHistoryId) {
-                console.error("orderHistoryId가 유효하지 않음:", orderHistoryId);
+                this.errorMessage = "Invalid order history ID.";
+                this.isErrorModalVisible = true;
+                setTimeout(() => {
+                    this.isErrorModalVisible = false;
+                }, 3000);
                 return;
             }
 
@@ -138,10 +162,15 @@ export default {
                         this.fetchBook(o.bookId);
                     }
                 });
-
-                
             } catch (error) {
-                console.error("구매 기록 목록 불러오던 중 오류 발생:", error);
+                console.error("Failed to load order details:", error);
+                this.errorMessage = "Failed to load order details.";
+                this.isErrorModalVisible = true;
+                
+                setTimeout(() => {
+                    this.isErrorModalVisible = false;
+                }, 3000);
+                return;
             }
         },
 
@@ -155,7 +184,13 @@ export default {
                 const response = await this.$axios.get(`/books/${bookId}`);
                 this.books[bookId]=response.data;
             } catch (error) {
-                console.error("책 정보를 불러오는 중 오류 발생:", error);
+                console.error("Failed to load book information:", error);
+                this.errorMessage = "Failed to load book information.";
+                this.isErrorModalVisible = true;
+                
+                setTimeout(() => {
+                    this.isErrorModalVisible = false;
+                }, 3000);
             }
         },
 
@@ -164,7 +199,13 @@ export default {
                 const response = await this.$axios.get(`/members/addresses/${addressId}`);
                 this.addresses[addressId] = response.data;
             } catch (error) {
-                console.error("Error - fetching addresses:", error);
+                console.error("Failed to load address information:", error);
+                this.errorMessage = "Failed to load address information.";
+                this.isErrorModalVisible = true;
+                
+                setTimeout(() => {
+                    this.isErrorModalVisible = false;
+                }, 3000);
             }
         },
 
@@ -182,8 +223,6 @@ export default {
     }
 };
 </script>
-
-
 
 <style>
 /* 전체 컨테이너 */
@@ -211,7 +250,7 @@ table {
 
 /* 테이블 헤더 스타일 */
 thead {
-    background: #1E90FF;
+    background: #679669;
     color: white;
     font-weight: bold;
 }
@@ -272,7 +311,7 @@ button {
     width: 100%;
     padding: 10px;
     margin-top: 10px;
-    background: #1E90FF;
+    background: #679669;
     color: white;
     border: none;
     border-radius: 5px;
@@ -282,7 +321,7 @@ button {
 }
 
 button:hover {
-    background: #187bcd;
+    background: #679669;
 }
 
 /* 닫기 버튼 */

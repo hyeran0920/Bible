@@ -17,14 +17,56 @@
     </div>
 
     <p v-else>{{ $t('mypage.reviews.noReviews') }}</p>
+
+        <!-- 삭제 확인 모달 -->
+        <Modal 
+      v-model="isConfirmModalVisible"
+      :message="confirmMessage"
+      showCancel
+      @confirm="handleConfirmDelete"
+      @cancel="isConfirmModalVisible = false"
+    >
+      <p>{{ confirmMessage }}</p>
+    </Modal>
+
+    <!-- 결과 모달 (성공/실패) -->
+    <Modal 
+      v-model="isResultModalVisible"
+      :message="resultMessage"
+    >
+      <p>{{ resultMessage }}</p>
+    </Modal>
+
+    <!-- 에러 모달 -->
+    <Modal 
+      v-model="isErrorModalVisible"
+      :message="errorMessage"
+    >
+      <p>{{ errorMessage }}</p>
+    </Modal>
   </div>
 </template>
 
 <script>
+import Modal from '../../modal/CustomModal.vue';
+
 export default {
+  components: {
+    Modal
+  },
   data() {
     return {
       reviews: [], // 리뷰 목록
+
+      // modal
+      isConfirmModalVisible: false,
+      isResultModalVisible: false,
+      isErrorModalVisible: false,
+      confirmMessage: '',
+      resultMessage: '',
+      errorMessage: '',
+      selectedReviewId: null,
+      selectedMemId: null
     };
   },
   computed: {
@@ -38,15 +80,41 @@ export default {
       return isodate ? new Date(isodate).toLocaleDateString() : "-";
     },
     
-    // 리뷰 삭제
-    async deleteReview(reviewId, memId) {
+    // 리뷰 삭제 버튼 클릭
+    deleteReview(reviewId, memId) {
+      this.selectedReviewId = reviewId;
+      this.selectedMemId = memId;
+      this.confirmMessage = "리뷰를 삭제하시겠습니까?";
+      this.isConfirmModalVisible = true;
+    },
+
+    // 삭제 확인 처리
+    async handleConfirmDelete() {
       try {
-        const response = await this.$axios.post(`/reviews/${reviewId}`);
-        this.reviews = this.reviews.filter((review) => review.reviewId !== reviewId); // 삭제된 리뷰를 리스트에서 제거
-        alert("리뷰가 삭제되었습니다!");
+        await this.$axios.post(`/reviews/${this.selectedReviewId}`);
+        this.reviews = this.reviews.filter(
+          (review) => review.reviewId !== this.selectedReviewId
+        );
+        
+        this.resultMessage = "리뷰가 삭제되었습니다!";
+        this.isResultModalVisible = true;
+        
+        // 3초 후 결과 모달 자동 닫기
+        setTimeout(() => {
+          this.isResultModalVisible = false;
+        }, 3000);
       } catch (error) {
         console.error("리뷰 삭제에 실패했습니다:", error);
-        alert("리뷰 삭제에 실패했습니다.");
+        this.resultMessage = "리뷰 삭제에 실패했습니다.";
+        this.isResultModalVisible = true;
+        
+        setTimeout(() => {
+          this.isResultModalVisible = false;
+        }, 3000);
+      } finally {
+        this.isConfirmModalVisible = false;
+        this.selectedReviewId = null;
+        this.selectedMemId = null;
       }
     },
   },
@@ -55,7 +123,13 @@ export default {
       const reviewsInfo = await this.$axios.get(`/reviews/me`);
       this.reviews = reviewsInfo.data; // 멤버 리뷰 목록 저장
     } catch (error) {
-      console.error("리뷰를 가져오는 데 실패했습니다:", error);
+      this.errorMessage = this.$t('mypage.reviews.errorMessage');
+      this.isErrorModalVisible = true;
+      
+      // 1.5초 후 에러 모달 자동 닫기
+      setTimeout(() => {
+        this.isErrorModalVisible = false;
+      }, 1500);    
     }
   },
 };

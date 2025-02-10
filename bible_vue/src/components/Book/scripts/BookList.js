@@ -1,5 +1,3 @@
-import axios from 'axios';
-
 export default {
   data() {
     return {
@@ -79,7 +77,7 @@ export default {
 
 
         // 서버에 책 추가 요청 (책 + 이미지)
-        const response = await axios.post("http://localhost:8080/api/books", formData, {
+        const response = await this.$axios.post("/books", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
 
@@ -109,7 +107,7 @@ export default {
         }
     
         // 서버에 책 업데이트 요청 (책 + 이미지)
-        const response = await axios.put("http://localhost:8080/api/books", formData, {
+        const response = await this.$axios.put("/books", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
 
@@ -143,7 +141,7 @@ export default {
     // Fetch Books
     async fetchData() {
       try {
-        const response = await axios.get('http://localhost:8080/api/books/best'); //베스트셀러
+        const response = await this.$axios.get('/books/best'); //베스트셀러
         this.books = response.data;
       } catch (error) {
         console.error('Error fetching books:', error);
@@ -167,7 +165,7 @@ export default {
       const userInput = prompt('삭제할 책의 저자 입력');
       if (userInput && userInput === bookAuthor) {
         try {
-          await axios.delete(`http://localhost:8080/api/books?bookid=${bookId}`); // 책 삭제
+          await this.$axios.delete(`/books?bookid=${bookId}`); // 책 삭제
 
 
           this.books = this.books.filter((b) => b.bookId !== bookId); // 책 목록 갱신

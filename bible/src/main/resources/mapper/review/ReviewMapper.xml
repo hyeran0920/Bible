@@ -10,11 +10,22 @@
         <result column="book_id"        property="bookId" />
         <result column="mem_id"         property="memId" />
         <result column="created_at"     property="createdAt" /> 
-        
     </resultMap>
+    
+    <resultMap type="com.library.bible.review.model.Review" id="reviewInfoMap">
+	    <result column="review_id"      property="reviewId" />
+	    <result column="review_star"    property="reviewStar" />
+	    <result column="review_comment" property="reviewComment" />
+	    <result column="book_id"        property="bookId" />
+	    <result column="mem_id"         property="memId" />
+	    <result column="mem_name"       property="memName" />
+	    <result column="book_title"     property="bookTitle" />
+	    <result column="created_at"     property="createdAt" />
+	</resultMap>
+    
   
     <!-- 리뷰 조회 -->
-    <select id="getReview" resultMap="reviewMap">
+    <select id="getReview" resultMap="reviewInfoMap">
         SELECT 
             r.review_id, 
             r.review_star, 

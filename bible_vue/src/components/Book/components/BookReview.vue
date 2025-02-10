@@ -38,16 +38,29 @@
       </li>
     </ul>
     <p v-else>리뷰가 없습니다!</p>
+    <Modal v-model="isModalVisible" @confirm="onConfirm">
+      <p>{{ singleModalMessage }}</p>
+    </Modal>
   </div>
 </template>
 
 <script>
 import { ref, onMounted, nextTick } from 'vue';
 import { getCurrentInstance } from 'vue'
+import Modal from '../../modal/CustomModal.vue';
 
 export default {
   props: {
     bookId: Number,
+  },
+  components:{
+    Modal,
+  },
+  data(){
+    return{
+      isModalVisible: false,
+      singleModalMessage: '',
+    }
   },
   setup(props) {
     const { proxy } = getCurrentInstance();
@@ -73,7 +86,7 @@ export default {
 
     const submitReview = async () => {
       if (reviewStar.value === 0 || !reviewComment.value.trim()) {
-        alert("별점과 리뷰 내용을 모두 입력해주세요!");
+        this.openModal("별점과 리뷰 내용을 모두 입력해주세요!");
         return;
       }
       const reviewData = {
@@ -83,13 +96,13 @@ export default {
       };
       try {
         const response = await proxy.$axios.post("/reviews", reviewData);
-        alert(response.data);
+        this.openModal(response.data);
         reviewStar.value = 0;
         reviewComment.value = "";
         await fetchReviews(); // 리뷰 업데이트
       } catch (error) {
         console.error("Error - submit review:", error);
-        alert("리뷰 제출에 실패했습니다.");
+        this.openModal("리뷰 제출에 실패했습니다.");
       }
     };
 
@@ -117,6 +130,18 @@ export default {
       formatDate,
       maskName,
     };
+  },
+  methods: {
+    openModal(message){
+      this.singleModalMessage = message;
+      this.isModalVisible = true;
+
+      onConfirm();
+    },
+    onConfirm(){
+      console.log("확인 버튼이 클릭되었습니다.");
+      this.isModalVisible = false;
+    },
   },
 };
 </script>

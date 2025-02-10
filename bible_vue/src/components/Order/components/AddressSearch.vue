@@ -18,11 +18,20 @@
         기본배송지 <input type="checkbox" v-model="defaultAddress">
     </div>
     <button @click="addAddress()">추가</button>
+
+    <Modal v-model="isModalVisible" @confirm="onConfirm">
+      <p>{{ singleModalMessage }}</p>
+    </Modal>
 </template>
 
 <script>
+import Modal from '../../modal/CustomModal.vue';
+
 export default {
     name: 'AddressSearch',
+    components:{
+        Modal,
+    },
     data() {
         return {
             receiverName: '',
@@ -32,6 +41,8 @@ export default {
             address: '',
             detailAddress: '',
             isScriptLoaded: false,
+            isModalVisible: false,
+            singleModalMessage: '',
         };
     },
     mounted() {
@@ -66,7 +77,7 @@ export default {
         },
         execDaumPostcode() {
             if (!this.isScriptLoaded) {
-                alert('주소 검색 서비스를 불러오는 중입니다. 잠시만 기다려주세요.');
+                this.openModal("주소 검색 서비스를 불러오는 중입니다. 잠시만 기다려주세요.");
                 return;
             }
 
@@ -102,7 +113,7 @@ export default {
         //주소 추가
         addAddress() {
             if (!this.postcode || !this.address || !this.detailAddress || !this.receiverName || !this.receiverPhone) {
-                alert('모든 주소 정보를 입력해주세요.');
+                this.openModal("모든 주소 정보를 입력해주세요.");
                 return;
             }
             const addressData = {
@@ -143,7 +154,7 @@ export default {
         },
         validatePhoneNumber() {
             if (!this.isValidPhoneNumber(this.receiverPhone)) {
-                alert("올바른 전화번호 형식이 아닙니다. (예: 010-1234-5678)");
+                this.openModal("올바른 전화번호 형식이 아닙니다. (예: 010-1234-5678)");
                 this.receiverPhone = ""; // 잘못된 값 초기화
             }
         },
@@ -153,8 +164,15 @@ export default {
         validateInputs() {
             if (!this.receiverName.trim()) this.receiverName = '';
             if (!this.detailAddress.trim()) this.detailAddress = '';
-        }
-
+        },
+        openModal(message){
+            this.singleModalMessage = message;
+            this.isModalVisible = true;
+        },
+        onConfirm(){
+            console.log("확인 버튼이 클릭되었습니다.");
+            this.isModalVisible = false;
+        },
     }
 };
 </script>

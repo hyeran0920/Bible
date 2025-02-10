@@ -59,6 +59,10 @@
       </div>
     </div>
 
+    <Modal v-model="isModalVisible" @confirm="onConfirm">
+      <p>{{ singleModalMessage }}</p>
+    </Modal>
+
   </div>
   <Footer />
 </template>
@@ -69,6 +73,7 @@
 import Header from '../../MainPage/components/Header.vue';
 import Footer from '../../MainPage/components/Footer.vue';
 import '../styles/CartStyle.css';
+import Modal from '../../modal/CustomModal.vue';
 
 export default {
   data() {
@@ -77,11 +82,14 @@ export default {
       books: {},             // key: bookId, value: 책 정보 객체
       selectedCartIds: [],   // 선택된 장바구니 cartId 목록
       totalPayPrice: 0,      // 선택한 항목들의 총 결제 금액
+      singleModalMessage: '',
+      isModalVisible: false,
     };
   },
   components: {
     Footer,
-    Header
+    Header,
+    Modal,
   },
   mounted() {
     this.fetchCarts();
@@ -150,7 +158,7 @@ export default {
     async deleteCart(cartId) {
       await this.$axios.delete(`/carts/${cartId}`, { withCredentials: true })
         .then(response => {
-          alert(response.data);
+          this.openModal(response.data);
           this.carts = this.carts.filter(cart => cart.cartId !== cartId);
           this.selectedCartIds = this.selectedCartIds.filter(id => id !== cartId);
           this.calculateTotal();
@@ -187,15 +195,22 @@ export default {
       //대여하기
       await this.$axios.post("/rents/requests/me", bookJson, { withCredentials: true })
         .then(response => {
-          alert("대여 신청이 완료되었습니다.");
+          this.openModal("대여 신청이 완료되었습니다.");
         })
         .catch(error=>{
           console.error("Error - rent book", error.response?.data);
           const errorMessage = error.response?.data?.message || "대여 신청에 실패했습니다.";
-          alert(errorMessage);
+          this.openModal(errorMessage);
         });
-
-    }
+    },
+    openModal(message){
+      this.singleModalMessage = message;
+      this.isModalVisible = true;
+    },
+    onConfirm(){
+      console.log("확인 버튼이 클릭되었습니다.");
+      this.isModalVisible = false;
+    },
   }
 };
 </script>

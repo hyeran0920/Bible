@@ -127,13 +127,14 @@ public class WebSocketHandler extends TextWebSocketHandler implements Initializi
                     // "authorization=JWT토큰값" 형태이므로 "=" 기준으로 분리
                     String[] keyValue = cookie.split("=", 2);
 
-                    if (keyValue.length == 2 && keyValue[0].trim().equalsIgnoreCase("authorization")) {
-                        String jwtToken = keyValue[1].trim();
-                        System.out.println("추출된 JWT: " + jwtToken); // 디버깅용 출력
+                    if (keyValue.length == 2 && keyValue[0].trim().equalsIgnoreCase("memId")) {
+                        String memId = keyValue[1].trim();
+//                        System.out.println("추출된 JWT: " + jwtToken); // 디버깅용 출력
 
                         // JWT 검증 및 memId 추출
-                        DecodedJWT decodedJWT = jwtProvider.getClaimsAndVerifyAccessToken(jwtToken);
-                        return Long.valueOf(decodedJWT.getSubject());
+//                        DecodedJWT decodedJWT = jwtProvider.getClaimsAndVerifyAccessToken(jwtToken);
+//                        return Long.valueOf(decodedJWT.getSubject());
+                        return Long.valueOf(memId);
                     }
                 }
             }

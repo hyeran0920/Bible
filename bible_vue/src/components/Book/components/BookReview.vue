@@ -43,13 +43,14 @@
 
 <script>
 import { ref, onMounted, nextTick } from 'vue';
-import axios from 'axios';
+import { getCurrentInstance } from 'vue'
 
 export default {
   props: {
     bookId: Number,
   },
   setup(props) {
+    const { proxy } = getCurrentInstance();
     const reviewStar = ref(0);
     const reviewComment = ref("");
     const reviews = ref([]);
@@ -57,7 +58,7 @@ export default {
     // ✅ API 요청 후 Vue가 반응형 데이터 변경을 감지하도록 처리
     const fetchReviews = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/reviews/${props.bookId}`);
+        const response = await proxy.$axios.get(`/reviews/${props.bookId}`);
         if (Array.isArray(response.data)) {
           reviews.value = response.data;
           await nextTick(); // Vue DOM 업데이트 보장
@@ -81,7 +82,7 @@ export default {
         reviewComment: reviewComment.value,
       };
       try {
-        const response = await axios.post("http://localhost:8080/api/reviews", reviewData, { withCredentials: true });
+        const response = await proxy.$axios.post("/reviews", reviewData);
         alert(response.data);
         reviewStar.value = 0;
         reviewComment.value = "";

@@ -17,7 +17,8 @@
 
           <!--img-->
           <div class="item-image">
-            <img :src="getBookImageUrl(cart.bookId)" :alt="books[cart.bookId]?.bookTitle || '책 제목 없음'" />
+            <img :src="`${this.$axios.defaults.baseURL}/uploads/book-image?bookid=${cart.bookId}`" 
+            :alt="books[cart.bookId]?.bookTitle || '책 제목 없음'" />
           </div>
 
           <!--title, author, qunaitiy, price-->
@@ -92,10 +93,12 @@ export default {
       await this.$axios.get('/carts', { withCredentials: true })
         .then(response => {
           this.carts = response.data;
+          console.log(this.carts);
           this.carts.forEach(cart => {
             if (!this.books[cart.bookId]) {
               this.fetchBook(cart.bookId);
             }
+            console.log(this.books);
           });
         })
         .catch(error => {
@@ -160,7 +163,7 @@ export default {
 
     // Book Img------------------------------------------------------------
     async getBookImageUrl(bookId) {
-      return `http://localhost:8080/api/uploads/book-image?bookid=${bookId}`;
+      return `${this.$axios.defaults.baseURL}/uploads/book-image?bookid=${bookId}`;
     },
 
 

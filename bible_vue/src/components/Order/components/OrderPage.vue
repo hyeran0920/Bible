@@ -115,7 +115,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 import AddressSearch from './AddressSearch.vue';
 
 export default {
@@ -145,7 +144,7 @@ export default {
     try {
       // 모든 장바구니 데이터 불러오기
       const cartResponses = await Promise.all(
-        cartIdArray.map(cartId => axios.get(`http://localhost:8080/api/carts/${cartId}`))
+        cartIdArray.map(cartId => this.$axios.get(`/carts/${cartId}`))
       );
       this.cartArray = cartResponses.map(res => res.data); // API 응답 데이터 저장
 
@@ -176,7 +175,7 @@ export default {
       if (this.books[bookId]) return; // 이미 불러온 책 정보는 다시 요청하지 않음
 
       try {
-        const response = await axios.get(`http://localhost:8080/api/books/${bookId}`);
+        const response = await this.$axios.get(`/books/${bookId}`);
         this.books[bookId] = response.data;
         this.totalPrice += bookCount * response.data.bookPrice
       } catch (error) {
@@ -185,7 +184,7 @@ export default {
     },
     async fetchAddresses() {
       try {
-        const response = await axios.get(`http://localhost:8080/api/members/me/addresses`, { withCredentials: true });
+        const response = await this.$axios.get(`/members/me/addresses`, { withCredentials: true });
         this.addressArray = response.data;
       } catch (error) {
         console.error("Error fetching addresses:", error);
@@ -193,7 +192,7 @@ export default {
     },
     async fetchDefaultAddress() {
       try {
-        const response = await axios.get(`http://localhost:8080/api/members/addresses/default`, { withCredentials: true });
+        const response = await this.$axios.get(`/members/addresses/default`, { withCredentials: true });
         if (response.data != null) { this.selectedAddress = response.data; }
       } catch (error) {
         console.error("Error fetching addresses:", error);
@@ -201,7 +200,7 @@ export default {
     },
     //책 이미지 가져오기--------------------------------------
     getBookImageUrl(bookId) {
-      return `http://localhost:8080/api/uploads/book-image?bookid=${bookId}`;
+      return `${this.$axios.defaults.baseURL}/uploads/book-image?bookid=${bookId}`;
     },
 
 
@@ -211,7 +210,7 @@ export default {
        
         //Insert Order History
         const today = new Date().toISOString().split('T')[0];
-        const orderHisResponse = await axios.post(`http://localhost:8080/api/orderhistory`,{ 
+        const orderHisResponse = await this.$axios.post(`/orderhistory`,{ 
           addressId:this.selectedAddress.addressId,
           orderHistoryDate:today,
           orderHistoryTotalPrice:this.totalPrice,
@@ -226,7 +225,7 @@ export default {
         //Insert Orders
         for(const cartItem of this.cartArray){
           //console.log(cartItem.bookId+" "+orderHisResponse.data+" "+cartItem.bookCount);
-          await axios.post(`http://localhost:8080/api/orders`,{
+          await this.$axios.post(`/orders`,{
             bookId: cartItem.bookId,
             orderHistoryId:orderHisResponse.data,
             bookCount:cartItem.bookCount
@@ -237,7 +236,9 @@ export default {
 
         //결제 창으로 이동
         //window.location.href = "http://localhost:8080/";
-        window.location.href = `http://localhost:8080/?orderHistoryId=${orderHisResponse.data}`;
+        const url = new URL(this.$axios.defaults.baseURL);
+        const baseOrigin = url.origin; // "http://localhost:8080"
+        window.location.href = `${baseOrigin}/?orderHistoryId=${orderHisResponse.data}`;
 
 
       } catch (error) {

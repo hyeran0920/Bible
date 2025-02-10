@@ -17,7 +17,7 @@
     },
     methods: {
       sendSms() {
-        fetch('http://localhost:8080/api/sms', {
+        fetch(`${this.$axios.defaults.baseURL}/sms`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

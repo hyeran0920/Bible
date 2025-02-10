@@ -77,7 +77,7 @@ function fetchMemInfo(memId){
      	
          try {
 			console.log("trying to get member info");
-             const response = await axios.get(BASE_URL+`members/${memId}`);
+             const response = await axios.get(BASE_URL+`members/token`);
              const memInfo = response.data;
 
              resolve(memInfo);

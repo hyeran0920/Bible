@@ -83,8 +83,6 @@
 </template>
 
 <script>
-import axios from 'axios';
-
 export default {
     data() {
         return {
@@ -103,7 +101,7 @@ export default {
     methods: {
         async fetchAllOrders() {
             try {
-                const response = await this.$axios.get('orderhistory', { withCredentials: true });
+                const response = await this.$axios.get('orderhistory');
                 this.orderHistories = response.data;
                 this.groupOrdersByDate(); // 날짜별로 그룹화
                 this.fetchAddresses();
@@ -138,7 +136,7 @@ export default {
 
         async fetchAddress(addressId) {
             try {
-                const response = await axios.get(`http://localhost:8080/api/members/addresses/${addressId}`);
+                const response = await this.$axios.get(`/members/addresses/${addressId}`);
                 this.addresses[addressId] = response.data;
             } catch (error) {
                 console.error("주소 정보를 불러오는 중 오류 발생:", error);
@@ -152,7 +150,7 @@ export default {
             }
 
             try {
-                const response = await axios.get(`http://localhost:8080/api/orders/history/${orderHistoryId}`);
+                const response = await this.$axios.get(`/orders/history/${orderHistoryId}`);
                 this.orders = response.data;
 
                 this.orders.forEach(o => {
@@ -174,7 +172,7 @@ export default {
             }
 
             try {
-                const response = await axios.get(`http://localhost:8080/api/books/${bookId}`);
+                const response = await this.$axios.get(`/books/${bookId}`);
                 this.books[bookId]=response.data;
             } catch (error) {
                 console.error("책 정보를 불러오는 중 오류 발생:", error);
@@ -182,7 +180,7 @@ export default {
         },
         
         getBookImageUrl(bookId) {
-            return `http://localhost:8080/api/uploads/book-image?bookid=${bookId}`;
+            return `${this.$axios.defaults.baseURL}/uploads/book-image?bookid=${bookId}`;
         },
 
         selectOrderHistory(orderHistory) {

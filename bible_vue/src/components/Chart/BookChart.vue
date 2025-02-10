@@ -6,8 +6,6 @@
 
 <script>
 import { Chart, registerables } from 'chart.js';
-import axios from 'axios';
-
 Chart.register(...registerables); // Chart.js 요소 등록
 
 export default {
@@ -37,7 +35,7 @@ export default {
     methods: {
         async fetchData() {
             try {
-                const response = await axios.get('http://localhost:8080/api/books');
+                const response = await this.$axios.get('/books');
                 this.books = response.data;
 
                 // 차트 데이터 업데이트

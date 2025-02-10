@@ -24,7 +24,10 @@ export default {
   },
   mounted() {
     // WebSocket 서버와 연결
-    const webSocketUrl = "ws://localhost:8080/websocket";
+    const baseURL = this.$axios.defaults.baseURL;
+    const hostPort = baseURL.split('//')[1].split('/api')[0];
+
+    const webSocketUrl = `ws://${hostPort}/websocket`;
     webSocketService.connect(webSocketUrl);
 
     // 메시지 이벤트 리스너 등록

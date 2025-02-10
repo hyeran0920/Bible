@@ -23,6 +23,7 @@ import com.library.bible.member.model.Member;
 import com.library.bible.member.service.IMemberService;
 import com.library.bible.resolver.AuthMember;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
@@ -53,7 +54,16 @@ public class MemberController {
 	// 사용자 단일 조회
 	@GetMapping("/{memId}")
 	public ResponseEntity<MemberResponseDto> selectMember(@PathVariable("memId") @Positive long memId) {
+		System.out.println("!! 여기 API 사용");
+
 		Member member = memberService.selectMember(memId);
+		return ResponseEntity.ok(memberMapper.memberToMemberResponseDto(member));
+	}
+	
+	// 토큰으로 사용자 조회
+	@GetMapping("/token")
+	public ResponseEntity<MemberResponseDto> selectMemberByToken(HttpServletRequest request) {
+		Member member = memberService.selectMemberByToken(request);
 		return ResponseEntity.ok(memberMapper.memberToMemberResponseDto(member));
 	}
 	

@@ -53,14 +53,13 @@
       </div>
     </div>
 
-    <BookReview :bookId="book.bookId" />
+    <BookReview :bookId="this.bookId" />
 
   </div>
   <Footer />
 </template>
 
 <script>
-import axios from 'axios';
 import Footer from '../../MainPage/components/Footer.vue';
 import Header from '../../MainPage/components/Header.vue';
 import BookReview from './BookReview.vue'; // BookReview 컴포넌트 임포트
@@ -79,7 +78,7 @@ export default {
   async created() {
     const bookId = this.$route.params.bookId || this.bookId; // bookId를 받아옵니다.
     try {
-      const response = await axios.get(`http://localhost:8080/api/books/${bookId}`);
+      const response = await this.$axios.get(`/books/${bookId}`);
       this.book = response.data;
     } catch (error) {
       console.error('Error fetching book details:', error);
@@ -87,10 +86,10 @@ export default {
   },
   methods: {
     getBookImageUrl(bookId) {
-      return `http://localhost:8080/api/uploads/book-image?bookid=${bookId}`;
+      return `${this.$axios.defaults.baseURL}/uploads/book-image?bookid=${bookId}`;
     },
-    addCart(bookid) {
-      axios.post(`http://localhost:8080/api/carts`, {
+    async addCart(bookid) {
+      await this.$axios.post(`/carts`, {
         bookId: bookid,
         bookCount: this.nowBookCount
       }, { withCredentials: true })
@@ -129,7 +128,7 @@ export default {
         reviewStar: this.reviewStar,
         reviewComment: this.reviewComment,
       };
-      axios.post("http://localhost:8080/api/reviews", reviewData, { withCredentials: true })
+      this.$axios.post("/reviews", reviewData, { withCredentials: true })
         .then(response => {
           alert(response.data);
           this.reviewStar = 0;
@@ -142,9 +141,9 @@ export default {
         });
     },
     // 리뷰 데이터 가져오기
-    fetchReviews(bookId) {
-      axios
-        .get(`http://localhost:8080/api/reviews/${bookId}`)
+    async fetchReviews(bookId) {
+      await this.$axios
+        .get(`/reviews/${bookId}`)
         .then((response) => {
           this.reviews = response.data; // 받은 데이터를 reviews 배열에 저장
         })
@@ -156,7 +155,7 @@ export default {
     bookRent(bookId, bookTitle){
       const rentArr = Array.isArray(bookId) ? bookId : [bookId];
       const bookJson = { "bookIds": rentArr };
-      axios.post("http://localhost:8080/api/rents/requests/me", bookJson, { withCredentials: true })
+      this.$axios.post("/rents/requests/me", bookJson, { withCredentials: true })
         .then(response => {
           alert("["+bookTitle +"] 대여 신청이 완료되었습니다.");
         })
@@ -171,7 +170,7 @@ export default {
     async bookReserve(bookId, bookTitle) {
       try {
         const bookJson = { "bookIds": [bookId] };
-        await this.$axios.post("http://localhost:8080/api/reservations/me", bookJson, );
+        await this.$axios.post("/reservations/me", bookJson, );
         alert("["+bookTitle +"] 예약이 완료되었습니다.");
       } catch(error) {
         console.error("Error - reserve book", error.response?.data);

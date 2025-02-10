@@ -30,8 +30,6 @@
 </template>
 
 <script>
-import axios from "axios";
-
 export default {
   name: "BookSearch",
   data() {
@@ -45,7 +43,7 @@ export default {
     // Category들 가져오기
     async fetchCategories() {
       try {
-        const response = await axios.get("http://localhost:8080/api/books/categories");
+        const response = await this.$axios.get("/books/categories");
         this.categories = response.data.map((cat) => cat.bookCategory);
       } catch (error) {
         console.error("Error fetching categories:", error);
@@ -56,11 +54,11 @@ export default {
     async fetchBooksByCategory() {
       try {
         if (this.selectedCategory === "All") {
-          const response = await axios.get("http://localhost:8080/api/books");
+          const response = await this.$axios.get("/books");
           this.$emit("update-books-list", response.data);
         } else {
-          const response = await axios.get(
-            `http://localhost:8080/api/books/categories/${encodeURIComponent(this.selectedCategory)}`
+          const response = await this.$axios.get(
+            `/books/categories/${encodeURIComponent(this.selectedCategory)}`
           );
           this.$emit("update-books-list", response.data);
         }
@@ -73,10 +71,10 @@ export default {
     async fetchSearchResults() {
       try {
         if (!this.searchKeyword) {
-          const response = await axios.get("http://localhost:8080/api/books");
+          const response = await this.$axios.get("/books");
           this.$emit("update-books-list", response.data);
         } else {
-          const response = await axios.get("http://localhost:8080/api/books/search", {
+          const response = await this.$axios.get("/books/search", {
             params: { keyword: this.searchKeyword },
           });
           this.$emit("update-books-list", response.data);
@@ -142,7 +140,7 @@ export default {
   width: 50px;
   border: none;
   border-radius: 5px;
-  background-color: #007bff;
+  background-color: #679669;
   color: #fff;
   font-size: 14px;
   cursor: pointer;

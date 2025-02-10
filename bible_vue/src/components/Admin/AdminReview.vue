@@ -33,8 +33,6 @@
   </template>
   
   <script>
-  import axios from 'axios';
-  
   export default {
     data() {
       return {
@@ -47,8 +45,8 @@
     methods: {
       // 리뷰 데이터 가져오는 메소드
       fetchReviews() {
-        axios
-          .get("http://localhost:8080/api/reviews/admin", { withCredentials: true }) // 관리자 리뷰 API 경로
+        this.$axios
+          .get("/reviews/admin") // 관리자 리뷰 API 경로
           .then((response) => {
             this.reviews = response.data; // 리뷰 정보를 저장
           })
@@ -66,8 +64,8 @@
       },
       // 리뷰 삭제 메소드
       deleteReview(reviewId) {
-        axios
-          .post(`http://localhost:8080/api/reviews/admin/${reviewId}`, {}, { withCredentials: true }) // 삭제 API 경로
+        this.$axios
+          .post(`/reviews/admin/${reviewId}`, {}, { withCredentials: true }) // 삭제 API 경로
           .then((response) => {
             // 삭제 성공 시 리뷰 리스트에서 해당 리뷰 제거
             this.reviews = this.reviews.filter((review) => review.reviewId !== reviewId);

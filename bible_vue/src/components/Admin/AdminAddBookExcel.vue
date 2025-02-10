@@ -45,7 +45,7 @@ export default {
             formData.append("file", this.selectedFile);
 
             try {
-                const response = await axios.post("http://localhost:8080/api/books/excel", formData, {
+                const response = await axios.post(`${this.$axios.defaults.baseURL}/books/excel`, formData, {
                     headers: { "Content-Type": "multipart/form-data" }
                 });
 
@@ -58,7 +58,7 @@ export default {
 
         async downloadExcel() {
             try {
-                const response = await fetch("http://localhost:8080/api/books/download-excel", {
+                const response = await fetch("${this.$axios.defaults.baseURL}/books/download-excel", {
                     method: "GET",
                 });
 
@@ -108,7 +108,7 @@ export default {
 
 .upload-btn {
     padding: 10px 15px;
-    background-color: #007bff;
+    background-color: #679669;
     color: white;
     border: none;
     cursor: pointer;

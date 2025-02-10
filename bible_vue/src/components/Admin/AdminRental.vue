@@ -66,8 +66,6 @@
 
 <script>
 import { Html5QrcodeScanner } from "html5-qrcode";
-import axios from "axios"; // axios 추가
-import { watch } from "vue"; // watch 추가
 
 export default {
     data() {
@@ -100,7 +98,7 @@ export default {
         //memId로 member 정보 가져오기
         async fetchCurrentMember(memId) {
             try {
-                const response = await axios.get(`http://localhost:8080/api/members/${memId}`,{withCredentials: true});
+                const response = await this.$axios.get(`/members/${memId}`,{withCredentials: true});
                 this.currentMember = response.data;
 
                 //console.log("member name="+this.currentMember.memName);

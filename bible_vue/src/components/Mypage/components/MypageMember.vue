@@ -106,7 +106,7 @@
 
 <script>
     const MEMBER_BASEURL = "/members/me";
-    const QR_BASEURL="http://localhost:8080/api/uploads/member-qr-image";
+    const QR_BASEURL='/uploads/member-qr-image';
     const ADDRESS_BASEURL = MEMBER_BASEURL+"/addresses";
 
     import AddressSearch from '../../Order/components/AddressSearch.vue';

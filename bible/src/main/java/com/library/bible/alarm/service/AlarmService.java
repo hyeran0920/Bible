@@ -21,7 +21,7 @@ public class AlarmService {
             String jsonMessage = objectMapper.writeValueAsString(alarmMessage);
             webSocketHandler.sendMessageToAll(jsonMessage);
         } catch (Exception e) {
-            e.printStackTrace();
+        	throw new RuntimeException("알람 전송 실패: " + e.getMessage(), e);
         }
     }
     
@@ -30,7 +30,7 @@ public class AlarmService {
     		String jsonMessage = objectMapper.writeValueAsString(alarmMessage);
             webSocketHandler.sendMessageToUser(memId,jsonMessage);
     	}catch(Exception e) {
-    		e.printStackTrace();
+    		throw new RuntimeException("알람 전송 실패: " + e.getMessage(), e);
     	}
     }
 }

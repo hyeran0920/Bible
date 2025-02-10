@@ -92,6 +92,7 @@ export default {
         
         const response = await axios.post(url, payload);
         this.responseMessage = response.data;
+        //this.responseMessage="";
 
         this.alarmTitle = "";
         this.alarmText = "";

@@ -91,6 +91,7 @@ export default {
         
         const response = await this.$axios.post(url, payload);
         this.responseMessage = response.data;
+        //this.responseMessage="";
 
         this.alarmTitle = "";
         this.alarmText = "";

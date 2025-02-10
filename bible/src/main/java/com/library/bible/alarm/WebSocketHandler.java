@@ -1,9 +1,10 @@
 package com.library.bible.alarm;
 
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.HashSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,24 +14,15 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-import com.auth0.jwt.interfaces.DecodedJWT;
-import com.library.bible.security.jwt.JwtProvider;
-
-import java.util.List;
-import java.util.Optional;
-
 public class WebSocketHandler extends TextWebSocketHandler implements InitializingBean {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final Set<WebSocketSession> sessionSet = new HashSet<>();
     
-    // JWT 기반 사용자 세션 매핑 (memId -> WebSocketSession)
+    // JWT - 사용자 세션 매핑 (memId -> WebSocketSession)
     private final Map<Long, WebSocketSession> jwtSessionMap = new ConcurrentHashMap<>();
 
-    private final JwtProvider jwtProvider; // JwtProvider 주입
-
-    public WebSocketHandler(JwtProvider jwtProvider) {
-        this.jwtProvider = jwtProvider;
+    public WebSocketHandler() {
         logger.info("WebSocketHandler 인스턴스 생성됨");
     }
 
@@ -88,8 +80,10 @@ public class WebSocketHandler extends TextWebSocketHandler implements Initializi
 	    	try{session.sendMessage(new TextMessage(messageContent));}
 	    	catch(Exception e) {
 	    		logger.error("사용자 {} 에게 메시지 전송 실패", memId, e);
+	    		throw new RuntimeException("메시지 전송 실패 ",e);
 	    	}
     	}else {
+    		throw new RuntimeException("session 없음 ");
     		//logger.error("사용자 {}의 WebSocket session 없음",memId);
     	}
 
@@ -109,7 +103,7 @@ public class WebSocketHandler extends TextWebSocketHandler implements Initializi
         }
     }
 
-    // WebSocket 세션에서 JWT를 읽고 사용자 memId 추출 (JwtProvider 사용)
+    // WebSocket 세션에서 JWT를 읽고 사용자 memId 추출
     private Long extractMemIdFromJwt(WebSocketSession session) {
         try {
             // WebSocket 세션에서 "Cookie" 헤더 가져오기
@@ -129,11 +123,6 @@ public class WebSocketHandler extends TextWebSocketHandler implements Initializi
 
                     if (keyValue.length == 2 && keyValue[0].trim().equalsIgnoreCase("memId")) {
                         String memId = keyValue[1].trim();
-//                        System.out.println("추출된 JWT: " + jwtToken); // 디버깅용 출력
-
-                        // JWT 검증 및 memId 추출
-//                        DecodedJWT decodedJWT = jwtProvider.getClaimsAndVerifyAccessToken(jwtToken);
-//                        return Long.valueOf(decodedJWT.getSubject());
                         return Long.valueOf(memId);
                     }
                 }
@@ -168,7 +157,7 @@ public class WebSocketHandler extends TextWebSocketHandler implements Initializi
 
                     
                     //Send User Messages Example
-                    //String messageContent2 = "{\"alarmTitle\":\"" + "헐" + "\",\"alarmText\":\"" + "되나요" + "\"}";
+                    String messageContent2 = "{\"alarmTitle\":\"" + "헐" + "\",\"alarmText\":\"" + "되나요" + "\"}";
                     //sendMessageToUser((long) 62, messageContent2);
                     
                     

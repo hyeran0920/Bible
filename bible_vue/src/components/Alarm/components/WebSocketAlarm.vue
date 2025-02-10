@@ -39,6 +39,9 @@ export default {
         console.error("WebSocket 메시지 파싱 오류:", error);
       }
     };
+
+    //call back 등록
+    webSocketService.setClearCallback(this.removeAllAlarm);
   },
   methods: {
     // 새로운 알람 추가
@@ -56,10 +59,11 @@ export default {
       this.alarmList=[];
     },
   },
-  beforeDestroy() {
+  beforeUnmount() {
+    //console.log("delete all alarms");
     // WebSocket 연결 종료
-    this.removeAllAlarm();
-    webSocketService.disconnect();
+    //this.removeAllAlarm();
+    //webSocketService.disconnect();
   },
 };
 </script>

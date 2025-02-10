@@ -12,7 +12,7 @@ public class Book {
     private String bookTitle;
     private String bookAuthor;
     private String bookPublisher;
-    private String bookReleaseDate;
+    private String bookReleaseDate="";
     private String bookCategory;
     private long bookPrice;
     private String bookImgPath="";

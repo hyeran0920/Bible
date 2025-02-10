@@ -85,7 +85,6 @@
         UPDATE member
         SET 
             mem_name = #{memName},
-            mem_email = #{memEmail},
             mem_phone = #{memPhone},
             mem_password = #{memPassword}
         WHERE mem_id = #{memId}

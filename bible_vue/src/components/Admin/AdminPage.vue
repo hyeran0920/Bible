@@ -3,7 +3,7 @@
     <aside class="sidebar">
       <ul>
         <li @click="changeMenu('member')">회원</li>
-        <li @click="changeMenu('product')">상품</li>
+        <li @click="changeMenu('product')">책</li>
         <li @click="changeMenu('order')">주문</li>
         <li @click="changeMenu('rental')">대여/반납</li>
         <li @click="changeMenu('rentalList')">대여 조회</li>
@@ -25,7 +25,7 @@
 import AdminMember from './AdminMember.vue';
 
 import AdminMain from './AdminMain.vue';
-import AdminProduct from './AdminProduct.vue';
+import AdminProduct from './AdminBookPage.vue';
 import AdminRental from './AdminRental.vue';
 import AdminRentalList from './AdminRentalList.vue'
 import AdminReservation from './AdminReservation.vue';

@@ -1,6 +1,9 @@
 <template>
+
+    <h1>{{ $t('mypage.order.orderHistory') }}</h1>
+
     <div class="order-list">
-        <h1>{{ $t('mypage.order.orderHistory') }}</h1>
+        
 
         <!-- 주문 기록 (날짜별 그룹화) -->
         <div class="order-history-items">
@@ -34,18 +37,38 @@
 
     <div v-if="orderModalVisible" class="order-modal">
         <!-- 주문 상세 정보 -->
-        <div class="order-history-detail">
-            <h2>주문 상세</h2>
-            <p>주문번호: {{ selectedOrderHistory.orderHistoryId }}</p>
-            <p>주소:</p>
-            <p>{{ addresses[selectedOrderHistory.addressId]?.postcode || "삭제된 우편번호" }}</p>
-            <p>{{ addresses[selectedOrderHistory.addressId]?.address || "삭제된 주소" }}</p>
-            <p>{{ addresses[selectedOrderHistory.addressId]?.detailAddress || "삭제된 상세 주소" }}</p> 
-            <p>수취인: {{ selectedOrderHistory.orderHistoryReceivedName }}</p>
-            <p>결제 수단: {{ selectedOrderHistory.orderPaymentMethod }}</p>
-            <p>결제 상태: {{ selectedOrderHistory.orderPaymentMethod=="결제전" ? "결제 전" : "결제 완료" }}</p>
-            <p>총 가격: {{ selectedOrderHistory.orderHistoryTotalPrice }}</p>
-        </div>
+        <h2>- 주문 상세 -</h2>
+        <table class="order-details">
+            
+            <tr>
+                <th>주문번호</th>
+                <td>{{ selectedOrderHistory.orderHistoryId }}</td>
+            </tr>
+            <tr>
+                <th>주소</th>
+                <td>
+                    {{ addresses[selectedOrderHistory.addressId]?.postcode || "삭제된 우편번호" }}<br>
+                    {{ addresses[selectedOrderHistory.addressId]?.address || "삭제된 주소" }}<br>
+                    {{ addresses[selectedOrderHistory.addressId]?.detailAddress || "삭제된 상세 주소" }}
+                </td>
+            </tr>
+            <tr>
+                <th>수취인</th>
+                <td>{{ selectedOrderHistory.orderHistoryReceivedName }}</td>
+            </tr>
+            <tr>
+                <th>결제 수단</th>
+                <td>{{ selectedOrderHistory.orderPaymentMethod }}</td>
+            </tr>
+            <tr>
+                <th>결제 상태</th>
+                <td>{{ selectedOrderHistory.orderPaymentMethod == "결제전" ? "결제 전" : "결제 완료" }}</td>
+            </tr>
+            <tr>
+                <th>총 가격</th>
+                <td>{{ selectedOrderHistory.orderHistoryTotalPrice }}</td>
+            </tr>
+        </table>
 
         <!-- 구매 목록 -->
         <div class="order-list">
@@ -78,7 +101,7 @@
         </div>
 
         <!-- close modal -->
-        <button @click="orderModalVisible = false">close</button>
+        <button  class="order-modal-close-button" @click="orderModalVisible = false">close</button>
     </div>
 </template>
 
@@ -194,6 +217,16 @@ export default {
 </script>
 
 <style>
+:root {
+    --primary-color: #6f90b1;
+    --secondary-color: #f9f9f9;
+    --danger-color: #e74c3c;
+    --white-color: #ffffff;
+
+    --text-color: #333333;
+    --hover-color:#5c6b7e;
+}
+
 /* 날짜별 그룹 스타일 */
 .order-group {
     margin-bottom: 30px;
@@ -208,9 +241,12 @@ export default {
     font-size: 20px;
     font-weight: bold;
     margin-bottom: 10px;
-    color: #1E90FF;
+    color: #000000;
     text-align: center;
 }
+
+
+
 
 /* 테이블 스타일 */
 table {
@@ -220,15 +256,13 @@ table {
 }
 
 /* 테이블 헤더 스타일 */
-thead {
-    background: #1E90FF;
-    color: white;
-    font-weight: bold;
-}
 
-thead td {
+thead td{
     padding: 12px;
     text-align: center;
+    font-weight: bold;
+    color: white;
+    background-color: #6f90b1;
 }
 
 /* 테이블 본문 스타일 */
@@ -236,6 +270,7 @@ tbody td {
     padding: 10px;
     text-align: center;
     border-bottom: 1px solid #ddd;
+    
 }
 
 /* 테이블 행 호버 효과 */
@@ -243,6 +278,13 @@ tbody tr:hover {
     background: #f1f1f1;
     cursor: pointer;
 }
+
+
+
+
+
+
+
 
 /* 주문 내역 모달 */
 .order-modal {
@@ -258,4 +300,32 @@ tbody tr:hover {
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
     z-index: 100;
 }
+
+.order-modal-close-button{
+    background-color: var(--danger-color);
+}
+.order-modal-close-button:hover{
+    background-color: #ad4034;
+}
+
+
+
+
+.order-details {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.order-details th,
+.order-details td {
+    text-align: left;
+    padding: 8px;
+    border: none; /* 구분선 제거 */
+}
+
+.order-details th {
+    width: 150px; /* 헤더 셀의 너비를 설정하여 정렬 유지 */
+    font-weight: bold;
+}
+
 </style>

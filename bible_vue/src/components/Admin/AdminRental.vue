@@ -1,38 +1,57 @@
 <template>
+    <div class="rent-container">
+
+    
     <h1>반납/대여</h1>
-    <div class="qr-scanner">
-        <h1>QR Code Scanner</h1>
-        <div id="qr-reader"></div>
 
-        <!--
-        <div v-if="scannedData" class="qr-scan-result">
-            <h2>Scanned QR Data:</h2>
-            <p>{{ scannedData }}</p>
+    <div class="qr-user-container">
+        <div class="qr-scanner">
+            <div id="qr-reader"></div>
         </div>
 
-        <div v-else class="placeholder">
-            <p>Scan a QR code to see the result here.</p>
-        </div>
-        -->
+        <div class="user-info">
+            <div class="info-row">
 
-    </div>
+                <table class="user-info-table">
+                    <tr>
+                        <td class="info-row">id</td>
+                        <td class="info-row-content">{{ currentMember.memId }}</td>
+                    </tr>
+                    <tr>
+                        <td class="info-row">name</td>
+                        <td class="info-row-content">{{ currentMember.memName }}</td>
+                    </tr>
+                    <tr>
+                        <td class="info-row">email</td>
+                        <td class="info-row-content">{{ currentMember.memEmail }}</td>
+                    </tr>
+                    <tr>
+                        <td class="info-row">phone</td>
+                        <td class="info-row-content">{{ currentMember.memPhone }}</td>
+                    </tr>
+                </table>
 
-    <div class="user-info">
-        <div class="info-row">
-            <p>id : {{ currentMember.memId }}</p>
-            <p>name : {{ currentMember.memName }}</p>
-            <p>email : {{ currentMember.memEmail }}</p>
-            <p>phone : {{ currentMember.memPhone }}</p>
-            <button @click="removeCurrentMember()">delete</button>
+                <br>
+                <button class="member-delete-button" @click="removeCurrentMember()">delete</button>
+            </div>
+
+            
         </div>
     </div>
     
-    <div class="rent-return-btn" @click="rentOrReturnBook(currentMember.memId)"><button>Rent/Return</button></div>
+    
+    
+    
+    <div class="rent-return-btn" 
+        @click="rentOrReturnBook(currentMember.memId)"><button>
+            Rent / Return
+        </button>
+    </div>
     
     <table class="books-list-table" border="1">
         <thead>
             <tr>
-                <th>checkBox</th>
+                <th></th>
                 <th>Id</th>
                 <th>Title</th>
                 <th>Author</th>
@@ -62,6 +81,8 @@
             </tr>
         </tbody>
     </table>
+
+</div>
 </template>
 
 <script>
@@ -251,71 +272,199 @@ export default {
 
 
 <style>
+/* 공통 색상 */
+:root {
+    --primary-color: #6f90b1;
+    --secondary-color: #f9f9f9;
+    --danger-color: #e74c3c;
+    --white-color: #ffffff;
+
+    --text-color: #333333;
+    --hover-color:#5c6b7e;
+}
+.button{
+    /* background-color: var(--primary-color); */
+}
+
+/* 전체 컨테이너 스타일 */
+.rent-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+    color: var(--text-color);
+}
+
+/* 제목 스타일 */
+h1 {
+    font-size: 28px;
+    color: var(--primary-color);
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+
+/* QR 스캐너와 회원 정보를 가로 정렬 */
+.qr-user-container {
+    display: flex;
+    align-items: center; /* 수직 중앙 정렬 */
+    justify-content: space-between; /* 좌우 공간 균등 배치 */
+    gap: 20px; /* 요소 간격 */
+}
+
+/* QR 스캐너 스타일 */
+.qr-scanner {
+    text-align: center;
+    padding: 20px;
+    background-color: var(--secondary-color);
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height:240px;
+}
+
+/* QR 코드 리더 */
 #qr-reader {
     width: 200px;
     height: 200px;
-    max-width: 100%;
-    margin: auto;
+    border-radius: 12px;
+    border: none;
+    background-color: var(--white-color);
 }
 
-/* 전체 테이블 스타일 */
+
+/* QR 코드 스캐너 버튼 스타일 */
+#qr-reader button {
+    background-color: #d8dfe7 !important; /* 기본 버튼 색상 */
+    color: var(--hover-color) !important; /* 글자 색상 */
+    font-size: 16px !important;
+    font-weight: bold;
+    padding: 8px 12px !important;
+    border: none !important;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* QR 스캐너 버튼 hover 효과 */
+#qr-reader button:hover {
+    background-color: #5c6b7e !important; /* hover 시 색상 변경 */
+    color:white !important;
+}
+
+
+
+/* 회원 정보 스타일 */
+.user-info {
+    flex: 2; /* 크기 분배 */
+    background-color: var(--white-color);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    height: 240px;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.member-delete-button{
+    background-color: var(--primary-color);
+}
+.member-delete-button:hover{
+    background-color: #5c6b7e;
+}
+
+/* 회원 정보 내부 요소 */
+.info-row {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    margin: 3px 0;
+    font-size: 15px;
+    font-weight: bold;
+}
+.info-row-content{
+    font-size: 18px;
+    font-weight: lighter;
+}
+
+
+
+
+.rent-return-btn button {
+    background-color: var(--primary-color);
+    color: var(--white-color);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 16px;
+    margin-top: 15px;
+    height: 80px;
+}
+
+.rent-return-btn button:hover {
+    background-color: #5c6b7e;
+}
+
+/* 테이블 스타일 */
 .books-list-table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
+    background-color: var(--white-color);
     border-radius: 8px;
     overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* 테이블 헤더 스타일 */
 .books-list-table thead {
-    background-color: #4CAF50;
-    color: white;
-    text-align: left;
+    background-color:  #ffffff;
+    color:  #5c6b7e;
+    border:none;
+    font-size: 16px;
 }
 
-.books-list-table th {
-    padding: 12px;
-    text-align: center;
-}
-
-/* 테이블 바디 스타일 */
-.books-list-table tbody tr {
-    border-bottom: 1px solid #ddd;
-    transition: background-color 0.3s ease-in-out;
-}
-
-
-/* 행 마우스 오버 효과 */
-.books-list-table tbody tr:hover {
-    background-color: #f1f1f1;
-}
-
-/* 셀 스타일 */
+.books-list-table th, 
 .books-list-table td {
-    padding: 12px;
+    padding: 12px 15px;
     text-align: center;
+    border: 1px solid #ddd;
+
+
 }
 
-/* 체크박스 스타일 */
+.books-list-table tbody tr:hover {
+    background-color: var(--secondary-color);
+}
+
 .books-list-table input[type="checkbox"] {
-    width: 16px;
-    height: 16px;
+    width: 20px;
+    height: 20px;
     cursor: pointer;
 }
 
-/* 삭제 버튼 스타일 */
+/* 삭제 버튼 */
 .books-list-table button {
-    background-color: #e74c3c;
-    color: white;
+    background-color: var(--danger-color);
+    color: var(--white-color);
     border: none;
-    padding: 6px 10px;
+    padding: 6px 12px;
     border-radius: 4px;
+    font-size: 14px;
     cursor: pointer;
-    transition: 0.3s;
+    transition: background-color 0.3s ease;
 }
+
+.books-list-table button:hover {
+    background-color: #c0392b;
+}
+
+
+
 
 
 </style>

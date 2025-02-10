@@ -41,7 +41,7 @@ export default {
     // 리뷰 삭제
     async deleteReview(reviewId, memId) {
       try {
-        const response = await this.$axios.post(`http://localhost:8080/api/reviews/${reviewId}`);
+        const response = await this.$axios.post(`/reviews/${reviewId}`);
         this.reviews = this.reviews.filter((review) => review.reviewId !== reviewId); // 삭제된 리뷰를 리스트에서 제거
         alert("리뷰가 삭제되었습니다!");
       } catch (error) {
@@ -52,7 +52,7 @@ export default {
   },
   async mounted() {
     try {
-      const reviewsInfo = await this.$axios.get(`http://localhost:8080/api/reviews/me`);
+      const reviewsInfo = await this.$axios.get(`/reviews/me`);
       this.reviews = reviewsInfo.data; // 멤버 리뷰 목록 저장
     } catch (error) {
       console.error("리뷰를 가져오는 데 실패했습니다:", error);

@@ -79,9 +79,6 @@
 </template>
 
 <script>
-import axios from 'axios';
-import { RouterLink } from 'vue-router';
-
 export default {
     data() {
         return {
@@ -113,7 +110,7 @@ export default {
             try {
 
                 //get order hisotries
-                const response = await axios.get('http://localhost:8080/api/orderhistory/me', { withCredentials: true });
+                const response = await this.$axios.get('/orderhistory/me');
                 this.orderHistories = response.data;
 
                 //get address
@@ -133,7 +130,7 @@ export default {
             }
 
             try {
-                const response = await axios.get(`http://localhost:8080/api/orders/history/${orderHistoryId}`);
+                const response = await this.$axios.get(`/orders/history/${orderHistoryId}`);
                 this.orders = response.data;
 
                 this.orders.forEach(o => {
@@ -155,7 +152,7 @@ export default {
             }
 
             try {
-                const response = await axios.get(`http://localhost:8080/api/books/${bookId}`);
+                const response = await this.$axios.get(`/books/${bookId}`);
                 this.books[bookId]=response.data;
             } catch (error) {
                 console.error("책 정보를 불러오는 중 오류 발생:", error);
@@ -164,7 +161,7 @@ export default {
 
         async fetchAddress(addressId) {
             try {
-                const response = await axios.get(`http://localhost:8080/api/members/addresses/${addressId}`);
+                const response = await this.$axios.get(`/members/addresses/${addressId}`);
                 this.addresses[addressId] = response.data;
             } catch (error) {
                 console.error("Error - fetching addresses:", error);
@@ -172,7 +169,7 @@ export default {
         },
 
         getBookImageUrl(bookId) {
-            return `http://localhost:8080/api/uploads/book-image?bookid=${bookId}`;
+            return `${this.$axios.defaults.baseURL}/uploads/book-image?bookid=${bookId}`;
         },
 
         selectOrderHistory(orderHistory) {

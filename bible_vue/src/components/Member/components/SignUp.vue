@@ -102,7 +102,6 @@
 </template>
   
 <script>
-  import axios from "axios";
   import Header from "../../MainPage/components/Header.vue";
   import Footer from "../../MainPage/components/Footer.vue";
   
@@ -182,7 +181,7 @@
         }
         try {
           // 서버로 POST 요청, member 객체에 맞춰 데이터 전송
-          const response = await axios.post("http://localhost:8080/api/members/user", {
+          const response = await this.$axios.post("/members/user", {
             memEmail: this.member.memEmail,
             memPassword: this.member.memPassword,
             memName: this.member.memName,
@@ -216,7 +215,7 @@
 
         try {
           // 서버에 인증번호 발송 요청
-          const response = await axios.post("http://localhost:8080/api/emails/verifications", {
+          const response = await this.$axios.post("/emails/verifications", {
             email: this.member.memEmail
           });
           
@@ -251,7 +250,7 @@
       // 인증 번호 확인
       async verifyCode() {
         try {
-            const response = await axios.put("http://localhost:8080/api/emails/verifications", {
+            const response = await this.$axios.put("/emails/verifications", {
                 email: this.member.memEmail,
                 code: this.verificationCode
             });

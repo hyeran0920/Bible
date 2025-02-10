@@ -6,7 +6,7 @@
         <div class="book-image">
           <img 
             v-img-lazy-loading
-            :src="`http://localhost:8080/api/uploads/book-image?bookid=${item.bookId}`"
+            :src="`${this.$axios.defaults.baseURL}/uploads/book-image?bookid=${item.bookId}`"
             :alt="item.bookTitle"
           />
         </div>

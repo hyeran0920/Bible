@@ -6,7 +6,6 @@
 
 <script>
 import { Chart, registerables } from 'chart.js';
-import axios from 'axios';
 
 Chart.register(...registerables); // Chart.js 요소 등록
 
@@ -35,7 +34,7 @@ export default {
     methods: {
         async fetchData() {
             try {
-                const response = await axios.get('http://localhost:8080/api/rents');
+                const response = await this.$axios.get('/rents');
                 this.rent = response.data.content.flatMap(item => item.rents);
 
                 const bookCount = this.rent.reduce((acc, rent) => {

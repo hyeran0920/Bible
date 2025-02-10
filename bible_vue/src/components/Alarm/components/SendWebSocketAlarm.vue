@@ -41,8 +41,7 @@
 </template>
 
 <script>
-import axios from "axios";
-const ALARM_API = "http://localhost:8080/api/alarm";
+const ALARM_API = "/alarm";
 
 export default {
   data() {
@@ -59,7 +58,7 @@ export default {
   methods: {
     async fetchMembers() {
       try {
-        const response = await this.$axios.get(`members`);
+        const response = await this.$axios.get(`/members`);
         this.members = response.data;
       } catch (error) {
         console.error("회원 목록을 가져오는 중 오류 발생:", error);
@@ -90,7 +89,7 @@ export default {
 
         const url = this.selectedMember ? `${ALARM_API}?memId=${this.selectedMember.memId}` : `${ALARM_API}/send`;
         
-        const response = await axios.post(url, payload);
+        const response = await this.$axios.post(url, payload);
         this.responseMessage = response.data;
 
         this.alarmTitle = "";

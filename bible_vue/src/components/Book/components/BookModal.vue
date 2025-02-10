@@ -110,7 +110,7 @@ export default {
 
   methods: {
     getBookImageUrl(bookId) {
-      return `http://localhost:8080/api/uploads/book-image?bookid=${bookId}`;
+      return `${this.$axios.defaults.baseURL}/uploads/book-image?bookid=${bookId}`;
     },
 
     //Image 선택 + 미리보기 이미지

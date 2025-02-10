@@ -28,17 +28,22 @@
       </div>
     </div>
     <Footer />
+    <Modal v-model="isModelVisible" :message="modalMessage">
+        <p>{{ modalMessage }}</p>
+    </Modal>
 </template>
 
 <script>
   import Header from "../../MainPage/components/Header.vue";
   import Footer from "../../MainPage/components/Footer.vue";
+  import Modal from '../../modal/CustomModal.vue';
 
   export default {
       name: "Login",
       components: {
       Header,  
-      Footer
+      Footer,
+      Modal,
     },
     data() {
       return {
@@ -46,27 +51,37 @@
           email: "",
           password: "",
         },
+        isModelVisible: false,
+        modalMessage: "",
       };
     },
     methods: {
+      showModal(modalMessage) {
+        this.modalMessage = modalMessage;
+        this.isModelVisible = true;
+      },
       async submitForm() {
         try {
             const response = await this.$axios.post("/login/admin", {
                 email: this.login.email, 
                 password: this.login.password, 
-            }, {withCredentials: true });
+            }, {
+              withCredentials: true, // 쿠키 허용
+            });
 
             this.$store.commit('setToken', response.headers['authorization']); 
 
-            console.log("관리자 로그인 성공:", response.data);
-            alert("관리자 로그인 성공!!!");
+            this.showModal("로그인되었습니다.");
 
-            localStorage.setItem("isLoggedIn", "true");
-            localStorage.setItem("isAdmin", "true");
-            this.$router.push("/"); 
+            // 모달을 표시한 후 2초 후에 페이지 이동
+            setTimeout(() => {
+              localStorage.setItem("isLoggedIn", "true");
+              localStorage.setItem("isAdmin", "true");
+              this.$router.push("/");
+            }, 1500);
         } catch (error) {
             console.error("로그인 실패:", error.response?.data || error.message);
-            alert("로그인에 실패했습니다!!!");
+            this.showModal("로그인에 실패했습니다!!!");
         }
       }
     },

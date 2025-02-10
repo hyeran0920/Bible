@@ -151,6 +151,29 @@ def recommend_get():
     #recommendations = [f"Book {i+1}" for i in range(n)]  # 임시 결과
     return jsonify({"mem_id": mem_id, "recommendations": recommendations})
 
+# 추천 도서 업데이트 (PUT)
+@app.route('/recommend', methods=['PUT'])
+def recommend_update():
+    data = request.get_json()
+    mem_id = data.get("mem_id")
+    n = data.get("n")
+
+    if not mem_id or not n:
+        return jsonify({"error": "Invalid input"}), 400
+
+    update_recommendations = recommend_books(model, dataset, mem_id, n)
+    return jsonify({"message": "추천 도서 업데이트 완료", "recommendations": update_recommendations}), 200
+
+# 추천 도서 삭제 (DELETE)
+@app.route('/recommend', methods=['DELETE'])
+def recommend_delete():
+    mem_id = request.args.get("mem_id")
+
+    if not mem_id:
+        return jsonify({"error": "mem_id가 필요합니다."}), 400
+
+    return jsonify({"message": f"회원 {mem_id}의 추천 도서 삭제 완료"}), 200
+
 # Flask 서버 실행
 if __name__ == "__main__":
 

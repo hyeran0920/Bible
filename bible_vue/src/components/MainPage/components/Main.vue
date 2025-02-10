@@ -52,7 +52,7 @@ const imageModules = import.meta.glob('../../../assets/banner/*.{png,jpg,jpeg,sv
 const images = Object.values(imageModules).map((module) => module.default);
 
 //api 주소
-const BOOKS = "/books";
+const BOOKS = "/books/best";
 
 export default {
   name: 'Main',

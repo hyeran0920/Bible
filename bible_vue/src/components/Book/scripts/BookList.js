@@ -143,7 +143,7 @@ export default {
     // Fetch Books
     async fetchData() {
       try {
-        const response = await axios.get('http://localhost:8080/api/books');
+        const response = await axios.get('http://localhost:8080/api/books/best'); //베스트셀러
         this.books = response.data;
       } catch (error) {
         console.error('Error fetching books:', error);

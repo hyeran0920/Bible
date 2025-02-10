@@ -1,24 +1,24 @@
 <template>
   <div class="alarm-container">
-    <h1>Send Home Page Alarm</h1>
+    <h1>홈페이지 알람</h1>
 
     <div class="input-group">
       <label for="title">알람 제목</label>
-      <input type="text" id="title" v-model="alarmTitle" placeholder="알람 제목 입력" />
+      <input type="text" id="title" v-model="alarmTitle" placeholder="알람 제목" />
     </div>
 
     <div class="input-group">
       <label for="text">알람 내용</label>
-      <textarea id="text" v-model="alarmText" placeholder="알람 내용을 입력하세요"></textarea>
+      <textarea id="text" v-model="alarmText" placeholder="알람 내용"></textarea>
     </div>
 
     <div class="input-group">
-      <label for="text">첨부 이미지</label>
-      <textarea id="text" v-model="alarmImgUrl"></textarea>
+      <label for="text">첨부 이미지 URL</label>
+      <input type="text" v-model="alarmImgUrl" placeholder="이미지 url">
     </div>
 
     <button @click="openMemberModal" class="select-btn">회원 선택</button>
-    <p v-if="selectedMember">선택한 회원: {{ selectedMember.memName }} ({{ selectedMember.memId }})</p>
+    <p v-if="selectedMember">선택한 회원: {{ selectedMember.memName }}</p>
     <button @click="sendAlarm" class="send-btn">알람 전송</button>
 
     <p v-if="responseMessage" class="response-message">{{ responseMessage }}</p>
@@ -107,8 +107,18 @@ export default {
 </script>
 
 <style scoped>
+:root {
+    --primary-color: #6f90b1;
+    --secondary-color: #f9f9f9;
+    --danger-color: #e74c3c;
+    --white-color: #ffffff;
+
+    --text-color: #333333;
+    --hover-color:#5c6b7e;
+}
+
 .alarm-container {
-  max-width: 500px;
+  max-width: 800px;
   margin: auto;
   padding: 20px;
   border-radius: 8px;
@@ -136,11 +146,16 @@ export default {
   font-size: 16px;
 }
 
+input,
 textarea {
-  height: 80px;
+  height: 50px;
   resize: none;
+  box-sizing: border-box;
 }
 
+textarea{
+  height: 100px;
+}
 .select-btn, .send-btn, .btn-all {
   width: 100%;
   padding: 12px;
@@ -152,13 +167,13 @@ textarea {
   transition: background 0.3s;
 }
 
-.select-btn { background: #f39c12; color: white; }
-.send-btn { background: #1e90ff; color: white; }
-.btn-all { background: #2ecc71; color: white; }
+.select-btn { background: #e7f0f3; color: var(--primary-color); }
+.send-btn { background: var(--primary-color); color: white; }
+.btn-all { background:  var(--primary-color); color: white; }
 
-.select-btn:hover { background: #d68910; }
-.send-btn:hover { background: #187bcd; }
-.btn-all:hover { background: #27ae60; }
+.select-btn:hover { background: #99b2b9; color: white;}
+.send-btn:hover { background: var(--hover-color); }
+.btn-all:hover { background:var(--hover-color); }
 
 .response-message {
   margin-top: 15px;

@@ -21,7 +21,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
 	
 	@Bean
     public WebSocketHandler webSocketHandler() {
-        return new WebSocketHandler(jwtProvider); // JwtProvider를 생성자를 통해 주입
+        return new WebSocketHandler();
     }
 
     @Override

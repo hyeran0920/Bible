@@ -3,6 +3,11 @@ import Cookies from "js-cookie"; // js-cookie 라이브러리 필요
 class WebSocketService {
   constructor() {
     this.socket = null;
+    this.clearCallback=null;
+  }
+
+  setClearCallback(callback){
+    this.clearCallback=callback;
   }
 
   connect(url) {
@@ -51,6 +56,10 @@ class WebSocketService {
             this.socket.close();
         } else {
             console.log("WebSocket이 이미 닫혀 있습니다.");
+        }
+
+        if(this.clearCallback){
+          this.clearCallback();
         }
         this.socket = null; // WebSocket 객체 초기화
     }

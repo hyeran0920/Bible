@@ -78,7 +78,9 @@
             "checkout":"checkout"
         },
         "reviews":{
-            "title":"My Review"
+            "title":"My Review",
+            "noReviews":"There are no reveiws.",
+            "errorMessage":"Failed to load reviews."
         }
     }
 }

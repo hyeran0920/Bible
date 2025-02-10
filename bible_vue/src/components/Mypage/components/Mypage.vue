@@ -83,13 +83,23 @@
 <style>
     .mypage-container {
         display: flex;
-        height: 100vh;
+        min-height: 100vh;
+        position: relative; /* Footer 위치 조정을 위해 추가 */
+        overflow-x: hidden; /* 가로 스크롤 방지 */
+    }
+    .content-area {
+        flex: 1;
+        padding: 20px;
+        background: #ffffff;
+        overflow-y: auto; /* 내용이 많을 경우 스크롤 */
+        padding-bottom: 70px; /* Footer 높이만큼 여백 추가 */
     }
 
     .sidebar {
         width: 250px;
         background: #f4f4f4;
         padding: 20px;
+        height: 100vh;
         transition: transform 0.3s ease-in-out;
     }
 
@@ -119,7 +129,7 @@
             flex: 1;
             padding: 20px;
             background: #ffffff;
-            width: 95%;
+            width: auto;
         }
 
         .mypage-container {
@@ -130,7 +140,7 @@
             position: fixed;
             top: 0;
             left: 0;
-            height: 100vh;
+            height: 100%;
             transform: translateX(-100%);
             transform: transform 0.3s ease-in-out;
             z-index: 1000;
@@ -171,11 +181,11 @@
         border-radius: 5px;
     }
     .sidebar a:hover {
-        background: #007bff;
+        background: #679669;
         color: #fff;
     }
     .sidebar a.active {
-        background: #007bff;
+        background: #679669;
         color: #fff;
     }
     .language-selector {
@@ -210,5 +220,13 @@
 
     .language-list li:hover {
         background-color: #f0f0f0;
+    }
+
+    .footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1000;
     }
 </style>

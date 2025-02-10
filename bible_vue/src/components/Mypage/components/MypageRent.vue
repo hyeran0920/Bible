@@ -77,14 +77,35 @@
         &gt;
       </button>
     </div>
+
+    <!-- 취소 확인 모달 -->
+    <Modal 
+      v-model="isConfirmModalVisible"
+      :message="confirmMessage"
+      showCancel
+      @confirm="handleConfirmCancel"
+      @cancel="isConfirmModalVisible = false">
+      <p>{{ confirmMessage }}</p>
+    </Modal>
+
+    <!-- 결과 모달 -->
+    <Modal 
+      v-model="isResultModalVisible"
+      :message="resultMessage">
+      <p>{{ resultMessage }}</p>
+    </Modal>
   </div>
 </template>
 
 <script>
 const RENT_BASEURL = "/rents/me";
+import Modal from '../../modal/CustomModal.vue';
 
 export default {
   name: 'MyRentHistory',
+  components: {
+    Modal
+  },
   data() {
     return {
       rentList: [], // 대여 기록
@@ -94,6 +115,17 @@ export default {
       totalElements: 0,
       isLastPage: false,
       pageSize: 5,
+
+      // 대여 신청 모달
+      isConfirmModalVisible: false,
+      isResultModalVisible: false,
+      confirmMessage: '',
+      resultMessage: '',
+      selectedRent: null,
+
+      // 에러났을 때 모달
+      isErrorModalVisible: false,
+      errorMessage: '',
     };
   },
   computed: {
@@ -145,19 +177,41 @@ export default {
         returned: status === "RETURNED",
       };
     },
-    async cancelRentRequest(item){
-      try{
-        // cancel
-        const response= await this.$axios.put(`rents/cancels/me`,{
-          "bookIds":[item.bookId],
-          "rentIds":[item.rentId]
+    // 대여신청 취소 버튼 클릭 시
+    cancelRentRequest(item) {
+      this.selectedRent = item;
+      this.confirmMessage = "대여 신청을 취소하시겠습니까?";
+      this.isConfirmModalVisible = true;
+    },
+
+    // 취소 확인 시
+    async handleConfirmCancel() {
+      try {
+        await this.$axios.put(`rents/cancels/me`, {
+          "bookIds": [this.selectedRent.bookId],
+          "rentIds": [this.selectedRent.rentId]
         });
-        // fetch
-        item.rentStatus="CANCLED";
-        alert("대여 신청이 취소되었습니다.")
-      }catch(error){
-        console.error("대여 신청 취소 - ",error);
-        alert("대여 신청이 취소에 실패했습니다.")
+        
+        this.selectedRent.rentStatus = "CANCLED";
+        this.resultMessage = "대여 신청이 취소되었습니다.";
+        this.isResultModalVisible = true;
+        
+        // 3초 후 결과 모달 자동 닫기
+        setTimeout(() => {
+          this.isResultModalVisible = false;
+        }, 3000);
+      } catch (error) {
+        console.error("대여 신청 취소 - ", error);
+        this.resultMessage = "대여 신청 취소에 실패했습니다.";
+        this.isResultModalVisible = true;
+        
+        // 3초 후 결과 모달 자동 닫기
+        setTimeout(() => {
+          this.isResultModalVisible = false;
+        }, 3000);
+      } finally {
+        this.isConfirmModalVisible = false;
+        this.selectedRent = null;
       }
     },
     // 페이지 데이터 가져오기
@@ -179,6 +233,13 @@ export default {
         this.isLastPage = data.last;
       } catch (error) {
         console.error("대여 정보 가져오기 에러 발생:", error);
+        this.errorMessage = "대여 정보를 가져오는데 실패했습니다.";
+        this.isErrorModalVisible = true;
+        
+        // 1.5초 후 에러 모달 자동 닫기
+        setTimeout(() => {
+            this.isErrorModalVisible = false;
+        }, 1500);
       }
     },
     resetAndFetch() {
@@ -193,12 +254,6 @@ export default {
     },
   },
   async mounted() {
-    // try {
-    //   const rentInfo = await this.$axios.get(RENT_BASEURL);
-    //   this.rentList = rentInfo.data.content;
-    // } catch (error) {
-    //   console.error("대여 정보 가져오기 에러 발생:", error);
-    // }
     await this.fetchRentList(0);
   },
 };

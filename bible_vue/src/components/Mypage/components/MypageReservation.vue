@@ -31,17 +31,43 @@
         </button>
       </div>
     </div>
+    <!-- 예약 취소 확인 모달 -->
+    <Modal 
+      v-model="isConfirmModalVisible"
+      :message="confirmMessage"
+      showCancel
+      @confirm="handleConfirmCancel"
+      @cancel="isConfirmModalVisible = false">
+      <p>{{ confirmMessage }}</p>
+    </Modal>
+
+    <!-- 결과 모달 -->
+    <Modal 
+      v-model="isResultModalVisible"
+      :message="resultMessage">
+      <p>{{ resultMessage }}</p>
+    </Modal>
   </div>
 </template>
 
 <script>
 const RESERV_BASEURL = "/reservations/me";
+import Modal from '../../modal/CustomModal.vue';
 
 export default {
   data() {
     return {
       reservList: [], // 예약 목록
+
+      isConfirmModalVisible: false,
+      isResultModalVisible: false,
+      confirmMessage: '',
+      resultMessage: '',
+      selectedReservation: null
     };
+  },
+  components: {
+    Modal,
   },
   methods: {
     changeDateTimeFormat(isodate) {
@@ -56,15 +82,29 @@ export default {
         hour12: true
       });
     },
+    // 예약 취소 버튼 클릭 시
     async cancelReservation(item){
-      try{
-        await this.$axios.delete(`reservations/${item.reservId}`);
-        // 목록에서 제거
-        this.reservList = this.reservList.filter(reserv => reserv.reservId !== item.reservId);
-        alert("예약 취소되었습니다.")
-      }catch(error){
+      this.selectedReservation = item;
+      this.confirmMessage = "예약을 취소하시겠습니까?";
+      this.isConfirmModalVisible = true;
+    },
+    // 예약 취소 확인 시
+    async handleConfirmCancel() {
+      try {
+        await this.$axios.delete(`reservations/${this.selectedReservation.reservId}`);
+        this.reservList = this.reservList.filter(
+          reserv => reserv.reservId !== this.selectedReservation.reservId
+        );
+        
+        this.resultMessage = "예약이 취소되었습니다.";
+        this.isResultModalVisible = true;
+      } catch (error) {
         console.error("예약 취소 에러:", error);
-        alert("예약 취소에 실패하였습니다.")
+        this.resultMessage = "예약 취소에 실패하였습니다.";
+        this.isResultModalVisible = true;
+      } finally {
+        this.isConfirmModalVisible = false;
+        this.selectedReservation = null;
       }
     },
   },
@@ -73,7 +113,14 @@ export default {
       const response = await this.$axios.get(RESERV_BASEURL);
       this.reservList = response.data;
     } catch (error) {
+      this.resultMessage = "예약 정보를 가져오지 못했습니다.";
+      this.isResultModalVisible = true;
       console.error("예약 정보 가져오기 에러:", error);
+
+      // 1.5초 후 자동으로 모달 닫기
+      setTimeout(() => {
+        this.isResultModalVisible = false;
+      }, 1500);
     }
   },
 };

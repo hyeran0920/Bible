@@ -24,27 +24,32 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
   async (response) => response,
   async (error) => {
-    const isLoggedIn = localStorage.getItem("isLoggedIn");
     let token = store.state.token;
+    let redirect = false;
 
+    console.log(error.response.data.message);
     if(error.response.status === 401 && error.response.data.message.includes("유효")) {
-        token = null;
+      redirect = true;
+      store.commit('setToken', null);
     }
     if(error.response.status === 401 && error.response.data.message.includes("로그인")) {
-      token = null;
+      redirect = true;
+      store.commit('setToken', null);
     }
 
-    if(isLoggedIn && !token) { // access token이 없는 경우
+    if(redirect) { // access token이 없는 경우
       try {
         await generateByRefreshToken(); // 토큰 재발급
         return instance(error.config); // 원래 요청 재시도
       } catch (refreshError) {
+        // alert(refreshError);
+        console.log("refreshError: ", refreshError);
         return Promise.reject(refreshError);
       }
     } else {
-      const errorMessage = error.response?.data?.message || "에러 발생";
-      alert(errorMessage);
-      console.error("응답 에러: ", errorMessage);  
+      const errorMessage = await error.response?.data?.message || "에러 발생";
+      console.log("errorMessage: ", errorMessage);
+      // alert(errorMessage);
     }
 
     return Promise.reject(error);
@@ -66,6 +71,7 @@ const generateByRefreshToken = async () => {
     // 재발급 실패시 로그아웃 처리
     localStorage.removeItem("isLoggedIn");
     localStorage.removeItem("isAdmin");
+    router.push("/");
     return Promise.reject(error);
   }
 }

@@ -46,29 +46,24 @@
   </script>
   
   <style scoped>
-  .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
+.modal-overlay {
+    position: fixed;  /* absolute를 fixed로 변경 */
+    top: 50%;        /* 중앙 정렬을 위한 설정 */
+    left: 50%;
+    transform: translate(-50%, -50%);
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
     align-items: center;
-    backdrop-filter: blur(5px);
-    z-index: 1000;
-  }
-  
-  .modal-content {
-    background: white;
-    padding: 24px;
-    border-radius: 12px;
-    width: 380px;
-    max-width: 90%;
-    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
-    text-align: center;
-  }
+}
+
+.modal-content {
+    position: relative;  /* 상대 위치 설정 */
+    max-height: 80vh;   /* 뷰포트 높이의 80% */
+    overflow-y: auto;   /* 내용이 많을 경우 스크롤 */
+}
   
   .modal-buttons {
     margin-top: 16px;

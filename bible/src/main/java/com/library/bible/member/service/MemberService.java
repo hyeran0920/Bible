@@ -17,8 +17,11 @@ import com.library.bible.memberrent.service.IMemberRentService;
 import com.library.bible.role.model.Role;
 import com.library.bible.role.model.RoleName;
 import com.library.bible.role.service.IRoleService;
+import com.library.bible.security.jwt.JwtProperties;
+import com.library.bible.security.jwt.JwtProvider;
 import com.library.bible.upload.service.UploadService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -31,12 +34,33 @@ public class MemberService implements IMemberService{
     private final BCryptPasswordEncoder passwordEncoder;
     private final UploadService uploadService;
     private final RedisTemplate<String, String> redisTemplate;
+	private final JwtProvider jwtProvider;
     
 	@Override
 	public Member selectMember(long memId) {
 		Member member = memberRepository.selectMember(memId);
 		if(member == null) throw new CustomException(ExceptionCode.MEMBER_NOT_FOUND);
 		return member;
+	}
+	
+	@Override
+	public Member selectMemberByToken(HttpServletRequest request) {
+	    String refreshToken = jwtProvider.resolveTokenInCookie(request, JwtProperties.REFRESH_COOKIE_STRING);
+	    if (refreshToken == null) {
+	        throw new CustomException(ExceptionCode.REFRESH_TOKEN_NOT_FOUND);
+	    }
+        // JWT 토큰 prefix 제거
+	    refreshToken = refreshToken.replace(JwtProperties.TOKEN_PREFIX, "");
+	    
+	    // Redis에서 Refresh Token 확인
+        String redisValue = redisTemplate.opsForValue().get(refreshToken);
+	    if (redisValue == null) {
+	        throw new CustomException(ExceptionCode.REFRESH_TOKEN_NOT_FOUND);
+	    }
+	    String memId = redisValue.split(",")[0];
+	    
+	    Member member = this.selectMember(Long.valueOf(memId));
+	    return member;
 	}
 
 	@Override

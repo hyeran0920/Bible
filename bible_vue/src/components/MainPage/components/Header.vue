@@ -3,10 +3,10 @@
     <!-- Header -->
     <header class="head">
       <div class="logo">
-  <a href="/">
-    <img src="../../../assets/logo.png" alt="Logo" class="logo-img">
-  </a>
-</div>
+        <a href="/">
+          <img src="../../../assets/logo.png" alt="Logo" class="logo-img">
+        </a>
+      </div>
       <div class="search-container">
         <input type="text" v-model="searchQuery" placeholder="Search..." class="search-input" @keyup.enter="performSearch" />
         <button class="search-button" @click="performSearch">🔍</button>
@@ -38,24 +38,35 @@
       <ul class="nav-links">
         <li><a href="/book">베스트셀러</a></li>
         <li><a href="/bookRecommendation">추천도서</a></li>
-        <li><a href="#">신간 도서</a></li>
-        <li><a href="#">내 서재</a></li>
+        <li><a href="#">인기도서</a></li>
       </ul>
     </nav>
   </div>
+
+  <!-- alert modal -->
+  <Modal v-model="isModelVisible" :message="modalMessage">
+        <p>{{ modalMessage }}</p>
+  </Modal>
 </template>
 
 <script>
 import WebSocket from "../../Alarm/websocket.js";
+import Modal from '../../modal/CustomModal.vue';
 
 export default {
   name: 'Header',
+  components: {
+    Modal,
+  },
   data() {
     return {
       isLoggedIn: false,
       showAuthMenu: false,
       searchQuery: '',
       isAdmin: false,
+
+      isModelVisible: false,
+      modalMessage: "",
     };
   },
   mounted() {
@@ -63,23 +74,35 @@ export default {
     this.isAdmin = localStorage.getItem("isAdmin") === "true";
   },
   methods: {
+    // 모달 보여주기
+    showModal(modalMessage) {
+      this.modalMessage = modalMessage;
+      this.isModelVisible = true;
+    },
     toggleAuthMenu() {
       this.showAuthMenu = !this.showAuthMenu;
     },
+    // 로그아웃
     async logout() {
       localStorage.removeItem("isLoggedIn");
       localStorage.removeItem("isAdmin");
       this.isLoggedIn = false;
       this.isAdmin = false;
+      this.showAuthMenu = false;
 
       this.$store.commit('logout');  // mutation 직접 호출
       WebSocket.disconnect();
 
-      await this.$axios("/logout", {
+      await this.$axios.post("/logout", null, {
         withCredentials: true, // 쿠키 허용
       });
-      alert("로그아웃 되었습니다.");
+
+      setTimeout(() => {
+        this.showModal("로그아웃 되었습니다.");
+      }, 100);
+      this.isModelVisible = false;
     },
+    // 검색
     performSearch() {
       // 여기에 검색 로직을 구현하세요
       console.log('Searching for:', this.searchQuery);
@@ -201,7 +224,7 @@ body, ul, li {
   }
 
   .nav-links {
-    justify-content: flex-start; /* 왼쪽 정렬 */
+    justify-content: center; /* 중앙 정렬 */
   }
   .nav-links li {
     flex-basis: 22%;

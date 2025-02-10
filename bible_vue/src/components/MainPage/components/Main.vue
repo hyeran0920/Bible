@@ -52,7 +52,6 @@ const imageModules = import.meta.glob('../../../assets/banner/*.{png,jpg,jpeg,sv
 const images = Object.values(imageModules).map((module) => module.default);
 
 //api 주소
-const BOOK_IMG_DIR = "http://localhost:8080/api/uploads";
 const BOOKS = "/books";
 
 export default {
@@ -109,7 +108,7 @@ export default {
       clearInterval(this.images.length);
     },
     getBookImageUrl(bookId){
-      return BOOK_IMG_DIR + `/book-image?bookid=${bookId}`;
+      return `${this.$axios.defaults.baseURL}/uploads/book-image?bookid=${bookId}`;
     },
     goToBookDetail(bookId){
       this.$router.push(`/book/${bookId}`);
@@ -146,9 +145,11 @@ body, ul, li {
 
 /* Main Content */
 .carousel{
-  text-align: center;
-  position: relative;
+  width: 100%;
+  max-width: 100%;
   overflow: hidden;
+  margin: 0;
+  padding: 0;
 }
 
 .main-image {

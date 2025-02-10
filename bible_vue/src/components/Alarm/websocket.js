@@ -8,10 +8,10 @@ class WebSocketService {
   connect(url) {
     if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
       // 쿠키에서 authorization 토큰 가져오기 (없어도 진행)
-      const token = Cookies.get("authorization");
+      const memId = Cookies.get("memId");
 
       // WebSocket URL에 토큰 추가 (없을 경우 토큰 제외)
-      const wsUrl = token ? `${url}?token=${encodeURIComponent(token)}` : url;
+      const wsUrl = memId ? `${url}?memId=${encodeURIComponent(memId)}` : url;
 
       console.log("WebSocket 연결 URL:", wsUrl);
       this.socket = new WebSocket(wsUrl);

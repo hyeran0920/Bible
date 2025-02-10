@@ -59,8 +59,6 @@
             }
           );
 
-          console.log(response);
-
           this.$store.commit('setToken', response.headers['authorization']); 
 
           console.log("로그인 성공:", response.data);

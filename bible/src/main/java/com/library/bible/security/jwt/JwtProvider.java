@@ -133,6 +133,15 @@ public class JwtProvider {
 		response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
 	}
 	
+	// 쿠키에 memId 저장하기
+	public void saveMemIdInCookie(HttpServletResponse response, String memId) {
+		ResponseCookie refreshCookie = ResponseCookie
+				.from("memId", memId)
+				.path("/")
+				.build();
+		response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
+	}
+	
 	// 쿠키에 저장된 jwt 제거
 	public void removeTokenInCookie(HttpServletRequest request, HttpServletResponse response) {
         // redis에서 refresh 삭제
@@ -154,8 +163,16 @@ public class JwtProvider {
             .maxAge(0)
             .build();
 
+        // memId 쿠키 삭제
+        ResponseCookie memIdCookie = ResponseCookie
+        		.from("memId", "")
+        		.path("/")
+        		.maxAge(0)
+        		.build();
+
         response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
         response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());        
+        response.addHeader(HttpHeaders.SET_COOKIE, memIdCookie.toString());        
 	}
 	
 	// 토큰들 생성 및 저장
@@ -172,6 +189,9 @@ public class JwtProvider {
         // cookie 방식
 //        jwtProvider.saveAccessTokenInCookie(response, accescToken);
         this.saveRefreshTokenInCookie(response, refreshToken);
+        
+        // memId 쿠키 추가
+		this.saveMemIdInCookie(response, memId);
         
 		// refresh를 redis에 저장
         redisTemplate.opsForValue().set(refreshToken, memId+", "+roles, Duration.ofMinutes(JwtProperties.REFRESH_EXPIRATION_TIME / 6000));

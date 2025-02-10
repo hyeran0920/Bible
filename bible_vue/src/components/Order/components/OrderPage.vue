@@ -49,7 +49,9 @@
     <!--결제 버튼튼-->
     <button @click="confirmPayment()" class="pay-btn">결제하기</button>
 
-
+    <Modal v-model="isInfoModalVisible" @confirm="onConfirm">
+      <p>{{ singleModalMessage }}</p>
+    </Modal>
   </div>
 
 
@@ -111,14 +113,17 @@
     </div>
 
   </div>
-
 </template>
 
 <script>
 import AddressSearch from './AddressSearch.vue';
+import Modal from '../../modal/CustomModal.vue';
 
 export default {
   props: ['cartIds'], // Router에서 받은 cartIds
+  components: {
+    Modal,
+  },
   data() {
     return {
       cartArray: [],           // 구매할 장바구니 아이템을 저장
@@ -129,7 +134,8 @@ export default {
 
       isModalVisible: false,
       isAddAddressModalVisible: false,
-      
+      isInfoModalVisible: false,
+      singleModalMessage: '',
     };
   },
   components: {
@@ -271,11 +277,11 @@ export default {
     async addressDelete(addressId) {
       try {
         await this.$axios.delete(`members/addresses/${addressId}`);
-        alert("삭제되었습니다.");
+        this.openModal("삭제되었습니다.");
         this.addressArray = this.addressArray.filter(address => address.addressId !== addressId);
       } catch (error) {
         console.error("주소 삭제 중 오류 발생: ", error);
-        alert("내부적인 이유로 삭제에 실패했습니다.");
+        this.openModal("내부적인 이유로 삭제에 실패했습니다.");
       }
     },
 
@@ -284,32 +290,40 @@ export default {
         console.log("trying to add address");
         //DB에 추가하는 요청 보내기
         const response = await this.$axios.post(`members/me/addresses`, addressData);
-        alert('주소가 추가되었습니다.');
+        this.openModal("주소가 추가되었습니다.")
 
         //주소 추가 후 리스트 갱신
         this.addressArray.push(response.data);
         this.isAddAddressModalVisible = false;
       } catch (error) {
         console.error("주소 추가 오류: ", error);
-        alert("주소 추가 실패");
+        this.openModal("주소 추가 실패");
       }
     },
 
     async setDefaultAddress(addressInfo) {
       try {
         await this.$axios.put(`members/addresses/default/${addressInfo.addressId}`, { withCredentials: true });
-        alert("기본주소가 변경되었습니다");
+        this.openModal("기본주소가 변경되었습니다.");
         this.selectedAddress = addressInfo;
 
       } catch (error) {
         console.log("기본주소로 바꾸기 오류", error);
-        alert("기본주소로 변경 실패");
+        this.openModal("기본주소로 변경 실패");
       }
     },
 
     async selectAddress(addressInfo) {
       this.selectedAddress = addressInfo;
-    }
+    },
+    onConfirm(){
+      console.log("확인 버튼이 클릭되었습니다.");
+      this.isInfoModalVisible = false;
+    },
+    openModal(message){
+      this.singleModalMessage = message;
+      this.isInfoModalVisible = true;
+    },
   }
 };
 </script>

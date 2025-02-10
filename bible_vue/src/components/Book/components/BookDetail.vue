@@ -55,6 +55,10 @@
 
     <BookReview :bookId="this.bookId" />
 
+    <Modal v-model="isModalVisible" @confirm="onConfirm">
+      <p>{{ singleModalMessage }}</p>
+    </Modal>
+
   </div>
   <Footer />
 </template>
@@ -63,16 +67,19 @@
 import Footer from '../../MainPage/components/Footer.vue';
 import Header from '../../MainPage/components/Header.vue';
 import BookReview from './BookReview.vue'; // BookReview 컴포넌트 임포트
+import Modal from '../../modal/CustomModal.vue';
 
 export default {
   props: {
     bookId: 0,
   },
-  components: { Footer, Header, BookReview },
+  components: { Footer, Header, BookReview, Modal },
   data() {
     return {
       book: null,
       nowBookCount: 1,
+      isModalVisible: false,
+      singleModalMessage: '',
     };
   },
   async created() {
@@ -94,11 +101,11 @@ export default {
         bookCount: this.nowBookCount
       }, { withCredentials: true })
       .then(response => {
-        alert(response.data);
+        this.openModal(response.data);
       })
       .catch(error => {
         console.error("Error - add cart:", error);
-        alert("장바구니 추가 실패");
+        this.openModal("장바구니 추가 실패");
       });
     },
     formatPrice(price) {
@@ -120,8 +127,7 @@ export default {
 
     submitReview() {
       if (this.reviewStar === 0 || !this.reviewComment.trim()) {
-        alert("별점과 리뷰 내용을 모두 입력해주세요!");
-        return;
+        this.openModal("별점과 리뷰 내용을 모두 입력해주세요!");
       }
       const reviewData = {
         bookId: this.book.bookId,
@@ -130,14 +136,15 @@ export default {
       };
       this.$axios.post("/reviews", reviewData, { withCredentials: true })
         .then(response => {
-          alert(response.data);
+          this.openModal(response.data);
+
           this.reviewStar = 0;
           this.reviewComment = "";
           this.fetchReviews(this.book.bookId); // 리뷰 작성 후 새로운 리뷰 데이터를 가져옵니다.
         })
         .catch(error => {
           console.error("Error - submit review:", error);
-          alert("리뷰 제출에 실패했습니다.");
+          this.openModal("리뷰 제출에 실패했습니다.");
         });
     },
     // 리뷰 데이터 가져오기
@@ -157,13 +164,13 @@ export default {
       const bookJson = { "bookIds": rentArr };
       this.$axios.post("/rents/requests/me", bookJson, { withCredentials: true })
         .then(response => {
-          alert("["+bookTitle +"] 대여 신청이 완료되었습니다.");
+          this.openModal("["+bookTitle +"] 대여 신청이 완료되었습니다.");
         })
         .catch(error=>{
           console.error("Error - rent book", error.response?.data);
 
           const errorMessage = error.response?.data?.message || "대여 신청에 실패했습니다.";
-          alert(errorMessage);
+          this.openModal(errorMessage);
         });
     },
     // 책 예약하기
@@ -171,13 +178,22 @@ export default {
       try {
         const bookJson = { "bookIds": [bookId] };
         await this.$axios.post("/reservations/me", bookJson, );
-        alert("["+bookTitle +"] 예약이 완료되었습니다.");
+        this.openModal("["+bookTitle +"] 예약이 완료되었습니다.");
       } catch(error) {
         console.error("Error - reserve book", error.response?.data);
         const errorMessage = error.response?.data?.message || "예약에 실패했습니다.";
-        alert(errorMessage);
+        this.openModal(errorMessage);
       }
-    }
+    },
+    openModal(message){
+      this.singleModalMessage = message;
+      this.isModalVisible = true;
+      // onConfirm();
+    },
+    onConfirm(){
+      console.log("확인 버튼이 클릭되었습니다.");
+      this.isModalVisible = false;
+    },
   },
 };
 </script>

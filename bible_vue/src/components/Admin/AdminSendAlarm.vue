@@ -1,5 +1,8 @@
 <template>
+
     <SendSms/>
+    <br>
+    <br>
     <SendWebSocketAlarm/>
 </template>
 

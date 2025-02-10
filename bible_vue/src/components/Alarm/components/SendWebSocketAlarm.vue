@@ -1,6 +1,6 @@
 <template>
   <div class="alarm-container">
-    <h1>홈페이지 알람</h1>
+    <h2>홈페이지 알람</h2>
 
     <div class="input-group">
       <label for="title">알람 제목</label>
@@ -107,15 +107,7 @@ export default {
 </script>
 
 <style scoped>
-:root {
-    --primary-color: #6f90b1;
-    --secondary-color: #f9f9f9;
-    --danger-color: #e74c3c;
-    --white-color: #ffffff;
 
-    --text-color: #333333;
-    --hover-color:#5c6b7e;
-}
 
 .alarm-container {
   max-width: 800px;
@@ -167,11 +159,11 @@ textarea{
   transition: background 0.3s;
 }
 
-.select-btn { background: #e7f0f3; color: var(--primary-color); }
+.select-btn { background: var(--secondary-color); color: var(--primary-color); }
 .send-btn { background: var(--primary-color); color: white; }
 .btn-all { background:  var(--primary-color); color: white; }
 
-.select-btn:hover { background: #99b2b9; color: white;}
+.select-btn:hover { background: var(--hover-color); color: white;}
 .send-btn:hover { background: var(--hover-color); }
 .btn-all:hover { background:var(--hover-color); }
 

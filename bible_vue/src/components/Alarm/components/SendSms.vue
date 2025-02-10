@@ -1,7 +1,7 @@
 <template>
 
   <div class="sms-container">
-      <h1>SMS 전송</h1>
+      <h2>SMS 전송</h2>
       <div class="input-group">핸드폰 번호</div>
       <input v-model="phoneNumber" placeholder="수신자 핸드폰 번호" />
       <div  class="input-group">메시지 내용</div>

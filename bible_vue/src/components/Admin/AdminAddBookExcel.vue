@@ -1,8 +1,7 @@
 <template>
     <div class="upload-container">
-        <h1>Upload/Download Book List with Excel File</h1>
 
-        <h2>📂 Add Books - Excel File</h2>
+        <h2>Excel로 책 추가</h2>
 
         <form @submit.prevent="uploadFile" class="upload-form">
             <input type="file" @change="handleFileUpload" accept=".xlsx, .xls" class="file-input">
@@ -13,10 +12,12 @@
             {{ uploadStatus }}
         </div>
 
-        
+        <br>
+        <br>
 
-        <h2>📂 Download Book List</h2>
-        <button @click="downloadExcel()">download Excel</button>
+
+        <h2> 책 리스트 다운로드</h2>
+        <button  class="excel-download-btn" @click="downloadExcel()">download Excel</button>
         
     </div>
 </template>
@@ -90,6 +91,7 @@ export default {
 
 
 <style>
+
 .upload-container {
     text-align: center;
     padding: 20px;
@@ -108,7 +110,7 @@ export default {
 
 .upload-btn {
     padding: 10px 15px;
-    background-color: #679669;
+    background-color: var(--primary-color);
     color: white;
     border: none;
     cursor: pointer;
@@ -123,5 +125,12 @@ export default {
 .status-message {
     margin-top: 20px;
     font-weight: bold;
+}
+
+.excel-download-btn{
+    background-color: var(--primary-color);
+}
+.excel-download-btn:hover{
+    background-color: var(--hover-color);
 }
 </style>

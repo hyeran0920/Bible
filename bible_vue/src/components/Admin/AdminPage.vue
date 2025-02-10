@@ -2,9 +2,9 @@
   <div class="dashboard">
     <aside class="sidebar">
       <ul>
+        <li @click="changeMenu('main')">관리자 메인</li>
         <li @click="changeMenu('member')">회원</li>
-        <li @click="changeMenu('product')">책</li>
-        <li @click="changeMenu('order')">주문</li>
+        <li @click="changeMenu('product')">책 목록</li>
         <li @click="changeMenu('rental')">대여/반납</li>
         <li @click="changeMenu('rentalList')">대여 조회</li>
         <li @click="changeMenu('reservation')">예약 조회</li>

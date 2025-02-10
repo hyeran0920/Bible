@@ -1,6 +1,6 @@
 <template>
     <div class="rent-container">
-        <h2>대여 관리</h2>
+        <h1>대여 관리</h1>
         <div class="status-filter">
         <select v-model="selectedStatus" @change="fetchRents">
             <option value="">전체</option>
@@ -11,7 +11,7 @@
         </select>
         </div>
         <div class="rent-list">
-        <table>
+        <table id="book-rent-list">
             <thead>
             <tr>
                 <th>대여 ID</th>
@@ -31,16 +31,16 @@
                 <td @click="showBookInfo(rent.bookId)" class="clickable-cell">{{ rent.bookTitle }}</td>
                 <td>{{ formatDate(rentGroup.rentDate) }}</td>
                 <td>{{ formatDate(rent.rentDueDate) }}</td>
-                <td>{{ getRentStatus(rent.rentStatus) }}</td>
-                <td>
+                <td class="rent-status">{{ getRentStatus(rent.rentStatus) }}</td>
+                <td class="rent-management-btns">
                     <button v-if="rent.rentStatus === 'IN_USE'" @click="renewRent(rent.rentId, rent.memId)" class="renew-btn">
-                        연장하기
+                        연장
                     </button>
                     <button v-if="rent.rentStatus === 'IN_USE'" @click="returnBook(rent.bookId, rent.memId)" class="return-btn">
-                        반납하기
+                        반납
                     </button>
                     <button v-if="rent.rentStatus === 'REQUESTED'" @click="cancelRent(rent.rentId, rent.memId)" class="cancel-btn">
-                        취소하기
+                        취소
                     </button>
                 </td>
                 </tr>
@@ -76,7 +76,7 @@
                             <td>{{ rent.bookTitle }}</td>
                             <td>{{ formatDate(rentGroup.rentDate) }}</td>
                             <td>{{ formatDate(rent.rentDueDate) }}</td>
-                            <td>{{ getRentStatus(rent.rentStatus) }}</td>
+                            <td class="rent-status">{{ getRentStatus(rent.rentStatus) }}</td>
                         </tr>
                         </template>
                     </tbody>
@@ -96,7 +96,7 @@
                         다음
                     </button>
                 </div>
-                <button class="close-btn" @click="closeModal">닫기</button>
+                <button class="close-btn" @click="closeModal">X</button>
             </div>
         </div>
         <!-- 책 정보 모달 -->
@@ -283,15 +283,32 @@
 </script>
   
 <style>
-    .status-filter {
-        margin-bottom: 20px;
-    }
 
+    /* SELECT */
     .status-filter select {
         padding: 8px;
-        border-radius: 4px;
+        border-radius: 6px;
+        text-align: left;
+        background-color: white;
+        border: 1px solid #ccc;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border:none;
     }
 
+
+    .status-filter select:focus {
+        outline: none;
+        border-color: #0D47A1;
+        box-shadow: 0 0 5px rgba(47, 119, 227, 0.5);
+        border:none;
+    }
+
+
+
+
+    /*pagination */
     .pagination {
         margin-top: 20px;
         display: flex;
@@ -302,10 +319,9 @@
 
     .pagination button {
         padding: 6px 12px;
-        border: 1px solid #1E90FF;
         border-radius: 4px;
         background-color: white;
-        color: #1E90FF;
+        color: var(--primary-color);
         cursor: pointer;
         font-size: 14px;
         transition: all 0.3s ease;
@@ -313,7 +329,7 @@
     }
 
     .pagination button:hover:not(:disabled) {
-        background-color: #1E90FF;
+        background-color: var(--primary-color);
         color: white;
     }
 
@@ -330,8 +346,53 @@
         padding: 0 10px;
     }
 
+
+
+
+
+    /*Table */
+    #book-rent-list{
+        background-color: white;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+
+    #book-rent-list td{
+        padding:15px;
+        margin: 10px;
+        height: 80px;
+    }
+
+    #book-rent-list th{
+        padding: 15px 15px;
+    }
+
+    .rent-status {
+        text-align: left;
+    }
+    .rent-management-btns{
+        width: 100px;
+    }
+
+    .clickable-cell {
+        cursor: pointer;
+        color: var(--primary-color);
+        font-weight: bold;
+        transition: color 0.3s ease;
+    }
+
+    .clickable-cell:hover {
+        color: #0D47A1;
+    }
+
+
+
+
+
+    /*button */
     .renew-btn, .return-btn {
-        margin-right: 5px;
+
         padding: 5px 10px;
         border: none;
         border-radius: 4px;
@@ -339,30 +400,50 @@
     }
 
     .renew-btn {
-        background-color: #4CAF50;
+        background-color: #25b129;
         color: white;
+    }
+    .renew-btn:hover{
+        background-color: #469048;
     }
 
     .return-btn {
-        background-color: #2196F3;
+        background-color: #62b3e1;
+        color: white;
+    }
+    .return-btn:hover {
+        background-color: #457fa0;
         color: white;
     }
 
     .close-btn {
-        margin-top: 20px;
+        margin-top: 0px;
         padding: 8px 16px;
-        background-color: #4CAF50;
+        background-color: var(--danger-color);
         color: white;
         border: none;
         border-radius: 4px;
         cursor: pointer;
         width: auto;
     }
-
     .close-btn:hover {
-        background-color: #45a049;
+        background-color:var(--danger-hover-color);
     }
 
+    .cancel-btn{
+        background-color: var(--danger-color);
+    }
+    .cancel-btn:hover{
+        background-color:var(--danger-hover-color);
+    }
+    
+
+
+
+
+
+
+    /* 모달창 */
     .modal {
         position: fixed;
         top: 50%;
@@ -390,14 +471,11 @@
         z-index: 10000;
     }
     
-    .clickable-cell {
-        cursor: pointer;
-        color: #2196F3;
-    }
 
-    .clickable-cell:hover {
-        background-color: #e3f2fd;
-        color: #0D47A1;
-    }
+
+
+
+
+
 
 </style>

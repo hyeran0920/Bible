@@ -1,6 +1,8 @@
 <template>
     <div class="modal" v-if="show" @click="closeModal">
         <div class="modal-content" @click.stop>
+        <button class="close-btn" @click="closeModal">X</button>
+        
         <h3>도서 정보</h3>
         <div v-if="bookInfo" class="book-info">
             <router-link :to="'/book/' + bookInfo.bookId">
@@ -28,7 +30,7 @@
             </tbody>
             </table>
         </div>
-        <button class="close-btn" @click="closeModal">닫기</button>
+       
         </div>
     </div>
 </template>
@@ -81,6 +83,8 @@
         width: 50%;
         border-collapse: collapse;
         margin-top: 20px;
+        margin-bottom: 30px;
+        margin-left:30px;
     }
 
     .book-details-table th, .book-details-table td {
@@ -90,10 +94,11 @@
     }
 
     .book-details-table th {
-        background-color: #1E90FF;
         width: 30%;
         font-weight: bold;
+        color:var(--primary-color);
     }
+
 
     .book-info {
         display: flex;
@@ -115,9 +120,9 @@
     }
 
     .close-btn {
-        margin-top: 20px;
+        margin-top: 0px;
         padding: 8px 16px;
-        background-color: #4CAF50;
+        background-color:var(--danger-color);
         color: white;
         border: none;
         border-radius: 4px;
@@ -126,6 +131,6 @@
     }
 
     .close-btn:hover {
-        background-color: #45a049;
+        background-color: var(--danger-hover-color);
     }
 </style>

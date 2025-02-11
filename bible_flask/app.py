@@ -6,64 +6,11 @@ import os
 from flask import Flask, jsonify, request
 from pyngrok import ngrok
 from flask_cors import CORS
-from googleapiclient.discovery import build
-from flask_ngrok import run_with_ngrok
 
-#GCP API 토큰: AIzaSyCmXmuDRPQE9Tx4YE88dCpFkoj8NpC56zw
-# !ngrok authtoken '2gAz8iHMKHDtlgbxaand8ce6EAu_2pSR9fiiFYRnhBPUHT1Vz'
-# ngrok config add-authtoken 2gAz8iHMKHDtlgbxaand8ce6EAu_2pSR9fiiFYRnhBPUHT1Vz
-
-# # 📌 Google Drive API 인증
-# SERVICE_ACCOUNT_FILE = "C:/dev/metanet/workspace/meta3/Bible/bible_flask/axial-crane-450109-u1-7deb17db1c7a.json"  # Google Drive API 인증 정보
-# SCOPES = ["https://www.googleapis.com/auth/drive"]
-
-# # Google Drive API 클라이언트 생성
-# credentials = service_account.Credentials.from_service_account_file(
-#     SERVICE_ACCOUNT_FILE, scopes=SCOPES
-# )
-# drive_service = build("drive", "v3", credentials=credentials)
-
-# # Google Drive에서 파일 가져오기
-# drive_path = "/content/drive/MyDrive/MetanetAPP/Book_ml/"
-# if os.path.exists(drive_path):
-#     print(f"📂 폴더가 존재합니다: {drive_path}")
-#     print("📄 포함된 파일 목록:", os.listdir(drive_path))
-# else:
-#     print("❌ 폴더를 찾을 수 없습니다.")
-
-# #모델 불러오기
-# model_path = os.path.join(drive_path, "lightfm_model.pkl")
-# dataset_path = os.path.join(drive_path, "dataset.pkl")
-
-# try:
-#     with open(model_path, "rb") as f:
-#         model = pickle.load(f)
-
-#     with open("dataset.pkl", "rb") as f:
-#         dataset = pickle.load(f)
-# except Exception as e:
-#     print(f"파일 로드 오류: {e}")
-# @app.route("/get_data")
-# def get_data():
-#     file_id = "YOUR_GOOGLE_DRIVE_FILE_ID"  # Google Drive에 업로드한 파일의 ID
-#     data = get_drive_file(file_id)
-#     return jsonify(data)
-
-# ngrok 터널 열기
-# ngrok.set_auth_token("2gAz8iHMKHDtlgbxaand8ce6EAu_2pSR9fiiFYRnhBPUHT1Vz") # ngrok Authtoken
-#ngrok config add-authtoken '2gAz8iHMKHDtlgbxaand8ce6EAu_2pSR9fiiFYRnhBPUHT1Vz`
-# public_url = ngrok.connect(5000)
-# print(f"🚀 Public URL: {public_url}")
-    
 import pandas as pd
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
-
-# ngrok 터널 열기
-ngrok.set_auth_token("2gAz8iHMKHDtlgbxaand8ce6EAu_2pSR9fiiFYRnhBPUHT1Vz") # ngrok Authtoken
-public_url = ngrok.connect(5000)
-print(f"Public URL: {public_url}")
 
 #저장 모드 load
 PATH = "C:/dev/metanet/workspace/meta3/Bible/bible_flask/"

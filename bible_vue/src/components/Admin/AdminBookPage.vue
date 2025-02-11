@@ -126,7 +126,7 @@ export default {
 
 /* Open Modal Button */
 .excel-btn {
-  background-color: var(--secondary-color);
+  background-color: white;
   color: var(--hover-color);
   border: none;
   padding: 10px 20px;
@@ -137,7 +137,7 @@ export default {
 }
 
 .excel-btn:hover {
-  background-color:var(--hover-second-color);
+  background-color:var(--primary-color);
   color:white;
 }
 

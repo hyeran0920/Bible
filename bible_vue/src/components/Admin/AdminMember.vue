@@ -9,7 +9,7 @@
             <div class="member-card">
                 <div class="member-details">
                     <div class="info-row">
-                            <label class="info">이름 {{ member.memName }}</label> 
+                            <label class="info"> {{ member.memName }}</label> 
                         <div class="info-row">
                             <label class="info">아이디 {{ member.memId }}</label>
                         </div>
@@ -22,9 +22,9 @@
 
                 <div class="member-actions">
                     <!-- 관리자인지 여부에 따라 수정 버튼 표시 -->
-                    <button v-if="!isAdmin" @click="openModal(true, member)" type="button" class="btn btn-edit">정보
+                    <button v-if="!isAdmin" @click="openModal(true, member)" type="button" class="member-force-modify-btn">정보
                         수정</button>
-                    <button @click="promptDelete(member.memId, member.memEmail)" type="button" class="btn btn-delete">회원
+                    <button @click="promptDelete(member.memId, member.memEmail)" type="button" class="member-force-delete-btn">회원
                         탈퇴</button>
                 </div>
             </div>
@@ -218,38 +218,7 @@ export default {
     font-weight: bold;
 }
 
-.member-actions {
-    display: flex;
-    gap: 10px;
-    /* 버튼 간 간격을 설정 */
-    justify-content: flex-end;
-    /* 오른쪽 정렬 */
-}
 
-.btn {
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.btn-edit {
-    background-color: #3498db;
-    color: white;
-}
-
-.btn-edit:hover {
-    background-color: #2980b9;
-}
-
-.btn-delete {
-    background-color: #e74c3c;
-    color: white;
-}
-
-.btn-delete:hover {
-    background-color: #c0392b;
-}
 
 .custom-modal {
     position: fixed;
@@ -301,5 +270,31 @@ export default {
 
 .btn-secondary:hover {
     background-color: #95a5a6;
+}
+
+
+/* BUTTON */
+.member-actions {
+    display: flex;
+    gap: 10px;
+    /* 버튼 간 간격을 설정 */
+    justify-content: flex-end;
+    /* 오른쪽 정렬 */
+}
+
+.member-actions button {
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100px;
+}
+
+.member-force-modify-btn{
+    background-color: var(--primary-color);
+}
+.member-force-delete-btn{
+    background-color: white;
+    border:1px solid var(--primary-color);
+    color: var(--primary-color);
 }
 </style>

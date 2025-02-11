@@ -103,6 +103,7 @@ html, body {
 
 .sidebar li {
   margin: 35px 0;
+  cursor: pointer;
 }
 
 .sidebar a {

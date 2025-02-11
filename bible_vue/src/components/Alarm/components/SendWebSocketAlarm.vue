@@ -143,6 +143,7 @@ textarea {
   height: 50px;
   resize: none;
   box-sizing: border-box;
+  border: 1px solid #ddd;
 }
 
 textarea{
@@ -159,7 +160,7 @@ textarea{
   transition: background 0.3s;
 }
 
-.select-btn { background: var(--secondary-color); color: var(--primary-color); }
+.select-btn { background: white; color: var(--primary-color); border:1px solid var(--primary-color) }
 .send-btn { background: var(--primary-color); color: white; }
 .btn-all { background:  var(--primary-color); color: white; }
 

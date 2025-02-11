@@ -27,7 +27,7 @@ import Cookies from "js-cookie"; // js-cookie 라이브러리 필요
 export default {
   setup() {
     const route = useRoute();
-    const memId = Cookies.get("memId");
+    const memId = ref(Cookies.get("memId") || "1030"); //memId반응형으로 바꾸기
     // const memId = ref(localStorage.getItem("memId") || "1030");
     //const memId = ref("38668"); // 기본 사용자 ID (없을 경우 대비)
     const recommendations = ref([]);
@@ -50,7 +50,7 @@ export default {
 
     // 현재 보여줄 책 리스트
     const visibleBooks = computed(() => {
-      const totalBooks = recommendations.value.length;
+    const totalBooks = recommendations.value.length;
       if (totalBooks === 0) return [];
       
       return [

@@ -3,7 +3,7 @@
 
   <div class="container">
     <h1 class="title">{{ memId }}님의 맞춤 추천 도서</h1>
-
+    <button @click="updateRecommendations">추천 다시 받기</button>
     <!-- 상위 5권: 캐러셀 영역 -->
     <div v-if="topBooks.length > 0" class="carousel-container">
       <button class="carousel-button left" @click="prevSlide">❮</button>
@@ -28,11 +28,7 @@
 
     <!-- 하위 5권: 리스트 영역 -->
     <div v-if="bottomBooks.length > 0" class="list-container">
-      <div
-        v-for="(book, idx) in bottomBooks"
-        :key="idx"
-        class="book-card"
-      >
+      <div v-for="(book, idx) in bottomBooks" :key="idx" class="book-card">
         <div class="book">
           <p class="book-title">
             {{ idx + 6 }}. {{ book.title }}
@@ -41,7 +37,6 @@
         </div>
       </div>
     </div>
-
   </div>
 
   <Footer />
@@ -123,12 +118,28 @@ export default {
     // const displayedIndex = (index) => {
     //   return (currentIndex.value + index) % recommendations.value.length;
     // };
+    const updateRecommendations = async () => {
+      try {
+        // 예: n=20 → 서버가 1~20번 중 11~20번을 반환하도록 구현
+        // (서버 구현에 따라 달라짐)
+        const response = await fetch(
+          `http://localhost:8080/flask/recommend/update?mem_id=${memId.value}&n=20`,
+          { method: "PUT" }
+        );
+        const data = await response.json();
 
+        // Flask/Spring 측에서 11~20번이 넘어온다고 가정
+        recommendations.value = data.recommendations.slice(10, 20);
+        currentIndex.value = 0; // 캐러셀 인덱스 초기화
+      } catch (error) {
+        console.error("추천 업데이트 실패:", error);
+      }
+    };
     // ▶ 상위 5권 / 하위 5권 분리
     const topBooks = computed(() => recommendations.value.slice(0, 5));
-    const bottomBooks = computed(() => recommendations.value.slice(5));
+    const bottomBooks = computed(() => recommendations.value.slice(5, 10));
 
-    // ▶ 캐러셀에 보일 책들: 3권씩 회전 (상위 5권 대상)
+    // 캐러셀 (한 권씩)
     const visibleTopBooks = computed(() => {
       const totalTop = topBooks.value.length;
       if (totalTop === 0) return [];
@@ -164,6 +175,7 @@ export default {
     return {
       memId,
       recommendations,
+      currentIndex,
 
       // 상위 5권: 캐러셀
       topBooks,
@@ -178,6 +190,7 @@ export default {
 
       // 함수
       getRecommendations,
+      updateRecommendations,
       itemsPerPage,
     };
   },

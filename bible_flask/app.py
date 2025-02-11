@@ -99,17 +99,19 @@ def recommend_get():
     return jsonify({"mem_id": mem_id, "recommendations": recommendations})
 
 # 추천 도서 업데이트 (PUT)
-@app.route('/recommend', methods=['PUT'])
+@app.route("/recommend/update", methods=['PUT'])
 def recommend_update():
-    data = request.get_json()
-    mem_id = data.get("mem_id")
-    n = data.get("n")
+    mem_id = request.args.get("mem_id", type=int)
+    n = request.args.get("n", default=5, type=int)
 
-    if not mem_id or not n:
-        return jsonify({"error": "Invalid input"}), 400
+    if not mem_id:
+        return jsonify({"error": "mem_id가 필요합니다."}), 400
 
-    update_recommendations = recommend_books(model, dataset, mem_id, n)
-    return jsonify({"message": "추천 도서 업데이트 완료", "recommendations": update_recommendations}), 200
+    # 예: 1~20권 중 11~20만 반환
+    recommendations_all = recommend_books(model, dataset, mem_id, n)
+    offset = 10
+    new_list = recommendations_all[offset:]  # 11~20
+    return jsonify({"recommendations": new_list})
 
 # 추천 도서 삭제 (DELETE)
 @app.route('/recommend', methods=['DELETE'])

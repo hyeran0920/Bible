@@ -7,10 +7,12 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.Base64;
+import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 
 import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
@@ -28,27 +30,40 @@ public class QRCodeGenerator {
 	//이거 UploadController에 넣을까 고민중
 	//QR 생성하고 저장
 	public static void generateQRCode(String data, String filePath) throws WriterException, IOException {
-        QRCodeWriter qrCodeWriter = new QRCodeWriter();
-        BitMatrix bitMatrix = qrCodeWriter.encode(data, BarcodeFormat.QR_CODE, 200, 200);
+	    QRCodeWriter qrCodeWriter = new QRCodeWriter();
+	    
+	    // ✅ 한글 깨짐 방지: UTF-8 설정
+	    HashMap<EncodeHintType, Object> hintMap = new HashMap<>();
+	    hintMap.put(EncodeHintType.CHARACTER_SET, "UTF-8");
+	    
+	    BitMatrix bitMatrix = qrCodeWriter.encode(data, BarcodeFormat.QR_CODE, 200, 200, hintMap);
 
-        Path path = FileSystems.getDefault().getPath(filePath);
-        MatrixToImageWriter.writeToPath(bitMatrix, "PNG", path);
-        
-        System.out.println("generateQRCode = "+path);
-    }
+	    Path path = FileSystems.getDefault().getPath(filePath);
+	    MatrixToImageWriter.writeToPath(bitMatrix, "PNG", path);
+	    
+	    System.out.println("generateQRCode = " + path);
+	}
+
 	
 	//QR 이미지를 Base64 문자열로 반환
 	public static String generateQRCodeURL(String data) throws WriterException, IOException {
-        QRCodeWriter qrCodeWriter = new QRCodeWriter();
-        BitMatrix bitMatrix = qrCodeWriter.encode(data, BarcodeFormat.QR_CODE, 50, 50);
-        
-        BufferedImage qrImage = MatrixToImageWriter.toBufferedImage(bitMatrix);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        ImageIO.write(qrImage, "PNG", outputStream);
+	    QRCodeWriter qrCodeWriter = new QRCodeWriter();
+	    
+	    // ✅ 한글 깨짐 방지: UTF-8 설정
+	    HashMap<EncodeHintType, Object> hintMap = new HashMap<>();
+	    hintMap.put(EncodeHintType.CHARACTER_SET, "UTF-8");
+	    
+	    BitMatrix bitMatrix = qrCodeWriter.encode(data, BarcodeFormat.QR_CODE, 50, 50, hintMap);
+	    
+	    BufferedImage qrImage = MatrixToImageWriter.toBufferedImage(bitMatrix);
+	    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+	    ImageIO.write(qrImage, "PNG", outputStream);
 
-        byte[] qrBytes = outputStream.toByteArray();
-        String base64QRCode = Base64.getEncoder().encodeToString(qrBytes);
+	    byte[] qrBytes = outputStream.toByteArray();
+	    String base64QRCode = Base64.getEncoder().encodeToString(qrBytes);
 
-        return "data:image/png;base64," + base64QRCode;
-    }
+	    return "data:image/png;base64," + base64QRCode;
+	}
+
+
 }

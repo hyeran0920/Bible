@@ -3,27 +3,17 @@
     <div class="search-row">
       <!-- Category -->
       <div class="category">
-        <label for="category" class="label">Select Category:</label>
-        <select id="category" v-model="selectedCategory" @change="fetchBooksByCategory" class="select">
+        <select 
+            id="category" 
+            v-model="selectedCategory" 
+            @change="fetchBooksByCategory" 
+            class="select">
           <option value="" disabled>Select a category</option>
           <option value="All">All</option>
           <option v-for="category in categories" :key="category" :value="category">
             {{ category }}
           </option>
         </select>
-      </div>
-
-      <!-- Search -->
-      <div class="search">
-        <label for="search" class="label">Search:</label>
-        <input
-          id="search"
-          type="text"
-          v-model="searchKeyword"
-          placeholder="Search by title, author, or publisher"
-          class="input"
-        />
-        <button @click="fetchSearchResults" class="search-btn">Search</button>
       </div>
     </div>
   </div>
@@ -65,8 +55,8 @@ export default {
       } catch (error) {
         console.error("Error fetching books by category:", error);
       }
-    },
-
+    },    
+    
     // Search 키워드에 대한 books 가져오기
     async fetchSearchResults() {
       try {
@@ -83,6 +73,20 @@ export default {
         console.error("Error fetching search results:", error);
       }
     },
+
+    // select 클릭 시
+    expandSelect(event) {
+      const select = event.target;
+      select.size = 5;  // 클릭 시 5개 항목 표시
+
+      // 선택 후 다시 기본 상태로 돌아가기
+      select.addEventListener('blur', () => {
+        select.size = 1;
+      }, { once: true });  // 이벤트 리스너는 한 번만 실행
+    },
+    
+    // Search 키워드에 대한 books 가져오기
+
   },
   mounted() {
     this.fetchCategories();
@@ -95,24 +99,26 @@ export default {
   margin: 20px;
 }
 
+.category {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  background: #EEE;
+  padding: 10px;
+}
+
+.category-select {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  min-width: 120px;
+}
+
 .search-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 20px;
-}
-
-.category {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.search {
-  flex: 2;
-  text-align: right;
-  gap: 10px;
 }
 
 .label {
@@ -121,34 +127,12 @@ export default {
   color: #333;
 }
 
-.select,
-.input {
+.select {
   padding: 10px;
   border-radius: 5px;
   border: 1px solid #ccc;
   font-size: 14px;
   width: 50%;
-}
-
-.select:focus,
-.input:focus {
-  border-color: #007bff;
-  outline: none;
-}
-
-.search-btn {
-  width: 50px;
-  border: none;
-  border-radius: 5px;
-  background-color: #679669;
-  color: #fff;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.search-btn:hover {
-  background-color: #0056b3;
 }
 
 /* 반응형 디자인 */
@@ -157,13 +141,8 @@ export default {
     flex-direction: column;
   }
 
-  .category,
-  .search {
+  .category {
     width: 100%;
-  }
-
-  .search-btn {
-    padding: 6px 12px;
   }
 }
 </style>

@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @Service
 public class FlaskClientService {
     
@@ -27,8 +30,26 @@ public class FlaskClientService {
     
     @GetMapping //요청 보내기
     public String getRecommendation(int memId, int n) {
-        String requestUrl = FLASK_API_URL + "?mem_id=" + memId + "&n=" + n;
-        return restTemplate.getForObject(requestUrl, String.class);
+    	String requestUrl = FLASK_API_URL + "?mem_id=" + memId + "&n=" + n;
+        ResponseEntity<String> responseEntity = restTemplate.getForEntity(requestUrl, String.class);
+        String jsonResponse = responseEntity.getBody();
+
+        try {
+            // JSON 응답 파싱
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(jsonResponse);
+
+            // 첫 번째 추천 도서의 image_url 가져오기
+            JsonNode recommendations = rootNode.path("recommendations");
+            if (recommendations.isArray() && recommendations.size() > 0) {
+                String imageUrl = recommendations.get(0).path("image_url").asText();
+                return imageUrl;
+            } else {
+                return "No recommendations found";
+            }
+        } catch (Exception e) {
+            return "Error parsing response: " + jsonResponse;
+        }
     }
     @PostMapping //요청 받기
     public String postRecommendation(int memId, int n) {

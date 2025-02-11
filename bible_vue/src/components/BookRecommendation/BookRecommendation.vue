@@ -69,11 +69,11 @@ export default {
       // const baseURL = this.$axios.defaults.baseURL;
       // console.log(baseURL);
       try {
-        const response = await axios(
+        const response = await axios.get(
           `http://localhost:8080/flask/recommend?mem_id=${memId.value}&n=10`
         );
         //const data = await response.json();
-        recommendations.value = data.recommendations;
+        recommendations.value = response.data.recommendations;
         currentIndex.value = 0;
       } catch (error) {
         console.error("추천 도서 불러오기 실패:", error);

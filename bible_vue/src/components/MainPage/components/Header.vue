@@ -7,10 +7,21 @@
           <img src="../../../assets/logo.png" alt="Logo" class="logo-img">
         </a>
       </div>
-      <div class="search-container">
-        <input type="text" v-model="searchQuery" placeholder="Search..." class="search-input" @keyup.enter="performSearch" />
-        <button class="search-button" @click="performSearch">🔍</button>
+        <!-- 검색 -->
+        <div class="search-container">
+          <input 
+            type="text" 
+            v-model="searchKeyword" 
+            placeholder="Search by title, author, or publisher" 
+            class="search-input" 
+            @keyup.enter="fetchSearchResults"
+          />
+        <!-- 검색 버튼 수정 -->
+        <button class="search-button" @click="fetchSearchResults">
+          <img src="../../../assets/search.png" alt="Search" class="search-icon" />
+        </button>
       </div>
+      <!-- 사용자 -->
       <div class="auth-icon" @click="toggleAuthMenu">👤</div>
     </header>
 
@@ -36,9 +47,21 @@
     <!-- Navigation -->
     <nav class="nav">
       <ul class="nav-links">
-        <li><a href="/book">베스트셀러</a></li>
-        <li><a href="/bookRecommendation">추천도서</a></li>
-        <li><a href="#">인기도서</a></li>
+        <li>
+          <router-link to="/book" :class="{ 'active': isActive('/book') }">
+            베스트셀러
+          </router-link>
+        </li>
+        <li>
+          <router-link to="/bookRecommendation" :class="{ 'active': isActive('/bookRecommendation') }">
+            추천도서
+          </router-link>
+        </li>
+        <li>
+          <router-link to="/book/best" :class="{ 'active': isActive('/book/best') }">
+            인기도서
+          </router-link>
+        </li>
       </ul>
     </nav>
   </div>
@@ -67,6 +90,8 @@ export default {
 
       isModelVisible: false,
       modalMessage: "",
+
+      searchKeyword: "", // 검색 키워드
     };
   },
   mounted() {
@@ -97,17 +122,28 @@ export default {
         withCredentials: true, // 쿠키 허용
       });
 
+      this.showModal("로그아웃 되었습니다.");
       setTimeout(() => {
-        this.showModal("로그아웃 되었습니다.");
-      }, 100);
-      this.isModelVisible = false;
+        this.isModelVisible = false;
+        this.$router.push(`/`);
+      }, 1500);
     },
-    // 검색
-    performSearch() {
-      // 여기에 검색 로직을 구현하세요
-      console.log('Searching for:', this.searchQuery);
-      // 예: this.$router.push({ path: '/search', query: { q: this.searchQuery } });
-    }
+    // 검색하기
+    async fetchSearchResults() {
+      if (this.searchKeyword.trim()) {
+        // 현재 경로가 /book이 아니면 이동
+        if (this.$route.path !== '/book') {
+          await this.$router.push('/book');
+        }
+        // store에 검색어 저장
+        this.$store.commit('setSearchKeyword', this.searchKeyword);
+        this.searchKeyword = ''; // 검색 후 입력창 초기화
+      }
+    },
+    // 네이게이션 클릭
+    isActive(path) {
+      return this.$route.path === path;
+    },
   }
 }
 </script>
@@ -142,27 +178,59 @@ body, ul, li {
 .search-container {
   display: flex;
   align-items: center;
-  width: 40%;
+  width: 60%;
   position: relative;
 }
 
 .search-input {
   width: 100%;
-  padding: 8px 30px 8px 12px;
-  font-size: 16px;
+  padding: 10px 12px 10px 40px; /* 오른쪽 패딩을 늘려서 버튼 공간 확보 */
+  font-size: 14px;
   border: 1px solid #ccc;
   border-radius: 20px;
+  z-index: 1;
+}
+
+.search-input:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+button {
+  padding: 0;  /* 패딩 제거 */
+  margin: 0;   /* 마진 제거 */  
 }
 
 .search-button {
   position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
+  left: 10px;  /* 오른쪽에서 10px 떨어진 위치 */
+  top: 50%;    /* 수직 중앙 정렬을 위해 추가 */
+  transform: translateY(-50%); /* 수직 중앙 정렬을 위해 추가 */
   border: none;
-  font-size: 16px;
+  background: none;
   cursor: pointer;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  z-index: 2;
+  width: auto;
+}
+
+.search-icon {
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+}
+
+.search-button img {
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+}
+
+.search-button:hover {
+  color: #007bff;
 }
 
 /* Auth menu */
@@ -205,7 +273,33 @@ body, ul, li {
   color: #333;
   font-size: 16px;
   font-weight: 500;
+  border-radius: 4px;
+  transition: all 0.3s ease;
 }
+
+/* 활성화된 링크 스타일 */
+.nav-links a.active {
+  color: #679669; /* 활성화된 메뉴의 텍스트 색상 */
+  font-weight: bold;
+  position: relative;
+}
+
+/* 밑줄 효과 */
+.nav-links a.active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 100%;
+  height: 2px;
+  background-color: #679669;
+}
+
+/* 호버 효과 */
+.nav-links a:hover {
+  color: #679669;
+}
+
 /* 로고 스타일 */
 .logo-img {
   max-width: 120px; /* 기본 크기 */
@@ -220,11 +314,11 @@ body, ul, li {
   }
 
   .search-container {
-    width: 50%;
+    width: 60%;
   }
 
   .nav-links {
-    justify-content: center; /* 중앙 정렬 */
+    justify-content: space-between; /* 중앙 정렬 */
   }
   .nav-links li {
     flex-basis: 22%;

@@ -58,13 +58,27 @@
             </div>
         </div>
     </div>
+    <!--확인 버튼만 있는 모달-->
+    <Modal v-model="isSModalVisible" @confirm="onConfirm1" >
+        <p>{{ systemMessage }}</p>
+    </Modal>
+
+    <!--확인+취소 버튼이 있는 모달-->
+    <Modal v-model="isDModalVisible" showCancel="true"
+            @confirm="onConfirm2" @cancel="onCancel">
+        <p>{{ systemMessage }}</p>
+    </Modal>
 </template>
 
 <script>
 const BASEURL = "/members";
+import Modal from "../../components/modal/CustomModal.vue";
 
 export default {
     name: 'Mypage',
+    components:{
+        Modal,
+    },
     data() {
         return {
             members: [],  // 모든 멤버 데이터를 저장하는 변수
@@ -72,6 +86,10 @@ export default {
             isModalVisible: false,  // 모달 표시 여부
             isEditing: false,  // 수정 상태 여부
             isAdmin: false, // 관리자 여부 (추후 서버로부터 확인 가능)
+            isSModalVisible:false,
+            isDModalVisible:false,
+            systemMessage: '',
+            pendingMemId: null,      // 탈퇴할 회원 ID 저장
         };
     },
     methods: {
@@ -105,21 +123,38 @@ export default {
             this.isModalVisible = false;
             this.currentMember = {};
         },
-        async promptDelete(memId, memEmail) {
-            const isConfirmed = window.confirm(`${memEmail}` + " 회원을 탈퇴할까요?");
-            if (isConfirmed) {
-                try {
-                    await this.$axios.delete(BASEURL + `/${memId}`);
-                    // 2초 후 홈으로 이동
-                    setTimeout(() => {
-                        this.$router.push('/');
-                    }, 500);
-                } catch (error) {
-                    console.error('Error deleting member:', error);
-                }
-            } else {
-                alert("탈퇴가 취소되었습니다.");
+        openSingleModal(message){
+            this.isSModalVisible = true;
+            this.systemMessage = message;
+        },
+        onConfirm1(){
+            console.log("확인버튼이 눌렸습니다.");
+            this.isSModalVisible = false;
+        },
+        openDoubleModal(message, memId){
+            this.isDModalVisible = true;
+            this.systemMessage = message;
+            this.pendingMemId = memId;
+        },
+        async onConfirm2(){
+            if (!this.pendingMemId) return;
+            try {
+                await this.$axios.delete(BASEURL + `/${this.pendingMemId}`);
+                this.isDModalVisible = false;
+                // 2초 후 홈으로 이동
+                setTimeout(() => {
+                this.$router.push('/');
+                }, 500);
+            } catch (error) {
+                console.error('Error deleting member:', error);
             }
+        },
+        onCancel(){
+            this.isDModalVisible = false;
+            this.openSingleModal("탈퇴를 취소하였습니다.");
+        },
+        async promptDelete(memId, memEmail) {
+            this.openDoubleModal(`${memEmail}` + " 회원을 탈퇴할까요?", memId);
         },
 
         async fetchMembers() {
@@ -129,7 +164,7 @@ export default {
             } catch (error) {
                 console.log("에러 메시지: ", error);
             }
-        }
+        },
     },
     async mounted() {
         // 페이지 로드 시 모든 멤버 데이터 가져오기

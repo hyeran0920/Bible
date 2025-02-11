@@ -47,18 +47,45 @@
       </div>
     </main>
 </div>
+<Modal v-model="isModalVisible" @confirm="onConfirm">
+  <p>{{ systemMessage }}</p>
+</Modal>
 </template>
 
 <script>
 import BookChart from '../Chart/BookChart.vue';
 import RentChart from '../Chart/RentChart.vue';
+import Modal from '../modal/CustomModal.vue';
 
 export default {
   name: "AdminContent",
   components: {
     BookChart,
-    RentChart
+    RentChart,
+    Modal,
   },
+  data(){
+    return {
+      isModalVisible: false,
+      systemMessage: '',
+    }
+  },
+  methods:{
+    openModal(message){
+      this.isModalVisible = true;
+      this.systemMessage = message;
+    },
+    onConfirm(){
+      this.$router.push('/login');
+      this.isModalVisible = false;
+    },
+  },
+  mounted(){
+    const isAdmin = localStorage.getItem("isAdmin");
+    if(!isAdmin || isAdmin === "false"){
+      this.openModal("관리자가 아닙니다. 다시 로그인하세요.");
+    }
+  }
 };
 </script>
 

@@ -64,10 +64,8 @@
       
       <!--Order page로 이동-->
       <div class="cart-parent-btn-layout">
-      <router-link :to="'/order/' + selectedCartIds.join('-')" style="display: flex; flex: 1">
-        <button class="cart-pay-btn">결제하기</button>
-      </router-link>
-      <button class="cart-rent-btn" @click="rentAll()">대여신청</button>
+        <button class="cart-pay-btn" @click="confirmPayment()">결제하기</button>
+        <button class="cart-rent-btn" @click="rentAll()">대여신청</button>
       </div>
     </div>
 
@@ -195,6 +193,23 @@ export default {
 
       }
     },
+    async confirmPayment() {
+      if (this.selectedCartIds.length === 0) {
+        this.openModal("구매할 책을 선택해주세요.");
+        return;
+      }
+
+      try {
+        // 선택된 cartId들을 '-'로 연결하여 주문 페이지 URL 생성
+        const orderUrl = `/order/${this.selectedCartIds.join('-')}`;
+
+        // Vue Router를 이용하여 주문 페이지로 이동
+        this.$router.push(orderUrl);
+      } catch (error) {
+        console.error("결제 처리 중 오류 발생:", error);
+      }
+    },
+
 
     // Rent ---------------------------------------------------------------
     async rentAll(){
@@ -383,7 +398,7 @@ export default {
     text-decoration: none !important;
   }
 
-
+  .cart-pay-btn,
   .cart-rent-btn{
     background-color: var(--main-green);
     font-size: 13px;
@@ -398,7 +413,6 @@ export default {
 
   .cart-pay-btn{
     background-color: darkgreen;
-    flex-grow: 1;
   }
 
  

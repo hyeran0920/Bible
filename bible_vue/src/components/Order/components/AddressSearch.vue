@@ -8,16 +8,19 @@
 
         <div class="input-group">
             <input type="text" v-model="postcode" placeholder="우편번호" readonly>
-            <button @click="execDaumPostcode">우편번호 찾기</button>
+            <button id="find-address-btn" @click="execDaumPostcode">우편번호 찾기</button>
         </div>
         
         <input type="text" v-model="address" placeholder="주소" readonly>
         
         <input type="text" v-model="detailAddress" placeholder="상세주소" @input="emitAddressData">
         
-        기본배송지 <input type="checkbox" v-model="defaultAddress">
+        <div id="address-default-container">
+            기본배송지 <input type="checkbox" v-model="defaultAddress" id="address-default-checkbox">
+        </div>
+        
     </div>
-    <button @click="addAddress()">추가</button>
+    <button id="address-research-add-btn" @click="addAddress()">추가</button>
 
     <Modal v-model="isModalVisible" @confirm="onConfirm">
       <p>{{ singleModalMessage }}</p>
@@ -181,9 +184,13 @@ export default {
 .address-search {
     display: flex;
     flex-direction: column;
+    align-items: center; /* 모든 요소 가로 중앙 정렬 */
+    justify-content: center;
     gap: 10px;
-    max-width: 500px;
+    max-width: 500px; /* 최대 너비 설정 */
+    margin: 0 auto; /* 화면 중앙 정렬 */
 }
+
 
 .input-group {
     display: flex;
@@ -195,14 +202,34 @@ input {
     border: 1px solid #ddd;
     border-radius: 4px;
     width: 100%;
+    box-sizing: border-box;
 }
 
-button {
+#find-address-btn{
     padding: 8px 16px;
+    margin:0px;
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     white-space: nowrap;
 }
+
+#address-default-container {
+    display: flex;
+    align-items: center; /* 세로 중앙 정렬 */
+    justify-content: center;
+    gap: 8px; /* 텍스트와 체크박스 간격 */
+    padding: 5px 10px; /* 적당한 패딩 추가 */
+    text-align: center;
+    width: 100%;
+
+}
+
+#address-default-checkbox{
+    width: 25px;
+    height: 25px;
+    margin: 0px;
+}
+
 </style>

@@ -1,27 +1,33 @@
 <template>
     <h2>{{ $t('mypage.member.title') }}</h2>
     <div class="mypage-member">
+        
         <h3>{{ $t('mypage.member.titleInfo') }}</h3>
         <hr class="hr-3">
+        
+
+        <!--QR IMG-->
+        <div class="qrContainer">
+            <img v-if="memberQRImg":src="memberQRImg" alt="Member QR Code" class="qr-image" />
+            <span v-else>{{ $t('mypage.member.QRInfo') }}</span>
+        </div>
+
         <!-- Member Info -->
         <div class="memberInfo">
             <label class="info">{{ $t('mypage.member.name') }}: </label><span>{{ member.memName }}</span>
             <label class="info">{{ $t('mypage.member.email') }}:</label><span>{{ member.memEmail }}</span>
             <label class="info">{{ $t('mypage.member.password') }}:</label><span>********</span>
             <label class="info">{{ $t('mypage.member.phone') }}:</label><span>{{ member.memPhone}}</span>
-
-            <!--QR IMG-->
-            <label class="info">{{ $t('mypage.member.QR') }}</label>
-            <div class="qrContainer">
-                <img v-if="memberQRImg":src="memberQRImg" alt="Member QR Code" class="qr-image" />
-                <span v-else>{{ $t('mypage.member.QRInfo') }}</span>
-            </div>
         </div>
+        <br>
+        
+
+
         <div class="InfoBtn">
             <!-- 수정하기 -->
-            <button @click="openModal(true, member)" type="button" class="btn btn-secondary">{{ $t('mypage.member.insertBtn') }}</button>
+            <button @click="openModal(true, member)" type="button" class="btn member-info-modify-button">{{ $t('mypage.member.insertBtn') }}</button>
             <!-- 탈퇴하기 -->
-            <button @click="promptDelete(member.memId, member.memEmail)" type="button" class="btn btn-secondary">{{ $t('mypage.member.deleteBtn') }}</button>
+            <button @click="promptDelete(member.memId, member.memEmail)" type="button" class="btn member-info-modify-button">{{ $t('mypage.member.deleteBtn') }}</button>
             <!-- 탈퇴 확인 모달 -->
             <Modal 
                 v-model="isDeleteConfirmModalVisible"
@@ -49,37 +55,41 @@
     </div>
 
     <!-- Edit Member Modal -->
-     <div v-if="isModalVisible" class="custom-modal">
+    <div v-if="isModalVisible" class="modal-overlay">
+     <div class="member-modify-modal">
         <div class="modal-content">
             <h2>{{ $t('mypage.member.modalTitle') }}</h2>
             <form @submit.prevent="handleSubmit">
                 <div class="form-group">
-                    <label for="memName">{{ $t('mypage.member.modalName') }}: </label>
+                    <label for="memName">{{ $t('mypage.member.modalName') }} </label>
                     <input v-model="currentMember.memName" type="text" id="memName" required/>
                 </div>
                 <div class="form-group">
-                    <label for="memPassword">{{ $t('mypage.member.modalPassword') }}: </label>
+                    <label for="memPassword">{{ $t('mypage.member.modalPassword') }} </label>
                     <input v-model="currentMember.memPassword" type="password" id="memPassword" :class="{ 'error-border': passwordError }" required/>
                     <span v-if="passwordPatternError" class="error-message">{{ $t('mypage.member.modalCheckPasswordPattern') }}</span>
                 </div>
                 <div class="form-group">
-                    <label for="memPassword2">{{ $t('mypage.member.modalPassword2') }}: </label>
+                    <label for="memPassword2">{{ $t('mypage.member.modalPassword2') }} </label>
                     <input v-model="currentMember.memPassword2" type="password" id="memPassword2" :class="{ 'error-border': passwordError }" required />
                     <span v-if="passwordError" class="error-message">{{ $t('mypage.member.modalCheckPassword') }}</span>
                 </div>
                 <div class="form-group">
-                    <label for="memPhone">{{ $t('mypage.member.modalPhone') }}: </label>
+                    <label for="memPhone">{{ $t('mypage.member.modalPhone') }} </label>
                     <input v-model="currentMember.memPhone" type="tel" id="memPhone" pattern="^010-\d{4}-\d{4}$" placeholder="010-1234-5678" :class="{ 'error-border': phoneError }" maxlength="13" required />
                     <span v-if="phoneError" class="error-message">{{ $t('mypage.member.modalCheckPhone') }}</span>
                 </div>
                 <div class="modal-actions">
-                    <button type="submit" class="btn-primary">{{ $t('mypage.member.modalSaveBtn') }}</button>
-                    <button type="button" @click="closeModal" class="btn-secondary">{{ $t('mypage.member.modalCancleBtn') }}</button>
+                    <button type="submit" class="member-info-modify-button">{{ $t('mypage.member.modalSaveBtn') }}</button>
+                    <button type="button" @click="closeModal" class="member-info-modify-button">{{ $t('mypage.member.modalCancleBtn') }}</button>
                 </div>
             </form>
         </div>
      </div>
+    </div>
      <div class="member-address">
+        <br>
+        <br>
         <h3>{{ $t('mypage.address.title') }}</h3>
         <hr class="hr-3">
         <!-- My Address List -->
@@ -100,8 +110,9 @@
                         <span>{{ addressInfo.detailAddress }}</span>
                     </div>
                 </div>
+                <!-- 주소 삭제 -->
                 <div class="address-actions">
-                    <button @click="addressDelete(addressInfo.addressId)" class="btn-secondary">
+                    <button @click="addressDelete(addressInfo.addressId)" class="delete-address-button">
                         {{ $t('mypage.address.deleteBtn') }}
                     </button>
                 </div>
@@ -112,7 +123,7 @@
         </div>
 
         <div class="InfoBtn">
-            <button @click="openAddressModal()" type="button" class="btn btn-secondary">{{ $t('mypage.address.addBtn') }}</button>
+            <button @click="openAddressModal()" type="button" class="btn member-info-modify-button">{{ $t('mypage.address.addBtn') }}</button>
             <!-- 모달 컴포넌트 -->
             <div v-if="showModal" class="modal-overlay">
                 <div class="modal-content">
@@ -122,6 +133,8 @@
                 </div>
             </div>
         </div>
+        <br>
+
      </div>
      <MessageModal v-model="isMessageModelVisible" :message="modalMessage">
         <p>{{ modalMessage }}</p>
@@ -412,45 +425,70 @@
 </script>
 
 <style scoped>
-    /* 기본적인 여백과 정렬 */
+/* 기본적인 여백과 정렬 */
+.member-address,
 .mypage-member {
-    margin-top: 30px;
-    padding: 0 20px;
+    display: flex;
+    flex-direction: column; /* 세로 정렬 */
+    align-items: center; /* 가로 중앙 정렬 */
+    justify-content: center; /* 세로 중앙 정렬 */
+    width: 100%; /* 전체 너비 */
+    text-align: center; /* 내부 텍스트도 중앙 정렬 */
 }
+
+
+
+
+
 
 /* 구분선 스타일 */
 hr.hr-3 {
-    border: 0;
-    height: 0;
-    border-top: 1px solid #e0e0e0;
+    width: 100%;
+    border: none; /* 기본 테두리 제거 */
+    border-top: 1px solid #d6d6d6; /* 구분선 스타일 */
+    margin: 20px 0; /* 위아래 여백 추가 */
 }
 
+
+
+
+
+
 /* 버튼 스타일 */
-.btn-secondary {
+.member-info-modify-button {
     margin-right: 15px;
     background-color: #f1f1f1;
     color: #333;
     border: 1px solid #ccc;
-    padding: 8px 15px;
+    margin:0px;
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    font-size: 12px;
+    width: 150px;
 }
 
-.btn-secondary:hover {
+.member-info-modify-button:hover {
     background-color: #e0e0e0;
 }
+
+
+
+
+
 
 /* 회원정보 */
 .memberInfo {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    gap: 12px;
     font-size: 16px;
+    margin:20px 40px 0px 40px;
+    max-width:400px;
 }
 
 .info {
-    text-align: right;
+    text-align: left;
     font-weight: bold;
     margin-right: 5px;
 }
@@ -460,31 +498,24 @@ span {
     font-weight: normal;
 }
 
-/* 수정 버튼 그룹 */
-.InfoBtn {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    max-width: 350px;
-    margin: 20px auto;
-    padding: 5px;
-}
+
+
+
+
 
 /* 모달 스타일 */
-.custom-modal {
+.member-modify-modal {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     background: white;
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     z-index: 1000;
     width: 100%;
     max-width: 500px;
     box-sizing: border-box;
+    border-radius: 10px;
 }
 
 /* 모달 내용 */
@@ -501,6 +532,10 @@ span {
     flex-direction: column;
     margin-bottom: 20px;
     width: 100%;
+}
+
+.form-group label{
+    text-align: left;
 }
 
 form{
@@ -530,6 +565,7 @@ input:focus {
     display: flex;
     justify-content: flex-end;
     gap: 15px;
+    height: 50px;
 }
 
 /* 에러 표시 */
@@ -553,23 +589,33 @@ input:focus {
 
 /* 오버레이 배경 */
 .modal-overlay {
-    position: fixed;  /* absolute를 fixed로 변경 */
-    top: 50%;        /* 중앙 정렬을 위한 설정 */
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5); /* 반투명 어두운 배경 */
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 999;
 }
 
+
 .modal-content {
-    position: relative;  /* 상대 위치 설정 */
-    max-height: 80vh;   /* 뷰포트 높이의 80% */
-    overflow-y: auto;   /* 내용이 많을 경우 스크롤 */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 가로 중앙 정렬 */
+    justify-content: center; /* 세로 중앙 정렬 */
+    text-align: center; /* 내부 텍스트 중앙 정렬 */
+    width: 100%;
+    max-width: 500px;
+    padding: 20px;
+    box-sizing: border-box;
 }
+
+
+
 
 /* 주소록 테이블 */
 .address-list {
@@ -584,17 +630,21 @@ input:focus {
     border-radius: 8px;
     padding: 15px;
     background-color: #fff;
+    min-width: 100px;
+    text-align: left;
+    
 }
 
 .address-content {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 5px;
 }
 
 .address-field {
     display: flex;
     gap: 10px;
+    font-size: 13px;
 }
 
 .address-field label {
@@ -616,12 +666,17 @@ input:focus {
     border-radius: 8px;
 }
 
+
+.delete-address-button{
+    font-size: 11px;
+    background-color: #4a4a4a;
+}
+
 /* 주소록 추가 버튼 */
 
 .InfoBtn button {
-    margin-top: 10px;
-    padding: 10px 15px;
-    background-color: #679669;
+
+    background-color: var(--main-green);
     color: white;
     border: none;
     border-radius: 4px;
@@ -630,23 +685,50 @@ input:focus {
 }
 
 .InfoBtn button:hover {
-    background-color: #679669;
+    background-color: var(--main-green);
 }
 
-/* QR 코드 표시 */
-.qrContainer {
+
+/* 수정 버튼 그룹 */
+.InfoBtn {
     display: flex;
+    justify-content: center;
     align-items: center;
     gap: 10px;
-    font-size: 14px;
+    max-width: 350px;
+    margin: 5px;
+    padding: 5px;
 }
 
+
+
+
+
+
+/* QR 코드 */
+.qrContainer {
+    display: flex;
+    flex-direction: column; /* 요소들을 세로로 정렬 */
+    align-items: center; /* 가로 중앙 정렬 */
+    justify-content: center; /* 세로 중앙 정렬 */
+    text-align: center; /* 텍스트 중앙 정렬 */
+    width: 100%; /* 부모 요소에 맞게 확장 */
+}
+
+
 .qr-image {
-    width: 100px;
-    height: 100px;
+    width: 150px;
+    height: 150px;
     object-fit: cover;
     border-radius: 4px;
+    display: block; /* 인라인 요소 특성 제거 */
 }
+
+
+
+
+
+
 
 /* 추가된 주소 모달 */
 .modal-content {

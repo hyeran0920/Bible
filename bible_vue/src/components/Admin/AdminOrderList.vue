@@ -1,7 +1,7 @@
 <template>
 
     <h1>{{ $t('mypage.order.orderHistory') }}</h1>
-
+    <div class="order-page">
     <div class="order-list">
         
 
@@ -9,7 +9,7 @@
         <div class="order-history-items">
             <div v-for="(orders, date) in groupedOrders" :key="date" class="order-group">
                 <h2 class="order-date">{{ date }}</h2>
-                <table>
+                <table class="admin-order-table">
                     <thead>
                         <tr>
                             <td>{{ $t('mypage.order.orderDate') }}</td>
@@ -34,6 +34,9 @@
             </div>
         </div>
     </div>
+
+    
+
     <div v-if="orderModalVisible" class="modal-overlay">
     <div class="order-modal">
         <!-- 주문 상세 정보 -->
@@ -71,20 +74,13 @@
             </tbody>
         </table>
 
+        <br>
+        <br>
         <!-- 구매 목록 -->
         <div class="order-list">
-            <h3>구매 항목</h3>
             <div class="order-info">
                 <table>
-                    <thead>
-                        <tr>
-                            <td>이미지</td>
-                            <td>책 제목</td>
-                            <td>개별 금액</td>
-                            <td>수량</td>
-                            <td>금액</td>
-                        </tr>                    
-                    </thead>
+
                     <tbody>
                         <tr v-for="order in orders" :key="order.orderId" class="order-item">
                             <td>
@@ -92,19 +88,20 @@
                                     class="bookImg" />
                             </td>
                             <td v-if="books[order.bookId]">{{ books[order.bookId]?.bookTitle || '불러오는 중...' }}</td>
-                            <td v-if="books[order.bookId]">{{ books[order.bookId].bookPrice }}</td>
-                            <td>{{ order.bookCount }}</td>
-                            <td v-if="books[order.bookId]">{{ order.bookCount * books[order.bookId].bookPrice }}</td>
+                            <td v-if="books[order.bookId]">{{ books[order.bookId].bookPrice }} 원</td>
+                            <td>{{ order.bookCount }} 권</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
-
+        <br>
+        <br>
         <!-- close modal -->
         <button  class="order-modal-close-button" @click="orderModalVisible = false">close</button>
     </div>
-</div>
+    </div>
+    </div>
 </template>
 
 <script>
@@ -219,6 +216,12 @@ export default {
 </script>
 
 <style>
+.order-page {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+  font-family: "Arial", sans-serif;
+}   
 
 
 /* 날짜별 그룹 스타일 */
@@ -226,8 +229,9 @@ export default {
     margin-bottom: 30px;
     padding: 15px;
     border-radius: 8px;
-    background-color: #f8f9fa;
+    background-color: #ffffff;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    /* border: 1px solid var(--primary-color); */
 }
 
 /* 날짜 제목 스타일 */
@@ -271,8 +275,8 @@ thead td{
     padding: 12px;
     text-align: center;
     font-weight: bold;
-    color: white;
-    background-color: var(--primary-color);
+    color: black;
+    background-color: white;
 }
 
 /* 테이블 본문 스타일 */
@@ -280,7 +284,7 @@ tbody td {
     padding: 10px;
     text-align: center;
     border-bottom: 1px solid #ddd;
-    
+    background-color: white;
 }
 
 /* 테이블 행 호버 효과 */
@@ -292,6 +296,17 @@ tbody tr:hover {
 
 
 
+
+.admin-order-table tbody tr td{
+    padding: 20px;
+}
+.admin-order-table thead tr td{
+    padding: 30px;
+}
+.admin-order-table tbody tr:hover{
+    background: #f1f1f1;
+    cursor: pointer;
+}
 
 
 
@@ -321,16 +336,10 @@ tbody tr:hover {
 
 
 
-.order-details {
-    width: 100%;
-    border-collapse: collapse;
-}
 
 .order-details th,
 .order-details td {
     text-align: left;
-    padding: 8px;
-    border: none; /* 구분선 제거 */
 }
 
 .order-details th {

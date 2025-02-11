@@ -1,4 +1,7 @@
 <template>
+  <div class="admin-book-list-container">
+
+  
     <table class="book-list-table">
       <thead>
         <tr>
@@ -40,13 +43,15 @@
           <td>{{ book.bookCategory }}</td>
           <td>{{ book.bookPrice }}</td>
           <td>{{ book.bookRentStock }}</td>
-          <td v-if="userRole === 'admin'">
+          <td class="book-modify-btns">
             <button class="edit-btn" @click="openModal(true, book)">Edit</button>
             <button class="delete-btn" @click="promptDelete(book.bookId, book.bookAuthor)">Delete</button>
           </td>
         </tr>
       </tbody>
     </table>
+  </div>
+
   </template>
   
   <script>
@@ -80,6 +85,7 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+
 table thead {
     background-color:  #ffffff;
     color:  #5c6b7e;
@@ -90,7 +96,7 @@ table thead {
 table tr,
 table th, 
 table td {
-    padding: 25px 5px;
+    padding: 20px 20px;
     text-align: center;
     border: none !important; 
 }
@@ -110,6 +116,7 @@ thead {
 .edit-btn{
   background-color: #edededdd;
   color:black;
+  margin-bottom: 10px;
 }
 .edit-btn:hover{
   background-color: var(--hover-color);
@@ -118,11 +125,16 @@ thead {
 
 .delete-btn{
   background-color: var(--danger-color);
-  height:30px;
+  
 }
 .delete-btn:hover{
   background-color: var(--danger-hover-color);
 }
+.book-modify-btns button{
+  height:35px;
+}
+
+
 
 
 
@@ -134,4 +146,8 @@ thead {
 .plain-link:hover {
   color: #6f90b1; /* 호버 시 색상 변경 (선택 사항*/
 }
+
+
+
+
 </style>

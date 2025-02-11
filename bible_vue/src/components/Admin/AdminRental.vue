@@ -2,7 +2,7 @@
     <div class="rent-container">
 
     
-    <h1>반납/대여</h1>
+    <h1>반납 / 대여</h1>
 
     <div class="qr-user-container">
         <div class="qr-scanner">
@@ -66,8 +66,8 @@
         </thead>
         <tbody>
             <tr v-for="book in rentBooks":key="book.bookId">
-                <td>대여중</td>
-                <td>{{ book.bookId }}</td>
+                <td class="in-use-text">대여중</td>
+                <td class="bookid-text">{{ book.bookId }}</td>
                 <td>{{ book.bookTitle }}</td>
                 <td>{{ book.bookAuthor }}</td>
                 <td>{{ book.bookPublisher }}</td>
@@ -295,7 +295,7 @@ export default {
     /* --primary-color: #6f90b1; */
     --primary-color: #035482;
     --secondary-color: #d8dfe7;
-    --danger-color: #e74c3c;
+    --danger-color: #ff4747;
     --danger-hover-color: #b32313;
     --white-color: #ffffff;
 
@@ -393,7 +393,9 @@ export default {
 }
 
 .member-delete-button{
-    background-color: var(--primary-color);
+    background-color: white;
+    border:1px solid var(--primary-color);
+    color: var(--primary-color);
 }
 .member-delete-button:hover{
     background-color: #5c6b7e;
@@ -471,6 +473,10 @@ export default {
     border: 1px solid #ddd;
 }
 
+.books-list-table tbody tr{
+    height: 20px !important;
+}
+
 .books-list-table tbody tr:hover {
     background-color: var(--secondary-color);
 }
@@ -480,6 +486,20 @@ export default {
     height: 20px;
     cursor: pointer;
 }
+
+.in-use-text{
+    color:#323232;
+    font-weight: bold;
+}
+
+.bookid-text{
+    color:#797979;
+
+}
+
+
+
+
 
 /* 삭제 버튼 */
 .books-list-table button {
@@ -496,9 +516,5 @@ export default {
 .books-list-table button:hover {
     background-color: #c0392b;
 }
-
-
-
-
 
 </style>

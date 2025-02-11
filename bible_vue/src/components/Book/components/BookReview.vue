@@ -1,7 +1,7 @@
 <template>
   <div class="review-section">
-    <h2>리뷰 작성</h2>
-    <div class="star-rating">
+    <h2>리뷰</h2>
+    <div class="star-rating" v-if="this.isLoggedIn">
       <label v-for="star in 5" :key="star">
         <input 
           type="radio" 
@@ -12,7 +12,7 @@
       </label>
     </div>
     <br>
-    <div class="review-input">
+    <div class="review-input" v-if="this.isLoggedIn">
       <textarea v-model="reviewComment" placeholder="리뷰를 작성해주세요." rows="4"></textarea>
       <button @click="submitReview">리뷰 작성하기</button>
     </div>
@@ -50,6 +50,11 @@ import { getCurrentInstance } from 'vue'
 import Modal from '../../modal/CustomModal.vue';
 
 export default {
+  data() {
+    return {
+      isLoggedIn: false,
+    };
+  },
   props: {
     bookId: Number,
   },
@@ -61,6 +66,12 @@ export default {
     const reviewStar = ref(0);
     const reviewComment = ref("");
     const reviews = ref([]);
+
+    // 로그인 상태 확인
+    let isLoggedIn = localStorage.getItem('isLoggedIn');
+    console.log("isLoggedIn: ", isLoggedIn);
+    if(isLoggedIn) this.isLoggedIn = isLoggedIn;
+    console.log("isLoggedIn: ", isLoggedIn);
 
     // ✅ API 요청 후 Vue가 반응형 데이터 변경을 감지하도록 처리
     const fetchReviews = async () => {

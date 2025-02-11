@@ -42,6 +42,7 @@
 
 <script>
 import Modal from '../../modal/CustomModal.vue';
+const REVIEW_URL = "/reviews/me";
 
 export default {
   components: {
@@ -113,10 +114,12 @@ export default {
   },
   async mounted() {
     try {
-      const reviewsInfo = await this.$axios.get(`/reviews/me`);
-      this.reviews = reviewsInfo.data; // 멤버 리뷰 목록 저장
-      console.log(reviews);
+      const response = await this.$axios.get(REVIEW_URL);
+      this.reviews = response.data; // 멤버 리뷰 목록 저장
+      // console.log(reviews);
     } catch (error) {
+      console.log("review 에러");
+
       this.errorMessage = this.$t('mypage.reviews.errorMessage');
       this.isErrorModalVisible = true;
 

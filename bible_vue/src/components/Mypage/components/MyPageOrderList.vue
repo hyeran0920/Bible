@@ -287,7 +287,9 @@ h1, h2, h3 {
     cursor: pointer;
 }
 
-
+#mypage-order-history-table tbody tr td{
+    padding:20px 10px 20px 10px;
+}
 
 
 

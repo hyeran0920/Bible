@@ -105,8 +105,11 @@ export default {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    margin-right: 10px;
+    margin-bottom: 10px;
+    width:100%;
+    box-sizing: border-box;
 }
+
 
 .upload-btn {
     padding: 10px 15px;

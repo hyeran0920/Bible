@@ -218,7 +218,7 @@
 
     /*예약 취소*/
     .cancel-btn {
-        background-color: #ff4444;
+        background-color: var(--danger-color);
         color: white;
         border: none;
         padding: 5px 10px;

@@ -205,6 +205,10 @@
         background-color: #333;
     }
 
+    .language-btn:hover {
+        background-color: #000000;
+    }
+
     .language-list {
         list-style: none;
         padding: 0;

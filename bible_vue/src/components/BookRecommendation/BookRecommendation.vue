@@ -16,40 +16,36 @@
 
       <button class="carousel-button right" @click="nextSlide">❯</button>
     </div>
-    <div class="button-container">
-      <button class="update-button" @click="updateRecommendations">추천 도서 업데이트</button>
-      <button class="delete-button" @click="deleteRecommendations">추천 도서 삭제</button>
-    </div>
   </div>
 </template>
 
 <script>
-import axios from "axios";
-//import { sortUserPlugins } from "vite";
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRoute } from "vue-router"; // URL에서 mem_id 가져오기
+import Cookies from "js-cookie"; // js-cookie 라이브러리 필요
 
 export default {
   setup() {
     const route = useRoute();
-    const memId = ref(route.query.mem_id || "1030"); // URL에서 mem_id 가져오기, 기본사용자 1030
+    const memId = Cookies.get("memId");
+    // const memId = ref(localStorage.getItem("memId") || "1030");
+    //const memId = ref("38668"); // 기본 사용자 ID (없을 경우 대비)
     const recommendations = ref([]);
     const currentIndex = ref(0);
     const itemsPerPage = 3;
 
     // 📌 URL에서 mem_id 가져오기
-    watch(
-      () => route.query.mem_id, // mem_id 값이 바뀔 때마다
-      (newMemId) => {
-        if (newMemId) {
-          memId.value = newMemId; // mem_id를 새로운 값으로 갱신
-          getRecommendations(); // 추천 도서 업데이트
-        }
-      }
-    );
-    console.log("Current mem_id:", memId.value);
     onMounted(() => {
-      getRecommendations(); // 페이지 로드 시 추천 도서 자동으로 가져오기
+      console.log("📢 onMounted 실행됨");
+      console.log("📢 route.query.mem_id 값:", route.query.mem_id);
+      if (route.query.mem_id) {
+        memId.value = route.query.mem_id;
+        console.log("📢 memId 값이 업데이트됨:", memId.value);
+      } else {
+        console.log("📢 route.query.mem_id 값이 없어서 기본값(1030) 사용됨");
+      }
+      console.log("📢 Vue에서 사용되는 memId:", memId.value);
+      getRecommendations(); // 페이지 로드 시 자동으로 추천 도서 가져오기
     });
 
     // 현재 보여줄 책 리스트
@@ -66,54 +62,15 @@ export default {
 
     // 추천받기 버튼 없이 자동으로 도서 가져오기
     const getRecommendations = async () => {
-      // const baseURL = this.$axios.defaults.baseURL;
-      // console.log(baseURL);
       try {
-        const response = await axios.get(
+        const response = await fetch(
           `http://localhost:8080/flask/recommend?mem_id=${memId.value}&n=10`
         );
-        //const data = await response.json();
-        recommendations.value = response.data.recommendations;
+        const data = await response.json();
+        recommendations.value = data.recommendations;
         currentIndex.value = 0;
       } catch (error) {
         console.error("추천 도서 불러오기 실패:", error);
-      }
-    };
-
-    //추천 도서 업데이트 (PUT 요청)
-    const updateRecommendations = async () => {
-      try {
-        const response = await axios.put(
-          "http://localhost:8080/flask/recommend",
-          { mem_id: memId.value, n: 10 }
-        );
-
-        if (response.status === 200) {
-          recommendations.value = response.data.recommendations;
-          alert("추천 도서가 업데이트되었습니다!");
-        } else {
-          console.error("추천 도서 업데이트 실패:", response.data.error);
-        }
-      } catch (error) {
-        console.error("추천 도서 업데이트 요청 실패:", error);
-      }
-    };
-
-    // 추천 도서 삭제 (DELETE 요청)
-    const deleteRecommendations = async () => {
-      try {
-        const response = await axios.delete(
-          `http://localhost:8080/flask/recommend?mem_id=${memId.value}`
-        );
-
-        if (response.status === 200) {
-          recommendations.value = [];
-          alert("추천 도서가 삭제되었습니다.");
-        } else {
-          console.error("추천 도서 삭제 실패:", response.data.error);
-        }
-      } catch (error) {
-        console.error("추천 도서 삭제 요청 실패:", error);
       }
     };
 
@@ -138,8 +95,6 @@ export default {
       recommendations,
       visibleBooks,
       getRecommendations,
-      updateRecommendations,
-      deleteRecommendations,
       nextSlide,
       prevSlide,
       displayedIndex,
@@ -184,7 +139,7 @@ export default {
   margin: 0 10px;
 }
 
-/* 책 이미지 크기 2배 확대 */
+/* 🖼️ 책 이미지 크기 2배 확대 */
 .book-image {
   width: 240px;
   height: 360px;
@@ -201,40 +156,6 @@ export default {
   -webkit-line-clamp: 3; /* 최대 3줄 */
   -webkit-box-orient: vertical;
   overflow: hidden;
-}
-
-.button-container {
-  margin-top: 20px;
-  display: flex;
-  gap: 10px;
-}
-
-.update-button,
-.delete-button {
-  padding: 10px 15px;
-  font-size: 16px;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
-  transition: 0.3s;
-}
-
-.update-button {
-  background-color: #4caf50;
-  color: white;
-}
-
-.update-button:hover {
-  background-color: #45a049;
-}
-
-.delete-button {
-  background-color: #f44336;
-  color: white;
-}
-
-.delete-button:hover {
-  background-color: #d32f2f;
 }
 
 /* 🔵 동그란 버튼 스타일 */

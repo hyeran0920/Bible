@@ -90,7 +90,7 @@ def recommend_post():
 def recommend_get():
     mem_id  = request.args.get("mem_id", type=int)
     n = request.args.get("n", default=5, type=int)
-
+    print(f"📢 recommend_books() 실행: mem_id={mem_id}, n={n}")  # 요청 확인용 로그
     if not mem_id:
         return jsonify({"error": "mem_id 필요합니다."}), 400
 

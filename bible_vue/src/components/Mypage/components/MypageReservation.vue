@@ -2,6 +2,8 @@
   <div class="container">
     <h2>{{ $t('mypage.reserv.title') }}</h2>
     <div class="reserv-cards">
+
+      <!-- book image -->
       <div v-for="item in reservList" :key="item.reservId" class="reserv-card">
         <div class="book-image">
           <img 
@@ -10,25 +12,31 @@
             :alt="item.bookTitle"
           />
         </div>
-        <div class="reserv-row">
-          <div class="reserv-label">{{ $t('mypage.reserv.bookName') }}</div>
-          <div class="reserv-value">
-            <router-link 
-              :to="`/book/${item.bookId}`" 
-              class="book-link">
-              {{ item.bookTitle }}
-            </router-link>
-          </div>
-        </div>
-        <div class="reserv-row">
-          <div class="reserv-label">{{ $t('mypage.reserv.reservDate') }}</div>
-          <div class="reserv-value">{{ changeDateTimeFormat(item.reservDate) }}</div>
-        </div>
+
+
+        <!-- reserve info -->
+        <table class="reserv-info-table">
+          <tbody>
+            <tr class="reserv-book-title">
+                <router-link 
+                  :to="`/book/${item.bookId}`" 
+                  class="book-link">
+                  {{ item.bookTitle }}
+                </router-link>
+            </tr>
+            <tr class="reserv-date" v-html="changeDateTimeFormat(item.reservDate)">
+            </tr>
+          </tbody>
+        </table>
+
+
+        <!-- 예약 취소 버튼 -->
         <button 
           @click="cancelReservation(item)" 
           class="reserv-cancel-btn">
           {{ $t('mypage.reserv.cancelBtn') }}
         </button>
+
       </div>
     </div>
     <!-- 예약 취소 확인 모달 -->
@@ -72,16 +80,23 @@ export default {
   methods: {
     changeDateTimeFormat(isodate) {
       if (!isodate) return "-";
-  
-      return new Date(isodate).toLocaleString('ko-KR', {
+
+      const date = new Date(isodate).toLocaleDateString('ko-KR', {
         year: 'numeric',
         month: '2-digit',
-        day: '2-digit',
+        day: '2-digit'
+      });
+
+      const time = new Date(isodate).toLocaleTimeString('ko-KR', {
         hour: '2-digit',
         minute: '2-digit',
         hour12: true
       });
+
+      //return `${date} <br> ${time}`; // 날짜와 시간 개행
+      return `${date} ${time}`;
     },
+
     // 예약 취소 버튼 클릭 시
     async cancelReservation(item){
       this.selectedReservation = item;
@@ -134,6 +149,11 @@ export default {
   font-family: "Arial", sans-serif;
 }   
 
+
+
+
+
+
 .reserv-group {
   margin-bottom: 20px;
   padding: 15px;
@@ -153,45 +173,52 @@ export default {
 
 .reserv-card {
   background: white;
-  border: 1px solid #ddd;
+  border: none;
   border-radius: 8px;
+
   padding: 15px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
   position: relative;
   display: flex;
   flex-direction: column;
 }
 
-.reserv-row {
+/* 예약 상세 테이블 */
+
+
+.reserv-date {
+  color: #a0a0a0;
+}
+
+.reserv-info-table {
   display: flex;
-  padding: 8px 0;
-  border-bottom: 1px solid #eee;
+  justify-content: center; /* 가로 중앙 정렬 */
+  align-items: center; /* 세로 중앙 정렬 */
+  text-align: center;
+  width: 100%;
+  margin:0px;
 }
 
-.reserv-row:last-child {
-  border-bottom: none;
-}
 
-.reserv-label {
-  flex: 0 0 120px;
-  font-weight: bold;
-  color: #666;
-}
 
-.reserv-value {
-  flex: 1;
-  word-break: break-word;
-}
+
+
 
 .requested { color: orange; font-weight: bold; }
 .cancled { color: red; font-weight: bold; }
 .inuse { color: green; font-weight: bold; }
 .returned { color: blue; font-weight: bold; }
 
+
+
+
+
+/* cancel book reservation button */
 .reserv-cancel-btn {
-  margin-top: 10px;
-  margin-left: 10px;
-  padding: 4px 8px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  padding: 8px 10px;
   border: none;
   border-radius: 4px;
   background: #ff4444;
@@ -205,24 +232,26 @@ export default {
   background: #cc0000;
 }
 
+
+
+/* book title */
 .book-link {
   text-decoration: none;
-  color: #007bff;
+  color: rgb(101, 101, 101) !important;
   cursor: pointer;
 }
 
 .book-link:hover {
-  text-decoration: underline;
   color: #0056b3;
+  text-decoration: none !important;
 }
 
 .book-image {
   width: 100%;
   height: 200px;
-  margin-bottom: 15px;
+  margin-bottom: 0px;
   position: relative;
   overflow: hidden;
-  border-radius: 8px;
   display: flex;
   justify-content: center;
   align-items: center;

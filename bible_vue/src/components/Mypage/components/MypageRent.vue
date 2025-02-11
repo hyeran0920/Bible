@@ -1,9 +1,9 @@
 <template>
-  <div class="container">
+  <div>
     <h2>{{ $t('mypage.rent.title') }}</h2>
     <!-- 상태 필터 추가 -->
     <div class="status-filter">
-      <select v-model="selectedStatus" @change="resetAndFetch">
+      <select class="select-book-status" v-model="selectedStatus" @change="resetAndFetch">
         <option value="" selected>{{ $t('mypage.rent.all') }}</option>
         <option value="REQUESTED">{{ $t('mypage.rent.requested') }}</option>
         <option value="CANCLED">{{ $t('mypage.rent.cancle') }}</option>
@@ -13,7 +13,7 @@
     </div>
 
     <div v-for="date in rentList" :key="date.rentDate" class="rent-group">
-      <h3>{{ $t('mypage.rent.rentDate') }}: {{ changeDateTimeFormat(date.rentDate) }}</h3>
+      <div id="mypage-rent-date">{{ $t('mypage.rent.rentDate') }} {{ changeDateTimeFormat(date.rentDate) }}</div>
       <div class="rent-cards">
         <div v-for="item in date.rents" :key="item.rentId" class="rent-card">
           <div class="book-image">
@@ -24,7 +24,6 @@
             />
           </div>
           <div class="rent-row">
-            <div class="rent-label">{{ $t('mypage.rent.bookName') }}</div>
             <div class="rent-value">
               <router-link 
                 :to="`/book/${item.bookId}`" 
@@ -42,11 +41,12 @@
             <div class="rent-value">{{ changeDateFormat(item.rentFinishDate) }}</div>
           </div>
           <div class="rent-row">
-            <div class="rent-label">{{ $t('mypage.rent.status') }}</div>
             <div class="rent-value" :class="getStatusClass(item.rentStatus)">
               {{ getRentStatusLabel(item.rentStatus) }}
             </div>
           </div>
+
+          <!-- rent canccel button -->
           <button 
             v-if="item.rentStatus=='REQUESTED'" 
             @click="cancelRentRequest(item)" 
@@ -56,6 +56,10 @@
         </div>
       </div>
     </div>
+
+
+
+
 
     <!-- 페이지네이션 추가 -->
     <div class="pagination" v-if="totalPages > 0">
@@ -260,19 +264,20 @@ export default {
 </script>
 
 <style>
-  .container {
-    max-width: 900px;
-    margin: auto;
-    padding: 20px;
-    font-family: "Arial", sans-serif;
-  }   
+
+
+  #mypage-rent-date{
+    text-align: center;
+    font-weight: bold;
+    color: var(--dark-green);
+  }
+
 
   .rent-group {
     margin-bottom: 20px;
     padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background: #f9f9f9;
+    border: none;
+
     overflow: hidden;
   }
 
@@ -286,7 +291,6 @@ export default {
 
   .rent-card {
     background: white;
-    border: 1px solid #ddd;
     border-radius: 8px;
     padding: 15px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -298,23 +302,24 @@ export default {
   .rent-row {
     display: flex;
     padding: 8px 0;
-    border-bottom: 1px solid #eee;
+    margin: 0px 20px 0px 20px;
   }
 
-  .rent-row:last-child {
-    border-bottom: none;
-  }
 
   .rent-label {
     flex: 0 0 120px;
-    font-weight: bold;
-    color: #666;
+    color: #a4a4a4;
   }
 
   .rent-value {
     flex: 1;
+    color: #818181;
     word-break: break-word;
   }
+  .book-link{
+    font-weight: bold !important;
+  }
+
 
   .requested { color: orange; font-weight: bold; }
   .cancled { color: red; font-weight: bold; }
@@ -323,11 +328,10 @@ export default {
 
   .rent-cancel-btn {
     margin-top: 10px;
-    margin-left: 10px;
-    padding: 4px 8px;
+    padding: 8px 10px;
     border: none;
     border-radius: 4px;
-    background: #ff4444;
+    background: var(--dark-green);
     color: white;
     cursor: pointer;
     align-self: center;
@@ -353,6 +357,7 @@ export default {
     width: 100%;
     height: 200px;
     margin-bottom: 15px;
+    margin-top:15px;
     position: relative;
     overflow: hidden;
     border-radius: 8px;
@@ -408,18 +413,23 @@ export default {
 
   .page-info {
     padding: 4px 8px; /* 패딩 크기 줄임 */
-    border: 1px solid #ddd;
     border-radius: 4px;
-    background-color: #f9f9f9;
-    font-size: 14px; /* 폰트 크기 줄임 */
+    font-size: 20px; /* 폰트 크기 줄임 */
     min-width: 60px; /* 최소 너비 설정 */
     text-align: center; /* 텍스트 중앙 정렬 */
     color: #495057;
   }
 
+
+
+
+  .select-book-status{
+    border:none;
+  }
+
   @media (max-width: 600px) {
     .rent-card {
-      font-size: 14px;
+      font-size: 12px;
     }
     
     .rent-label {

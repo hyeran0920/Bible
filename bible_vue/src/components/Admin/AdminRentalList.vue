@@ -378,7 +378,8 @@
     #book-rent-list td{
         padding:15px;
         margin: 10px;
-        height: 80px;
+        height: 65px;
+        font-size: 14px;
     }
 
     #book-rent-list th{
@@ -387,6 +388,7 @@
 
     .rent-status {
         text-align: left;
+        font-size: 10px;
     }
     .rent-management-btns{
         width: 100px;
@@ -417,16 +419,18 @@
     }
 
     .renew-btn {
-        background-color: #25b129;
+        background-color: var(--primary-color);
         color: white;
+        margin-bottom: 10px;
     }
     .renew-btn:hover{
-        background-color: #469048;
+        background-color: #000000;
     }
 
     .return-btn {
-        background-color: #62b3e1;
-        color: white;
+        background-color: white;
+        border: 1px solid var(--primary-color);
+        color: var(--primary-color);
     }
     .return-btn:hover {
         background-color: #457fa0;
@@ -435,7 +439,7 @@
 
     .close-btn {
         margin-top: 0px;
-        padding: 8px 16px;
+        padding: 8px 10px;
         background-color: var(--danger-color);
         color: white;
         border: none;

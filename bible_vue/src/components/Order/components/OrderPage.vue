@@ -37,14 +37,14 @@
     <!--결제 버튼-->
     <button @click="confirmPayment()" class="pay-btn">결제하기</button>
 
-    <Modal v-model="isInfoModalVisible" @confirm="onConfirm">
+    <Modal v-model="isModalVisible" @confirm="onConfirm">
       <p>{{ singleModalMessage }}</p>
     </Modal>
   </div>
 
 
   <!--주소 변경 모달 창-->
-  <div v-if="isModalVisible" class="modal-overlay" @click.self="closeAddressModal">
+  <div v-if="isAddressChangeModalVisible" class="modal-overlay" @click.self="closeAddressModal">
     <div class=" modal-content">
 
       <div class="InfoBtn">
@@ -103,6 +103,7 @@ export default {
   props: ['cartIds'], // Router에서 받은 cartIds
   components: {
     Modal,
+    AddressSearch,
   },
   data() {
     return {
@@ -112,15 +113,13 @@ export default {
       selectedAddress: {},     // 최종 결정한 주소 저장
       totalPrice: 0,           // 총 가격
 
-      isModalVisible: false,
+      isAddressChangeModalVisible: false,
       isAddAddressModalVisible: false,
-      isInfoModalVisible: false,
+      isModalVisible: false,
       singleModalMessage: '',
     };
   },
-  components: {
-    AddressSearch,
-  },
+  
   async mounted() {
     if (!this.cartIds) return; // cartIds가 없으면 API 호출하지 않음
 
@@ -192,6 +191,11 @@ export default {
 
     //결제----------------------------------------------------
     async confirmPayment() {
+      if (!this.selectedAddress || 
+        Object.keys(this.selectedAddress).length === 0) {
+        this.openModal("배송지를 선택해주세요.");
+        return;
+      }
       try {
        
         //Insert Order History
@@ -246,10 +250,10 @@ export default {
 
     //주소변경 모달 띄워짐
     openAddressModal() {
-      this.isModalVisible = true;
+      this.isAddressChangeModalVisible = true;
     },
     closeAddressModal() {
-      this.isModalVisible = false;
+      this.isAddressChangeModalVisible = false;
     },
 
 
@@ -298,11 +302,11 @@ export default {
     },
     onConfirm(){
       console.log("확인 버튼이 클릭되었습니다.");
-      this.isInfoModalVisible = false;
+      this.isModalVisible = false;
     },
     openModal(message){
       this.singleModalMessage = message;
-      this.isInfoModalVisible = true;
+      this.isModalVisible = true;
     },
   }
 };

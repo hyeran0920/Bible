@@ -1,18 +1,9 @@
 <template>
   <div class="order-container">
-    <h1>🛒 주문 내역</h1>
+    <h2>주문 내역</h2>
 
     <table v-if="cartArray.length" class="order-table">
-      <thead>
-        <tr>
-          <th>이미지</th>
-          <th>제목</th>
-          <th>저자</th>
-          <th>단가</th>
-          <th>수량</th>
-          <th>합계</th>
-        </tr>
-      </thead>
+
       <tbody>
         <tr v-for="cart in cartArray" :key="cart.cartId">
           <td><img :src="getBookImageUrl(cart.bookId)" :alt="books[cart.bookId]?.bookTitle || '책 이미지 없음'"
@@ -20,33 +11,30 @@
           <td>{{ books[cart.bookId]?.bookTitle || '제목 없음' }}</td>
           <td>{{ books[cart.bookId]?.bookAuthor || '저자 없음' }}</td>
           <td>{{ books[cart.bookId]?.bookPrice?.toLocaleString() || '0' }}원</td>
-          <td>× {{ cart.bookCount }}</td>
-          <td>= {{ (cart.bookCount * (books[cart.bookId]?.bookPrice || 0)).toLocaleString() }}원</td>
+          <td>{{ cart.bookCount }} 권</td>
         </tr>
       </tbody>
     </table>
     <p v-else class="loading-text">로딩 중...</p>
 
 
-    <div class="address">
-      <h3>주소</h3>
+    <div class="order-address-info">
+      
       <div class="selected-address" v-if="selectedAddress && Object.keys(selectedAddress).length > 0">
-        <p><strong>수취인:</strong> {{ selectedAddress.receiverName }}</p>
-        <p><strong>우편번호:</strong> [{{ selectedAddress.postcode }}]</p>
-        <p><strong>주소:</strong> {{ selectedAddress.address }}</p>
-        <p><strong>상세 주소:</strong> {{ selectedAddress.detailAddress }}</p>
-        <p><strong>연락처:</strong> {{ selectedAddress.receiverPhone }}</p>
+        <p class="selected-address-receiver"> {{ selectedAddress.receiverName }} </p>
+        <p class="selected-address-address">{{ selectedAddress.address }} <br> {{ selectedAddress.detailAddress }}</p>
+        <p class="selected-address-receiver-phone">{{ selectedAddress.receiverPhone }}</p>
       </div>
-      <div v-else>기본주소가 없습니다</div>
 
-      <div><button @click="openAddressModal">배송지 변경</button></div>
+      <div v-else>기본주소가 없습니다</div>
+      <button id="order-address-change-btn" @click="openAddressModal">배송지 변경</button>
     </div>
 
     <div class="total-price">
-      총 결제 금액: <strong>{{ totalPrice.toLocaleString() }} 원</strong>
+      총 결제 금액 <strong>{{ totalPrice.toLocaleString() }} 원</strong>
     </div>
 
-    <!--결제 버튼튼-->
+    <!--결제 버튼-->
     <button @click="confirmPayment()" class="pay-btn">결제하기</button>
 
     <Modal v-model="isInfoModalVisible" @confirm="onConfirm">
@@ -60,43 +48,35 @@
     <div class=" modal-content">
 
       <div class="InfoBtn">
-        <button @click="openAddAddressModal()" type="button" class="btn btn-secondary">주소 추가</button>
+        <button @click="openAddAddressModal()" type="button" class="order-add-address-btn">+ 주소 추가</button>
       </div>
 
 
 
-      <table>
-        <thead>
-          <tr>
-            <th>선택</th>
-            <th>수취인 명</th>
-            <th>우편주소</th>
-            <th>도로명 주소</th>
-            <th>상세 주소</th>
-            <th>수취인 번호</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody v-if="addressArray.length > 0">
-          <tr v-for="addressInfo in addressArray" :key="addressInfo.addressId">
-            <td><input type="checkbox" @change="selectAddress(addressInfo)"></td>
-            <td>{{ addressInfo.receiverName }}</td>
-            <td>[{{ addressInfo.postcode }}]</td>
-            <td>{{ addressInfo.address }}</td>
-            <td>{{ addressInfo.detailAddress }}</td>
-            <td>{{ addressInfo.receiverPhone }}</td>
-            <td>
-              <button @click="setDefaultAddress(addressInfo)">기본주소 지정</button>
-              <button @click="addressDelete(addressInfo.addressId)">삭제</button>
-            </td>
-          </tr>
-        </tbody>
-        <tbody v-else>
-          <tr>
-            <td colspan="3">저장된 주소가 없습니다.</td>
-          </tr>
-        </tbody>
-      </table>
+      <!-- 주소 목록을 카드 형식으로 표시 -->
+      <div v-if="addressArray.length > 0" class="order-address-list">
+        <div v-for="addressInfo in addressArray" :key="addressInfo.addressId" class="order-address-card">
+          <div><input type="checkbox" @change="selectAddress(addressInfo)"></div>
+          <!-- 카드 헤더 -->
+          <div class="order-address-card-head">
+            <span class="order-address-recipient">{{ addressInfo.receiverName }}</span>
+            <span class="order-address-phone">{{ addressInfo.receiverPhone }}</span>
+          </div>
+
+          <!-- 카드 본문 -->
+          <div class="order-address-card-content">
+            <p>[{{ addressInfo.postcode }}]</p>
+            <p> {{ addressInfo.address }}</p>
+            <p>{{ addressInfo.detailAddress }}</p>
+          </div>
+
+        </div>
+      </div>
+
+      <p v-else>저장된 주소가 없습니다.</p>
+
+
+
 
       <!--주소선택창 닫기-->
       <button @click="closeAddressModal" class="btn btn-danger">닫기</button>
@@ -336,7 +316,7 @@ export default {
 /* 기본 레이아웃 */
 .order-container {
   max-width: 800px;
-  margin: 20px auto;
+  margin: 20px 10px;
   padding: 20px;
   background: #f9f9f9;
   border-radius: 10px;
@@ -358,26 +338,19 @@ export default {
 .order-table {
   width: 100%;
   border-collapse: collapse;
-  background: white;
   border-radius: 10px;
   overflow: hidden;
-}
-
-.order-table th,
-.order-table td {
-  padding: 12px;
-  border-bottom: 1px solid #ddd;
-}
-
-.order-table th {
-  background: #007bff;
-  color: white;
-  font-weight: bold;
+  
 }
 
 .order-table td {
   text-align: center;
+  padding:20px;
 }
+
+
+
+
 
 /* 이미지 스타일 */
 .bookImg {
@@ -391,6 +364,10 @@ export default {
   transform: scale(1.1);
 }
 
+
+
+
+
 /* 로딩 텍스트 */
 .loading-text {
   font-size: 18px;
@@ -398,21 +375,26 @@ export default {
   margin-top: 20px;
 }
 
+
+
+
 /* 총 결제 금액 */
 .total-price {
-  font-size: 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 18px;
   font-weight: bold;
-  margin-top: 20px;
+  margin-top: 50px;
+  padding: 10px 0; /* 위아래 여백 추가 */
   color: #333;
 }
 
-/* 버튼 스타일 */
-.order-actions {
-  margin-top: 20px;
-}
 
+
+/* 버튼 스타일 */
 .pay-btn {
-  background: #28a745;
+  background: var(--dark-green);
   color: white;
   font-size: 18px;
   padding: 12px 24px;
@@ -420,49 +402,25 @@ export default {
   border-radius: 5px;
   cursor: pointer;
   transition: background 0.3s ease-in-out;
+  margin-top:50px;
 }
 
-.pay-btn:hover {
-  background: #218838;
-}
 
-/* ✅ 모바일 최적화 */
-@media screen and (max-width: 768px) {
-  .order-container {
-    width: 95%;
-    padding: 15px;
-  }
 
-  .order-table {
-    font-size: 14px;
-  }
 
-  .order-table th,
-  .order-table td {
-    padding: 10px;
-  }
 
-  .bookImg {
-    width: 60px;
-  }
 
-  .total-price {
-    font-size: 18px;
-  }
 
-  .pay-btn {
-    font-size: 16px;
-    padding: 10px 20px;
-  }
 
-}
 
+
+
+/* modal */
 .modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
+
   width: 100%;
   height: 100%;
+  padding:0px;
   background: rgba(0, 0, 0, 0.5);
   /* 반투명 검정 배경 */
   display: flex;
@@ -478,9 +436,141 @@ export default {
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   width: 500px;
   /* 모달 크기 조정 */
-  max-width: 90%;
+  max-width: 80%;
   /* 화면이 작을 경우 최대 크기 */
   position: relative;
   text-align: center;
 }
+
+
+
+
+
+/* address */
+
+
+.order-add-address-btn{
+  background-color: white;
+  border: 1px solid var(--dark-green);
+  color: var(--dark-green);
+}
+
+#order-address-change-btn {
+  background-color: white;
+  border: 1px solid var(--main-green);
+  color: var(--main-green);
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: 20px; /* 위쪽 여백 추가 */
+}
+.order-address-info{
+  margin-top: 40px;
+  margin-bottom: 20px;
+}
+
+.selected-address p{
+  text-align: left;
+}
+
+.selected-address-receiver{
+  font-weight: bold;
+}
+
+.selected-address-address{
+  color: #707070;
+}
+/* ADDRESS EDIT */
+/* 개별 주소 카드 스타일 */
+.order-address-card {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative; /* 체크박스 위치 조정을 위해 필요 */
+}
+
+/* 선택 버튼 (체크박스) 위치 조정 */
+.order-address-card input[type="checkbox"] {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  transform: scale(1.4); /* 체크박스 크기 조정 */
+}
+
+/* 카드 헤더 (수취인명, 전화번호) */
+.order-address-card-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  padding-bottom: 5px;
+  margin-left: 30px; /* 체크박스와 간격 조정 */
+}
+
+/* 📌 카드 본문 (주소 정보) - 왼쪽 정렬 */
+.order-address-card-content {
+  text-align: left;
+  margin-left: 30px; /* 체크박스와 간격 조정 */
+}
+
+.order-address-card-content p {
+  font-size: 14px;
+  margin: 5px 0;
+  color: #555;
+}
+
+
+
+
+
+
+
+
+#order-address-list{
+  font-size:12px;
+}
+#order-address-list thead th{
+  font-size:14px;
+  font-weight: bold;
+}
+
+
+
+
+
+/* 모바일 최적화 */
+@media screen and (max-width: 768px) {
+
+
+  .order-table {
+    font-size: 12.5px;
+  }
+
+  .order-table th,
+  .order-table td {
+    padding: 8px;
+  }
+
+  .bookImg {
+    width: 50px;
+  }
+
+  .total-price {
+    font-size: 18px;
+  }
+
+  .pay-btn {
+    font-size: 16px;
+    padding: 10px 20px;
+  }
+
+}
+
+
 </style>

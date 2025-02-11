@@ -41,7 +41,9 @@
         </div>
     </div>
     
-    
+    <Modal v-model="isSystemModal" @confirm="onConfirm">
+        <p>{{ systemMessage }}</p>
+    </Modal> 
     
     
     <div class="rent-return-btn" 
@@ -89,8 +91,12 @@
 
 <script>
 import { Html5QrcodeScanner } from "html5-qrcode";
+import Modal from "../modal/CustomModal.vue";
 
 export default {
+    components:{
+        Modal,
+    },
     data() {
         return {
             rentBooks:[], //회원이 대여하고 있는 책들
@@ -98,6 +104,8 @@ export default {
             selectedBookIds:[], //선택된 책들
             scannedData: null, // QR code data
             currentMember: {}, // 회원 정보
+            isSystemModal: false,
+            systemMessage: '',
         };
     },
     mounted() {
@@ -117,6 +125,14 @@ export default {
         );
     },
     methods: {
+        //모달 창 정의
+        openSystemModal(message){
+            this.isSystemModal = true;
+            this.systemMessage = message;
+        },
+        onConfirm() {
+            this.isSystemModal = false;
+        },
 
         //memId로 member 정보 가져오기
         async fetchCurrentMember(memId) {
@@ -134,11 +150,11 @@ export default {
 
         async rentOrReturnBook(memId) {
             if(!memId){
-                alert("선택된 회원이 없습니다");
+                this.openSystemModal("선택된 회원이 없습니다.");
                 return;
 
             }else if(!Array.isArray(this.selectedBookIds) || this.selectedBookIds.length === 0) {
-                alert("선택된 책이 없습니다");
+                this.openSystemModal("선택된 책이 없습니다.");
                 return;
             }
 
@@ -151,7 +167,7 @@ export default {
                 });
 
                 //console.log("대여/반납 성공:", response.data);
-                alert("대여/반납 성공");
+                this.openSystemModal("대여/반납 성공");
 
                 //tempBooks 갱신
                 this.tempBooks = this.tempBooks.filter(book => !this.selectedBookIds.includes(book.bookId));
@@ -260,7 +276,7 @@ export default {
             if (bookId) {
 
                 if (!this.currentMember || Object.keys(this.currentMember).length === 0) {
-                    alert("회원 정보를 인식해 주세요");
+                    this.openSystemModal("회원 정보를 인식해 주세요.");
                     return;
                 }
                 console.log("책 QR 감지, 책 ID:", bookId);

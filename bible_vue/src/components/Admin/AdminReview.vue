@@ -40,14 +40,29 @@
       </ul>
       <p v-else>리뷰가 없습니다!</p>
     </div>
+    <Modal v-model="isSsystemModal" @confirm="onConfirm">
+      <p> {{ systemMessage }}</p>
+    </Modal>
+    <Modal v-model="isDsystemModal" showCancel
+        @confirm="onConfirm1" @cancel="onCancel">
+      <p>{{ systemMessage }}</p>
+    </Modal>
   </template>
   
   <script>
+  import Modal from '../modal/CustomModal.vue';
   export default {
+    components:{
+      Modal,
+    },
     data() {
       return {
         reviews: [], // 리뷰 리스트 저장
         books:{},
+        isSsystemModal: false,  //모달 상태 저장
+        isDsystemModal: false,
+        systemMessage: '',
+        pendingReviewId: null,
       };
     },
     created() {
@@ -71,11 +86,7 @@
 
       // 리뷰 삭제 전에 확인 메소드
       confirmDelete(reviewId) {
-        if (confirm('정말 삭제하시겠습니까?')) {
-          this.deleteReview(reviewId); // 확인 클릭 시 삭제
-        } else {
-          console.log('삭제 취소');
-        }
+        this.openDoubleModal('정말 삭제하시겠습니까?', reviewId);
       },
       // 리뷰 삭제 메소드
       deleteReview(reviewId) {
@@ -84,7 +95,7 @@
           .then((response) => {
             // 삭제 성공 시 리뷰 리스트에서 해당 리뷰 제거
             this.reviews = this.reviews.filter((review) => review.reviewId !== reviewId);
-            alert('리뷰가 삭제되었습니다!'); // 삭제 알림
+            this.openSingleModal('리뷰가 삭제되었습니다.'); // 삭제 알림
           })
           .catch((error) => {
             console.error('리뷰 삭제에 실패했습니다:', error);
@@ -93,6 +104,27 @@
       // 날짜 포맷팅 메소드
       formatDate(date) {
         return new Date(date).toLocaleDateString('ko-KR');
+      },
+      //모달 창
+      openSingleModal(message){
+        this.isSsystemModal = true;
+        this.systemMessage = message;
+      },
+      onConfirm(){
+        this.isSsystemModal = false;
+      },
+      openDoubleModal(message, reviewId){
+        this.isDsystemModal = true;
+        this.systemMessage = message;
+        this.pendingReviewId = reviewId;
+      },
+      onConfirm1(){
+        this.deleteReview(`${this.pendingReviewId}`); 
+        this.isDsystemModal = false;
+      },
+      onCancel(){
+        console.log('삭제 취소');
+        this.isDsystemModal = false;
       }
     }
   };

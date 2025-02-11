@@ -2,7 +2,6 @@ package com.library.bible.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -39,7 +38,6 @@ public class SecurityConfig {
     private final CorsConfiguration corsConfiguration;
     private final ExceptionResponseUtil exceptionResponseUtil;
     private final PrintLog printLog;
-    private final RedisTemplate<String, String> redisTemplate;
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -61,7 +59,7 @@ public class SecurityConfig {
 			.formLogin(AbstractHttpConfigurer::disable)
 			.httpBasic(AbstractHttpConfigurer::disable)
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .addFilter(new JwtAuthenticationFilter(authenticationManager(), exceptionResponseUtil, jwtProvider, printLog, redisTemplate)) // AuthenticationManager가 로그인 실행함
+            .addFilter(new JwtAuthenticationFilter(authenticationManager(), exceptionResponseUtil, jwtProvider, printLog)) // AuthenticationManager가 로그인 실행함
 			.addFilter(new JwtTokenValidationFilter(authenticationManager(), jwtProvider, exceptionResponseUtil, printLog)) // AuthenticationManager 필요함
 			.exceptionHandling(e -> e // 에러 처리
 	                .authenticationEntryPoint(authenticationEntryPoint)
@@ -74,15 +72,13 @@ public class SecurityConfig {
             )
             .authorizeHttpRequests(authorizeRequests ->
                 authorizeRequests
+                	// member
 	                .requestMatchers(HttpMethod.POST, "/api/members/user").permitAll()  // 일반 사용자 생성은 모두 허용
 	                .requestMatchers(HttpMethod.GET, "/api/members/token").permitAll()     // token으로 member 조회
 	                .requestMatchers(HttpMethod.POST, "/api/members/admin").hasRole("ADMIN")  // 관리자만 관리자 생성 가능
 	                .requestMatchers(HttpMethod.GET, "/api/members/me").hasAnyRole("ADMIN", "USER")  // 조회는 관리자만 가능
-	                .requestMatchers(HttpMethod.GET, "/api/members/me/addresses/**").hasRole("USER")     // 본인 주소 조회
-	                .requestMatchers(HttpMethod.GET, "/api/members/*/addresses/**").hasRole("USER")      // ID로 주소 조회
 	                .requestMatchers(HttpMethod.GET, "/api/members/**").hasRole("ADMIN")  // 조회는 관리자만 가능
-//                    .requestMatchers("/**").permitAll(); // 모든 요청에 대해 인증 없이 접근 허용
-                    .anyRequest().permitAll() // 그 외 요청은 인증 필요
+                    .anyRequest().permitAll() // 그 외 요청은 인증 허용
 //                    .anyRequest().authenticated()); // 그 외 요청은 인증 필요
             );
         return http.build();

@@ -105,17 +105,22 @@
             :bookId="selectedBookId"
             @close="closeBookModal"
         />
+        <Modal v-model="isSystemModal" @confirm="onConfirm">
+            <p>{{ systemMessage }}</p>
+        </Modal>
     </div>
 </template>
 
 <script>
     import BookInfoModal from './BookInfoModal.vue';
+    import Modal from '../modal/CustomModal.vue';
     const RENT_URL = "/rents";
   
     export default {
         name: 'AdminRentalList',
         components: {
-            BookInfoModal
+            BookInfoModal,
+            Modal,
         },
         data() {
             return {
@@ -136,7 +141,11 @@
 
                 // 북 모달
                 showBookModal: false,
-                selectedBookId: null
+                selectedBookId: null,
+
+                // 커스텀 모달
+                isSystemModal: false,
+                systemMessage: '',
             }
         },
         methods: {
@@ -187,10 +196,10 @@
                         rentIds: [rentId]
                     });
                     await this.fetchRents();
-                    alert("연장에 성공하였습니다.");
+                    this.openSystemModal("연장에 성공하였습니다.");
                 } catch (error) {
                     const errorMessage = error.response?.data?.message || "연장에 실패했습니다.";
-                    alert(errorMessage);
+                    this.openSystemModal(errorMessage);
                     console.error('연장에 실패했습니다:', error);
                 }
             },
@@ -202,10 +211,10 @@
                         bookIds: [bookId]
                     });
                     await this.fetchRents();
-                    alert("반납에 성공하였습니다.");
+                    this.openSystemModal("반납에 성공하였습니다.");
                 } catch (error) {
                     const errorMessage = error.response?.data?.message || "반납에 실패했습니다.";
-                    alert(errorMessage);
+                    this.openSystemModal(errorMessage);
                     console.error('반납에 실패했습니다:', error);
                 }
             },
@@ -217,10 +226,10 @@
                         rentIds: [rentId]
                     });
                     await this.fetchRents();
-                    alert("대여 신청 취소에 성공하였습니다.");
+                    this.openSystemModal("대여 신청 취소에 성공하였습니다.");
                 } catch (error) {
                     const errorMessage = error.response?.data?.message || "대여 신청 취소에 실패했습니다.";
-                    alert(errorMessage);
+                    this.openSystemModal(errorMessage);
                     console.error('대여 신청 취소에 실패했습니다:', error);
                 }
             },
@@ -249,7 +258,7 @@
                     this.showModal = true;
                 } catch (error) {
                     const errorMessage = error.response?.data?.message || "사용자별 대여 목록을 불러오는데 실패했습니다.";
-                    alert(errorMessage);
+                    this.openSystemModal(errorMessage);
                     console.error('사용자별 대여 내역을 불러오는데 실패했습니다:', error);
                 }
             },
@@ -274,6 +283,14 @@
             closeBookModal() {
                 this.showBookModal = false;
                 this.selectedBookId = null;
+            },
+            //커스텀 모달
+            openSystemModal(message){
+                this.isSystemModal = true;
+                this.systemMessage = message;
+            },
+            onConfirm(){
+                this.isSystemModal = false;
             },
         },
         mounted() {

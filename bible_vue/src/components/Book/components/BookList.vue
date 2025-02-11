@@ -9,7 +9,6 @@
         <p class="book-author">{{ book.bookAuthor }}</p>
         <p class="book-publisher">{{ book.bookPublisher }} · {{ book.bookReleaseDate }}</p>
         <br>
-        <br>
         <p class="book-price">
           <span class="discount" v-if="book.bookDiscount">{{ $filters.numberWithCommas(book.bookDiscount) }}% </span>
           <span class="final-price">{{ $filters.numberWithCommas(book.bookPrice) }}원</span>
@@ -39,92 +38,108 @@ export default {
 
 <style scoped>
 .book-list {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+  padding: 0px 12px 12px 12px;
 }
 
 .book-item {
   display: flex;
-  align-items: flex-start;
-  gap: 15px;
-  padding: 15px;
-  border-bottom: 1px solid #eee;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+  gap: 16px;
+  padding: 16px 0;
+  background: white;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 1px solid #888;
 }
 
-.book-item:hover {
-  background-color: #f9f9f9;
+/* 마지막 아이템의 구분선 제거 */
+.book-item:last-child {
+  border-bottom: none;
+}
+
+.book-image {
+  width: auto;
+  margin: 0px 20px;
 }
 
 .book-image img {
-  width: 100px;
-  height: auto;
   object-fit: cover;
-  border-radius: 4px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .book-info {
   flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .book-title {
   font-size: 16px;
-  font-weight: bold;
-  margin: 0 0 5px 0;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 8px;
+  color: #333;
+  overflow: hidden;
+  text-align: left;
 }
 
-.book-author,
-.book-publisher {
+.book-author {
   font-size: 14px;
   color: #666;
-  margin: 3px 0;
+  margin-bottom: 0px;
 }
 
-.book-price {
-  font-size: 14px;
-  margin: 5px 0;
+.book-publisher {
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 0px;
 }
 
-.discount {
-  color: #e74c3c;
-  font-weight: bold;
-  margin-right: 5px;
-}
-
-.final-price {
-  font-weight: bold;
+.book-bottom {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .book-rating {
   font-size: 14px;
-  color: #f39c12;
+  color: #ffa41c;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
-@media (max-width: 600px) {
+.book-price {
+  text-align: right;
+}
+
+.discount {
+  color: #ff3b3b;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.final-price {
+  font-weight: 600;
+  font-size: 15px;
+  color: #333;
+  margin-right: 20px;
+}
+
+@media (max-width: 360px) {
   .book-image img {
-    width: 150px;
+    width: 80px;
+    height: 120px;
   }
-
+  
   .book-title {
-    font-size: 18px;
-    color: #333;
-    margin-bottom : 15px; 
+    font-size: 15px;
   }
-
+  
   .book-author,
-  .book-publisher,
-  .book-rating {
-    font-size: 15px;
-    margin-top: 10px;
+  .book-publisher {
+    font-size: 13px;
   }
-  .book-price{
-    text-align: right;
-    padding-right: 30px;
-    color: #666;
-    font-size: 15px;
-  }
-
 }
 </style>

@@ -1,4 +1,6 @@
 <template>
+    <Header />
+    
     <div class="mypage-container">
         <button class="hamburger-btn" @click="toggleSidebar">☰</button>
         <div class="sidebar" :class="{ 'sidebar-hidden': !isSidebarOpen }">
@@ -30,9 +32,12 @@
   
 <script>
     import Footer from '../../MainPage/components/Footer.vue';
+    import Header from '../../MainPage/components/Header.vue';
+
     export default {
         name: "mypageMember",
         components:{
+            Header,
             Footer,
         },
         data() {

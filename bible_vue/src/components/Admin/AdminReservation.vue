@@ -60,18 +60,27 @@
         :bookId="selectedBookId"
         @close="closeBookModal"
     />
+    <Modal v-model="isSystemModal" @confirm="onConfirm">
+        <p>{{ systemMessage }}</p>
+    </Modal>
+    <Modal v-model="isSystemModal2" showCancel
+        @confirm="onConfirm2" @cancel="onCancel">
+        <p>{{ systemMessage }}</p>
+    </Modal> 
   </div>
 </template>
 
 <script>
     import BookInfoModal from './BookInfoModal.vue';
+    import Modal from '../modal/CustomModal.vue';
     const RESERVATION_ALL_URL = "/reservations/all";
     const RESERVATION_DELETE = "/reservations/"
 
     export default {
         name: 'AdminReservation',
         components: {
-            BookInfoModal
+            BookInfoModal,
+            Modal,
         },
         data() {
             return {
@@ -82,7 +91,12 @@
                 userReservations: [],
                 // 북 모달
                 showBookModal: false,
-                selectedBookId: null
+                selectedBookId: null,
+                // 커스텀 모달
+                isSystemModal: false,
+                isSystemModal2: false,
+                systemMessage: '',
+                pendingreserv: null,
             }
         },
         methods: {
@@ -92,7 +106,7 @@
                     this.reservations = response.data;
                 } catch (error) {
                     const errorMessage = error.response?.data?.message || "예약 목록을 불러오는데 실패했습니다.";
-                    alert(errorMessage);
+                    this.openSystemModal(errorMessage);
                     console.error('예약 목록을 불러오는데 실패했습니다:', error);
                 }
             },
@@ -102,17 +116,7 @@
             },
             // 예약 취소 버튼
             async cancelReservation(reservId) {
-                if (confirm('정말로 이 예약을 취소하시겠습니까?')) {
-                    try {
-                        await this.$axios.delete(RESERVATION_DELETE + reservId);
-                        await this.fetchReservations(); // 목록 새로고침
-                        alert("대여 취소에 성공하였습니다.");
-                    } catch (error) {
-                        const errorMessage = error.response?.data?.message || "예약 목록을 불러오는데 실패했습니다.";
-                        alert(errorMessage);
-                        console.error('예약 취소에 실패했습니다:', error);
-                    }
-                }
+              this.openSystemModal2('정말로 이 예약을 취소하시겠습니까?', reservId);
             },
             // 사용자별 예약 정보 모달
             async showUserReservations(memId) {
@@ -123,7 +127,7 @@
                     this.showModal = true;
                 } catch (error) {
                     const errorMessage = error.response?.data?.message || "예약 목록을 불러오는데 실패했습니다.";
-                    alert(errorMessage);
+                    this.openSystemModal(errorMessage);
                     console.error('사용자 예약 내역을 불러오는데 실패했습니다:', error);
                 }
             },
@@ -142,6 +146,33 @@
             closeBookModal() {
                 this.showBookModal = false;
                 this.selectedBookId = null;
+            },
+            //커스텀 모달
+            openSystemModal(message){
+              this.isSystemModal = true;
+              this.systemMessage = message;
+            },
+            onConfirm(){
+              this.isSystemModal = false;
+            },
+            openSystemModal2(message, reservId){
+              this.isSystemModal2 = true;
+              this.systemMessage = message;
+              this.pendingreserv = reservId;
+            },
+            async onConfirm2(){
+              try {
+                  await this.$axios.delete(RESERVATION_DELETE + `${this.pendingreserv}`);
+                  await this.fetchReservations(); // 목록 새로고침
+                  this.openSystemModal("대여 취소에 성공하였습니다.");
+              } catch (error) {
+                  const errorMessage = error.response?.data?.message || "예약 목록을 불러오는데 실패했습니다.";
+                  this.openSystemModal(errorMessage);
+              }
+              this.isSystemModal2 = false;
+            },
+            onCancle(){
+              this.isSystemModal2 = false;
             },
         },  
         mounted() {

@@ -1,4 +1,6 @@
 <template>
+  <Header />
+
   <div class="container">
     <h1 class="title">{{ memId }}님의 맞춤 추천 도서</h1>
 
@@ -17,13 +19,21 @@
       <button class="carousel-button right" @click="nextSlide">❯</button>
     </div>
   </div>
+
+  <Footer />
 </template>
 
 <script>
 import { ref, computed, onMounted } from "vue";
 import { useRoute } from "vue-router"; // URL에서 mem_id 가져오기
+import Footer from '../MainPage/components/Footer.vue';
+import Header from '../MainPage/components/Header.vue';
 
 export default {
+  components: {
+    Header,
+    Footer,
+  },
   setup() {
     const route = useRoute();
     const memId = ref("1030"); // 기본 사용자 ID (없을 경우 대비)

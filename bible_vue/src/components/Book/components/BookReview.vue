@@ -38,10 +38,10 @@
       </li>
     </ul>
     <p v-else>리뷰가 없습니다!</p>
-    <Modal v-model="isModalVisible" @confirm="onConfirm">
-      <p>{{ singleModalMessage }}</p>
-    </Modal>
   </div>
+  <Modal v-model="isModalVisible" @confirm="onConfirm">
+    <p>{{ singleModalMessage }}</p>
+  </Modal>
 </template>
 
 <script>
@@ -55,12 +55,6 @@ export default {
   },
   components:{
     Modal,
-  },
-  data(){
-    return{
-      isModalVisible: false,
-      singleModalMessage: '',
-    }
   },
   setup(props) {
     const { proxy } = getCurrentInstance();
@@ -86,7 +80,7 @@ export default {
 
     const submitReview = async () => {
       if (reviewStar.value === 0 || !reviewComment.value.trim()) {
-        this.openModal("별점과 리뷰 내용을 모두 입력해주세요!");
+        openModal("별점과 리뷰 내용을 모두 입력해주세요!");
         return;
       }
       const reviewData = {
@@ -96,13 +90,13 @@ export default {
       };
       try {
         const response = await proxy.$axios.post("/reviews", reviewData);
-        this.openModal(response.data);
+        openModal(response.data);
         reviewStar.value = 0;
         reviewComment.value = "";
         await fetchReviews(); // 리뷰 업데이트
       } catch (error) {
         console.error("Error - submit review:", error);
-        this.openModal("리뷰 제출에 실패했습니다.");
+        openModal("리뷰 제출에 실패했습니다.");
       }
     };
 
@@ -119,6 +113,15 @@ export default {
         : name;
     };
 
+    // 모달 창
+    const isModalVisible = ref(false);
+    const singleModalMessage = ref("");
+
+    const openModal = (message) =>{
+      singleModalMessage.value = message;
+      isModalVisible.value = true;
+    }
+
     // ✅ 컴포넌트가 마운트되면 리뷰 불러오기
     onMounted(fetchReviews);
 
@@ -129,19 +132,10 @@ export default {
       submitReview,
       formatDate,
       maskName,
+      isModalVisible,
+      singleModalMessage,
+      openModal,
     };
-  },
-  methods: {
-    openModal(message){
-      this.singleModalMessage = message;
-      this.isModalVisible = true;
-
-      onConfirm();
-    },
-    onConfirm(){
-      console.log("확인 버튼이 클릭되었습니다.");
-      this.isModalVisible = false;
-    },
   },
 };
 </script>

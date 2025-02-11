@@ -6,7 +6,6 @@ import com.library.bible.exception.CustomException;
 import com.library.bible.exception.ExceptionCode;
 import com.library.bible.exception.ExceptionResponseUtil;
 import com.library.bible.role.model.RoleName;
-import com.library.bible.security.jwt.JwtProperties;
 import com.library.bible.security.jwt.JwtProvider;
 import com.library.bible.security.utils.LoginDto;
 import com.library.bible.security.utils.MemberUserDetails;
@@ -17,9 +16,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.*;
 
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
@@ -30,7 +29,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
-import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,7 +43,6 @@ public class JwtAuthenticationFilter  extends UsernamePasswordAuthenticationFilt
     private final JwtProvider jwtProvider;
 	private final PrintLog printLog;	
 	private final String[] processUrls = new String[]{"/api/login", "/api/login/admin"};
-    private final RedisTemplate<String, String> redisTemplate;
 	
 	@Override
 	protected boolean requiresAuthentication(HttpServletRequest request, HttpServletResponse response) {
@@ -100,13 +97,20 @@ public class JwtAuthenticationFilter  extends UsernamePasswordAuthenticationFilt
             throws IOException, ServletException {
         // 권한 확인(admin 계정 로그인한 경우)
     	MemberUserDetails memberUserDetails = (MemberUserDetails) authResult.getPrincipal();
-    	if(request.getRequestURI().contains("admin")) {
-            for(GrantedAuthority role : memberUserDetails.getAuthorities()) {
-            	if(role.toString().equals(RoleName.ROLE_USER.toString())) continue;
-            	if(!role.toString().equals(RoleName.ROLE_ADMIN.toString()))
-            		throw new CustomException(ExceptionCode.FORBIDDEN);
-            }
-    	}
+
+    	try {
+        	if(request.getRequestURI().contains("admin")) {
+                for(GrantedAuthority role : memberUserDetails.getAuthorities()) {
+                	if(role.toString().equals(RoleName.ROLE_USER.toString()) && 
+                			memberUserDetails.getAuthorities().size() == 1) 
+                		throw new CustomException(ExceptionCode.FORBIDDEN);
+                }
+        	}
+    	} catch (Exception e) {
+    	    unsuccessfulAuthentication(request, response, 
+    	            new AuthenticationServiceException(e.getMessage(), e));
+	    }
+
     	
     	// memId, roles
     	String memId = String.valueOf(memberUserDetails.getMember().getMemId());
@@ -129,7 +133,7 @@ public class JwtAuthenticationFilter  extends UsernamePasswordAuthenticationFilt
             HttpServletResponse response, AuthenticationException failed) 
             throws IOException {
 		exceptionResponseUtil.printErrorLog("# Authentication failed: ", failed);
-		
+
 	    ExceptionCode exceptionCode;
 	    if (failed instanceof DisabledException) {
 	        exceptionCode = ExceptionCode.ACCOUNT_DISABLED;
@@ -139,6 +143,8 @@ public class JwtAuthenticationFilter  extends UsernamePasswordAuthenticationFilt
 	        exceptionCode = ExceptionCode.ACCOUNT_EXPIRED;
 	    } else if (failed instanceof CredentialsExpiredException) {
 	        exceptionCode = ExceptionCode.CREDENTIALS_EXPIRED;
+	    } else if (failed instanceof RuntimeException) {
+	        exceptionCode = ExceptionCode.FORBIDDEN;
 	    } else {
 	        exceptionCode = ExceptionCode.INVALID_CREDENTIALS;
 	    }

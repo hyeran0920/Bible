@@ -409,8 +409,6 @@
             },
 
             async checkAuthAndInitialize() {
-                this.$store.dispatch('getToken');  // action 호출
-
                 // 데이터 초기화
                 await this.initializeAddress();
                 await this.initializeMember();

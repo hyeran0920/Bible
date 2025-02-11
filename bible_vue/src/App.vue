@@ -4,11 +4,21 @@
       <router-view></router-view>
     </main>
   </div>
+  <Modal 
+    v-model="isErrorModalVisible"
+    :message="errorMessage"
+    @confirm="hideErrorModal">
+    <p>{{ errorMessage }}</p>
+  </Modal>
 </template>
 
 <script>
+import { mapState, mapMutations } from 'vuex';
+import Modal from './components/modal/CustomModal.vue';
+
 export default {
   name: 'App',
+  components: { Modal },
   computed: {
     isAdminPage() {
       return this.$route.path === '/admin-page'; // admin 페이지에서만 true
@@ -16,7 +26,11 @@ export default {
     adminPageStyle() {
       // 어드민 페이지일 때만 스타일을 리셋
       return this.isAdminPage ? { width: '100% !important', margin: '0 !important', padding: '0 !important' } : {};
-    }
+    },
+    ...mapState(['isErrorModalVisible', 'errorMessage'])
+  },
+  methods: {
+    ...mapMutations(['hideErrorModal'])
   }
 };
 </script>

@@ -81,7 +81,7 @@
             }, 1500);
         } catch (error) {
             console.error("로그인 실패:", error.response?.data || error.message);
-            this.showModal("로그인에 실패했습니다!!!");
+            if(error.status !== 403) this.showModal("로그인에 실패했습니다!!!");
         }
       }
     },
@@ -121,7 +121,7 @@
     cursor: pointer;
   }
   button:hover {
-    background-color: #0056b3;
+    background-color: #679669;
   }
 
   .login-link {
@@ -130,7 +130,7 @@
   }
 
   .login-link a {
-    color: #007bff;
+    color: #679669;
     text-decoration: none;
   }
 

@@ -60,7 +60,7 @@
 
 
     <!-- 특정 사용자의 리뷰 조회 -->
-    <select id="getMemberReview" resultMap="reviewMap">
+    <select id="getMemberReview" resultMap="reviewInfoMap">
         SELECT 
             r.review_id, 
             r.review_star, 

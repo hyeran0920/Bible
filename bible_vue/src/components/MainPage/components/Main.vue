@@ -171,21 +171,27 @@ body, ul, li {
 .pagination {
   display: flex;
   justify-content: center;
+  align-items: center;
   margin-top: 16px;
-  gap: 8px;
+  gap: 12px;
 }
 
 .dot {
-  width: 8px;
-  height: 8px;
+  width: 12px;
+  height: 12px;
   background-color: #ccc;
-  border-radius: 50%;
+  border-radius: 0%;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 .dot.active {
-  background-color: #333;
+  background-color: #333; /* 현재 활성화된 슬라이드 색상 */
+  transform: scale(1.3); /* 활성화된 점을 커지게 */
+}
+
+.dot:not(.active):hover {
+  background-color: #bbb; /* 비활성화된 상태에서 마우스 오버 시 */
 }
 
 /* 모바일 최적화 */
@@ -196,7 +202,7 @@ body, ul, li {
   }
 
   .pagination {
-    margin-top: 8px;
+    margin-top: 5px;
     gap: 6px;
   }
 

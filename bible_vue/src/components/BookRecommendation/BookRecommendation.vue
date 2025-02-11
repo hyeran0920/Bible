@@ -1,4 +1,6 @@
 <template>
+  <Header />
+
   <div class="container">
     <h1 class="title">{{ memId }}님의 맞춤 추천 도서</h1>
 
@@ -21,6 +23,8 @@
       <button class="delete-button" @click="deleteRecommendations">추천 도서 삭제</button>
     </div>
   </div>
+
+  <Footer />
 </template>
 
 <script>
@@ -28,8 +32,14 @@ import axios from "axios";
 //import { sortUserPlugins } from "vite";
 import { ref, computed, onMounted, watch } from "vue";
 import { useRoute } from "vue-router"; // URL에서 mem_id 가져오기
+import Footer from '../MainPage/components/Footer.vue';
+import Header from '../MainPage/components/Header.vue';
 
 export default {
+  components: {
+    Header,
+    Footer,
+  },
   setup() {
     const route = useRoute();
     const memId = ref(route.query.mem_id || "1030"); // URL에서 mem_id 가져오기, 기본사용자 1030

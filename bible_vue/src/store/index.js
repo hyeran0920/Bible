@@ -3,6 +3,7 @@ import { createStore } from 'vuex';
 const store = createStore({
   state: { // 데이터
     token: null, // JWT 토큰
+    searchKeyword: '', // 검색 키워드
   },
   mutations: { // 동적
     setToken(state, token) {
@@ -10,6 +11,9 @@ const store = createStore({
     },
     logout(state) {
       state.token = null;
+    },
+    setSearchKeyword(state, keyword) {
+      state.searchKeyword = keyword;
     },
   },
   actions: { // 비동기

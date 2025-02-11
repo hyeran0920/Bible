@@ -4,11 +4,11 @@
 
     <!--<SocketTest v-if="userRole === 'admin'" />-->
 
-    <h2>Book List</h2>
+    <!-- <h2>Book List</h2> -->
     
 
     <!--Book Search and category-->
-    <BookSearch @update-books-list="updateBookList" />
+    <BookSearch ref="bookSearch" @update-books-list="updateBookList" />
     
     <!-- Book List -->
     <BookList 
@@ -26,6 +26,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import '../styles/BookListStyle.css';
 import BookList from './BookList.vue';
 import Pagination from './Pagination.vue';
@@ -40,8 +41,21 @@ export default {
     Pagination,
     BookSearch,
     Header,
-    Footer
+    Footer,
   },
   mixins: [bookListLogic], // 스크립트 로직을 Mixin으로 가져옴
+  computed: { // 검색 키워드 관리
+    ...mapState(['searchKeyword'])
+  },
+  watch: {
+    // store의 검색어가 변경되면 검색 실행
+    searchKeyword(newKeyword) {
+      if (newKeyword) {
+        this.$refs.bookSearch.searchKeyword = newKeyword;
+        this.$refs.bookSearch.fetchSearchResults();
+        this.$store.commit('setSearchKeyword', '');  // 검색 후 초기화
+      }
+    }
+  },
 };
 </script>

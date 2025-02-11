@@ -27,6 +27,7 @@ import MyPageOrderList from "../components/Mypage/components/MyPageOrderList.vue
 const routes = [
   { path: "/", name: "main", component: Main },
   { path: "/book", name: "book-list", component: BookListMain },
+  { path: "/book/best", name: "book-list-best", component: BookListMain },
   { path: "/book/:bookId", name: "book-detail", component: BookDetail, props: true },
   { path: "/signUp", name: "SignUp", component: SignUp },
   { path: "/login", name: "Login", component: Login },

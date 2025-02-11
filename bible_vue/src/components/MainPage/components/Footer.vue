@@ -5,7 +5,7 @@
     <!-- Footer -->
     <footer class="footer">
       <div class="footer-content">
-        <div class="menu-icon" @click="toggleMenu">☰</div>
+        <div class="menu-icon" @click="toggleCart">🛒</div>
         <div> <a href="/">
             <img src="../../../assets/logo.png" alt="Logo" class="logo-img">
           </a></div>
@@ -33,10 +33,19 @@ export default {
     }
   },
   methods: {
-    toggleMenu() {
-      // 메뉴 토글 로직
+    toggleCart() {
+      // cart
+      const isLoggedIn = localStorage.getItem("isLoggedIn");
+      if(isLoggedIn) this.$router.push('/cart');
+      else {
+        this.showMessageModal("로그인 시 사용 가능합니다.");
+        setTimeout(() => {
+          this.$router.push('/login');
+        }, 1500);
+      }
     },
     toggleAuthMenu() {
+      // mypage
       const isLoggedIn = localStorage.getItem("isLoggedIn");
       if(isLoggedIn) this.$router.push('/mypage/mypageMember');
       else {

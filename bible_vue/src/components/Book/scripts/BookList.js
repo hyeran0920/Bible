@@ -21,6 +21,11 @@ export default {
       return this.books.slice(start, end);
     },
   },
+  // 라우트가 변경될 때마다 실행
+  '$route'(to) {
+    const type = to.params.type || 'best';
+    this.fetchData(type);
+  },
   methods: {
     // Open/Close Modal
     openModal(editing = false, book = null) {
@@ -127,7 +132,6 @@ export default {
 
         }
 
-
         // 종료
         this.selectedFile = null;
         this.closeModal();
@@ -137,12 +141,25 @@ export default {
       }
     },
     
-
     // Fetch Books
-    async fetchData() {
+    async fetchData(type = 'all') {
       try {
-        const response = await this.$axios.get('/books/best'); //베스트셀러
+        let response;
+        switch(type) {
+          case 'best':
+            response = await this.$axios.get('/books/best'); // 베스트셀러
+            break;
+          case 'all':
+            response = await this.$axios.get('/books'); // 전체 도서
+            break;
+          default:
+            response = await this.$axios.get('/books'); // 전체 도서
+        }
         this.books = response.data;
+        if(this.books.length === 0) { // 인기 도서가 없을 경우
+          response = await this.$axios.get('/books');
+          this.books = response.data;
+        }
       } catch (error) {
         console.error('Error fetching books:', error);
       }
@@ -186,9 +203,22 @@ export default {
     },
   },
 
-
-
   mounted() {
-    this.fetchData();
+    // URL 파라미터나 라우트 정보를 기반으로 type 결정
+    const path = this.$route.path;
+    let type;
+    
+    switch(path) {
+      case '/book/best':
+        type = 'best';
+        break;
+      case '/book':
+        type = 'all';
+        break;
+      default:
+        type = 'all';
+    }
+    
+    this.fetchData(type);
   },
 };

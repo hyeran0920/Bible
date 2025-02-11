@@ -52,7 +52,8 @@ const imageModules = import.meta.glob('../../../assets/banner/*.{png,jpg,jpeg,sv
 const images = Object.values(imageModules).map((module) => module.default);
 
 //api 주소
-const BOOKS = "/books/best";
+const BEST_BOOKS = "/books/best";
+const BOOKS = "/books";
 
 export default {
   name: 'Main',
@@ -123,8 +124,13 @@ export default {
   async mounted(){
     this.startAutoSlide();  //자동 슬라이드 시작
     try{
-      const response = await this.$axios.get(BOOKS);
+      const response = await this.$axios.get(BEST_BOOKS);
       this.books = response.data;
+
+      if(this.books.length === 0) { // 인기 도서가 없을 경우
+        const response = await this.$axios.get(BOOKS);
+        this.books = response.data;
+      }
     }catch{
         console.error("Error: ", error);
     }

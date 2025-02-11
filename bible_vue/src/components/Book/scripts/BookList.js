@@ -11,6 +11,16 @@ export default {
       selectedFile: null,
     };
   },
+  watch: {
+    // 라우트가 변경될 때마다 실행
+    '$route': {
+      handler(to, from) {
+        const type = to.fullPath;
+        this.fetchData(type);
+      },
+      immediate: true // 컴포넌트가 생성될 때도 실행
+    }
+  },
   computed: {
     totalPages() {
       return Math.ceil(this.books.length / this.itemsPerPage);
@@ -20,11 +30,6 @@ export default {
       const end = start + this.itemsPerPage;
       return this.books.slice(start, end);
     },
-  },
-  // 라우트가 변경될 때마다 실행
-  '$route'(to) {
-    const type = to.params.type || 'best';
-    this.fetchData(type);
   },
   methods: {
     // Open/Close Modal
@@ -146,15 +151,16 @@ export default {
       try {
         let response;
         switch(type) {
-          case 'best':
+          case '/book/best':
             response = await this.$axios.get('/books/best'); // 베스트셀러
             break;
-          case 'all':
+          case '/book':
             response = await this.$axios.get('/books'); // 전체 도서
             break;
           default:
             response = await this.$axios.get('/books'); // 전체 도서
         }
+
         this.books = response.data;
         if(this.books.length === 0) { // 인기 도서가 없을 경우
           response = await this.$axios.get('/books');
@@ -204,21 +210,6 @@ export default {
   },
 
   mounted() {
-    // URL 파라미터나 라우트 정보를 기반으로 type 결정
-    const path = this.$route.path;
-    let type;
-    
-    switch(path) {
-      case '/book/best':
-        type = 'best';
-        break;
-      case '/book':
-        type = 'all';
-        break;
-      default:
-        type = 'all';
-    }
-    
-    this.fetchData(type);
+    this.fetchData();
   },
 };

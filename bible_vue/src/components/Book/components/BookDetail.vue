@@ -2,20 +2,19 @@
   <Header />
   <div class="book-details-page">
     <div v-if="book" class="book-details">
-      <div class="book-image">
+      <div class="book-image" :style="backgroundStyle">
         <img :src="getBookImageUrl(book.bookId)" :alt="book.bookTitle" />
       </div>
       <div class="book-info">
         <h1>{{ book.bookTitle }}</h1>
         <p class="author">by {{ book.bookAuthor }}</p>
         <div class="book-meta">
-          <p><strong>출판사:</strong> {{ book.bookPublisher }}</p>
-          <p><strong>출간일:</strong> {{ formatDate(book.bookReleaseDate) }}</p>
+          <p>{{ book.bookPublisher }} · {{ formatDate(book.bookReleaseDate) }}</p>
           <p><strong>카테고리:</strong> {{ book.bookCategory }}</p>
         </div>
         <div class="book-price">
           <p class="price">{{ formatPrice(book.bookPrice) }}원</p>
-          <p class="stock">총재고: {{ book.bookTotalStock }}권</p>
+          <p class="stock">총 재고: {{ book.bookTotalStock }}권</p>
           <p class="stock">대여 가능 수량: {{ book.bookTotalStock-book.bookRentStock }}권</p>
         </div>
         <div class="cart-actions">
@@ -53,7 +52,7 @@
       </div>
     </div>
 
-    <BookReview :bookId="this.bookId" />
+    <BookReview :bookId="this.bookId"/>
 
     <Modal v-model="isModalVisible" @confirm="onConfirm">
       <p>{{ singleModalMessage }}</p>
@@ -89,6 +88,20 @@ export default {
       this.book = response.data;
     } catch (error) {
       console.error('Error fetching book details:', error);
+    }
+  },
+  computed: {
+    // 책 이미지를 블러 처리해서 백그라운드에 두기
+    backgroundStyle() {
+      if (this.book) {
+        return {
+          backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)), 
+                url(${this.getBookImageUrl(this.book.bookId)})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        }
+      }
+      return {}
     }
   },
   methods: {
@@ -208,55 +221,72 @@ export default {
 
 .book-details {
   display: flex;
-  gap: 30px;
 }
 
 .book-image {
   flex: 0 0 300px;
+  z-index: -1;
 }
 
 .book-image img {
   width: 100%;
   height: auto;
   border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); */
 }
 
 .book-info {
-  flex: 1;
+  padding: 16px;
+  background-color: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin: -40px 0;
+  
 }
 
-h1 {
-  font-size: 24px;
-  margin-bottom: 5px;
+.book-info h1 {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
 }
 
-.author {
-  font-style: italic;
-  color: #666;
-  margin-bottom: 20px;
-}
-
-.book-meta {
-  margin-bottom: 20px;
+.book-info .author {
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 16px;
 }
 
 .book-meta p {
-  margin: 5px 0;
+  font-size: 14px;
+  color: #666;
+  margin: 4px 0;
+}
+
+.book-meta p strong {
+  font-weight: bold;
+  color: #333;
 }
 
 .book-price {
-  margin-bottom: 20px;
+  margin-top: 20px;
 }
 
-.price {
-  font-size: 24px;
+.book-price .price {
+  font-size: 18px;
   font-weight: bold;
-  color: #e53935;
+  color: #e91e63;
+  margin-bottom: 10px;
+  margin-top: 10px;
 }
 
-.stock {
-  color: #4caf50;
+.book-price .stock {
+  font-size: 14px;
+  color: #666;
+}
+
+.book-price .stock:last-child {
+  margin-bottom: 0;
 }
 
 .cart-actions {
@@ -268,6 +298,7 @@ h1 {
 .quantity-input {
   display: flex;
   align-items: center;
+  margin-top: 15px;
 }
 
 .quantity-input input {
@@ -289,24 +320,49 @@ h1 {
   font-size: 18px;
 }
 
-.add-to-cart-btn, .rent-btn {
-  background-color: #4caf50;
+.book-description{
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.add-to-cart-btn {
+  background-color: #679669;
+  font-weight: bold;
   color: white;
-  border: none;
+  border: #679669;
   padding: 10px 20px;
   border-radius: 4px;
   cursor: pointer;
   font-size: 16px;
 }
 
-.book-description {
-  margin-top: 30px;
+
+/* 대여 & 예약 버튼 */
+.rent-btn, .reserve-btn {
+  background-color: white;
+  border: 2px solid #679669;
+  color: #679669;
+  font-weight: bold;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
 }
 
-.book-description h2 {
-  font-size: 18px;
-  margin-bottom: 10px;
+.book-image::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  right: -20px;
+  bottom: -20px;
+  background: inherit;
+  background-size: cover;
+  background-position: center;
+  filter: blur(15px);
+  opacity: 0.6;
 }
+
 @media screen and (max-width: 768px) {
   .book-details {
     flex-direction: column;
@@ -315,14 +371,24 @@ h1 {
   }
 
   .book-image {
-    flex: 0 0 auto;
+    /* flex: 0 0 auto;
     width: 80%;
-    max-width: 300px;
+    max-width: 300px; */
+    flex: 0 0 300px;
+    position: relative;
+    padding: 20px;
+    /* overflow: hidden; */
+    /* background: rgba(0, 0, 0, 1); */
+    /* z-index: -1; */
   }
 
   .book-image img {
     width: 100%;
     height: auto;
+    border-radius: 8px;
+    /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); */
+    position: relative;
+    z-index: 1;
   }
 
   .book-info {
@@ -333,22 +399,11 @@ h1 {
     font-size: 22px;
   }
 
-  .author {
-    font-size: 14px;
-  }
-
-  .book-meta p,
-  .book-price p,
-  .stock {
-    font-size: 14px;
-  }
-
   .cart-actions {
     flex-direction: row; /* 가로 정렬 */
     justify-content: center; /* 가운데 정렬 */
     flex-wrap: wrap; /* 버튼이 너무 길어질 경우 줄바꿈 */
   }
-
 
   .quantity-input {
     width: 100%;
@@ -367,7 +422,8 @@ h1 {
     font-size: 16px;
   }
   .add-to-cart-btn, 
-  .rent-btn {
+  .rent-btn,
+  .reserve-btn {
     width: 48%; /* 버튼을 양옆으로 배치 */
     min-width: 140px;
     font-size: 16px;
@@ -375,15 +431,7 @@ h1 {
     text-align: center;
   }
 
-  .book-description {
-    text-align: left;
-    padding: 10px;
-  }
-
-  .book-description h2 {
-    font-size: 16px;
-  }
-
+  /* 리뷰 */
   .review-section {
     padding: 15px;
   }
@@ -417,19 +465,4 @@ h1 {
     font-size: 12px;
   }
 }
-
-.reserve-btn {
-  background-color: #ff9800; /* 예약 버튼은 주황색으로 구분 */
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-.reserve-btn:hover {
-  background-color: #f57c00;
-}
-
 </style>

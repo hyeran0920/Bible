@@ -1,7 +1,7 @@
 <template>
   <div class="review-section">
     <h2>리뷰</h2>
-    <div class="star-rating" v-if="this.isLoggedIn">
+    <div class="star-rating">
       <label v-for="star in 5" :key="star">
         <input 
           type="radio" 
@@ -12,7 +12,7 @@
       </label>
     </div>
     <br>
-    <div class="review-input" v-if="this.isLoggedIn">
+    <div class="review-input" v-if="isLoggedIn">
       <textarea v-model="reviewComment" placeholder="리뷰를 작성해주세요." rows="4"></textarea>
       <button @click="submitReview">리뷰 작성하기</button>
     </div>
@@ -50,11 +50,6 @@ import { getCurrentInstance } from 'vue'
 import Modal from '../../modal/CustomModal.vue';
 
 export default {
-  data() {
-    return {
-      isLoggedIn: false,
-    };
-  },
   props: {
     bookId: Number,
   },
@@ -66,13 +61,8 @@ export default {
     const reviewStar = ref(0);
     const reviewComment = ref("");
     const reviews = ref([]);
-
-    // 로그인 상태 확인
-    let isLoggedIn = localStorage.getItem('isLoggedIn');
-    console.log("isLoggedIn: ", isLoggedIn);
-    if(isLoggedIn) this.isLoggedIn = isLoggedIn;
-    console.log("isLoggedIn: ", isLoggedIn);
-
+    const isLoggedIn = ref(false);
+    
     // ✅ API 요청 후 Vue가 반응형 데이터 변경을 감지하도록 처리
     const fetchReviews = async () => {
       try {
@@ -81,12 +71,17 @@ export default {
           reviews.value = response.data;
           await nextTick(); // Vue DOM 업데이트 보장
           console.log("책 리뷰 리스트:", reviews.value);
+          
         } else {
           console.error("서버 응답이 배열이 아님:", response.data);
         }
       } catch (error) {
         console.error("리뷰 데이터를 가져오는 데 실패했습니다:", error);
       }
+
+      // 로그인 상태 확인
+      // const storedLoginStatus = localStorage.getItem("isLoggedIn");
+      // isLoggedIn.value = storedLoginStatus === "true";
     };
 
     const submitReview = async () => {
@@ -134,7 +129,11 @@ export default {
     }
 
     // ✅ 컴포넌트가 마운트되면 리뷰 불러오기
-    onMounted(fetchReviews);
+    // onMounted(fetchReviews);
+    onMounted(()=>{
+      isLoggedIn.value = JSON.parse(localStorage.getItem("isLoggedIn") || "false");
+      fetchReviews();
+    });
 
     return {
       reviewStar,
@@ -146,6 +145,7 @@ export default {
       isModalVisible,
       singleModalMessage,
       openModal,
+      isLoggedIn,
     };
   },
 };
@@ -154,9 +154,9 @@ export default {
 
 <style scoped>
 .review-section {
-  margin-top: 30px;
+  margin-top: 60px;
   background-color: #f9f9f9;
-  padding: 30px;
+  padding: 16px;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
@@ -171,22 +171,23 @@ export default {
 .review-input {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 10px;
 }
 
 .review-input textarea {
-  width: 100%;
-  padding: 12px;
+  width: 94%;
+  padding: 10px;
   border: 1px solid #ddd;
-  border-radius: 8px;
+  border-radius: 4px;
   font-size: 14px;
   resize: none;
-  outline: none;
 }
+
 .star-rating {
   display: flex;
   gap: 5px;
   justify-content: center;
+  margin-bottom: 12px;
 }
 
 .star-rating input {
@@ -205,16 +206,17 @@ export default {
 }
 
 .review-list {
-  list-style-type: none;
+  margin-top: 20px;
+  list-style: none;
   padding: 0;
 }
 
 .review-card {
-  background-color: #fff;
-  padding: 20px;
-  margin-bottom: 15px;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  background-color: #f9f9f9;
+  padding: 12px;
+  border-radius: 6px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+  margin-bottom: 12px;
 }
 
 .review-header {
@@ -242,5 +244,19 @@ export default {
 .review-name p {
   font-size: 14px;
   color: #777;
+}
+
+@media (max-width: 768px) {
+  .review-section {
+    padding: 12px;
+  }
+
+  .review-input textarea {
+    font-size: 13px;
+  }
+
+  .review-input button {
+    width: 100%;
+  }
 }
 </style>

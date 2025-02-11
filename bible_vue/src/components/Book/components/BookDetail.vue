@@ -14,7 +14,7 @@
         </div>
         <div class="book-price">
           <p class="price">{{ formatPrice(book.bookPrice) }}원</p>
-          <p class="stock">총재고: {{ book.bookTotalStock }}권</p>
+          <p class="stock">총 재고: {{ book.bookTotalStock }}권</p>
           <p class="stock">대여 가능 수량: {{ book.bookTotalStock-book.bookRentStock }}권</p>
         </div>
         <div class="cart-actions">
@@ -95,7 +95,8 @@ export default {
     backgroundStyle() {
       if (this.book) {
         return {
-          backgroundImage: `url(${this.getBookImageUrl(this.book.bookId)})`,
+          backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)), 
+                url(${this.getBookImageUrl(this.book.bookId)})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center'
         }
@@ -224,6 +225,7 @@ export default {
 
 .book-image {
   flex: 0 0 300px;
+  z-index: -1;
 }
 
 .book-image img {
@@ -234,77 +236,57 @@ export default {
 }
 
 .book-info {
-  flex: 1;
-  padding: 20px;
+  padding: 16px;
+  background-color: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin: -40px 0;
+  
 }
 
-h1 {
-  font-size: 24px;
-  margin-bottom: 5px;
+.book-info h1 {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 10px;
   color: #333;
-  line-height: 1.3;
 }
 
-.author {
-  font-size: 15px;
-  color: #666;
-  border-radius: 8px;
-  margin-bottom: 20px;
-}
-
-.book-meta {
-  margin: 10px 0;
-  color: #555;
-  display: flex;
-  align-items: center;
+.book-info .author {
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 16px;
 }
 
 .book-meta p {
-  margin: 10px 0;
-  color: #555;
-  display: flex;
-  align-items: center;
+  font-size: 14px;
+  color: #666;
+  margin: 4px 0;
 }
 
-.book-meta strong {
-  min-width: 80px;
+.book-meta p strong {
+  font-weight: bold;
   color: #333;
 }
 
 .book-price {
-  margin-bottom: 20px;
+  margin-top: 20px;
 }
 
-.price {
-  font-size: 30 px;
+.book-price .price {
+  font-size: 18px;
   font-weight: bold;
-  color: #e53935;
+  color: #e91e63;
   margin-bottom: 10px;
+  margin-top: 10px;
 }
 
-.stock {
-  color: #2196F3;
+.book-price .stock {
   font-size: 14px;
-  margin: 5px 0;
-}
-
-.book-description {
-  margin-top: 30px;
-}
-
-.book-description h2 {
-  font-size: 20px;
-  color: #333;
-  margin-bottom: 15px;
-  padding-bottom: 10px;
-  border-bottom: 2px solid #eee;
-}
-
-.book-description p {
-  line-height: 1.6;
   color: #666;
-  text-align: left;
-  padding: 10px;
+}
+
+.book-price .stock:last-child {
+  margin-bottom: 0;
 }
 
 .cart-actions {
@@ -316,6 +298,7 @@ h1 {
 .quantity-input {
   display: flex;
   align-items: center;
+  margin-top: 15px;
 }
 
 .quantity-input input {
@@ -335,6 +318,11 @@ h1 {
   border-radius: 50%;
   cursor: pointer;
   font-size: 18px;
+}
+
+.book-description{
+  margin-top: 30px;
+  margin-bottom: 30px;
 }
 
 .add-to-cart-btn {

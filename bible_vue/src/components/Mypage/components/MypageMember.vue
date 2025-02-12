@@ -54,7 +54,7 @@
     </div>
 
     <!-- Edit Member Modal -->
-    <div v-if="isModalVisible" class="modal-overlay">
+    <div v-if="isModalVisible" class="modal-overlay-member">
      <div class="member-modify-modal">
         <div class="modal-content">
             <h2>{{ $t('mypage.member.modalTitle') }}</h2>
@@ -124,7 +124,7 @@
         <div class="InfoBtn">
             <button @click="openAddressModal()" type="button" class="btn member-info-modify-button">{{ $t('mypage.address.addBtn') }}</button>
             <!-- 모달 컴포넌트 -->
-            <div v-if="showModal" class="modal-overlay">
+            <div v-if="showModal" class="modal-overlay-member">
                 <div class="modal-content">
                     <!-- AddressSearch 컴포넌트-->
                     <AddressSearch @address-added="addAddress"/>
@@ -564,7 +564,7 @@ input:focus {
 }
 
 /* 오버레이 배경 */
-.modal-overlay {
+.modal-overlay-member {
     position: fixed;
     top: 0;
     left: 0;

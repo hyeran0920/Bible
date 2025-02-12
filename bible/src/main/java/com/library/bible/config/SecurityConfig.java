@@ -76,8 +76,12 @@ public class SecurityConfig {
 	                .requestMatchers(HttpMethod.POST, "/api/members/user").permitAll()  // 일반 사용자 생성은 모두 허용
 	                .requestMatchers(HttpMethod.GET, "/api/members/token").permitAll()     // token으로 member 조회
 	                .requestMatchers(HttpMethod.POST, "/api/members/admin").hasRole("ADMIN")  // 관리자만 관리자 생성 가능
-	                .requestMatchers(HttpMethod.GET, "/api/members/me").hasAnyRole("ADMIN", "USER")  // 조회는 관리자만 가능
+	                .requestMatchers(HttpMethod.GET, "/api/members/me/**").hasAnyRole("ADMIN", "USER")  // 조회는 관리자만 가능
+
+	                // address
+	                .requestMatchers(HttpMethod.GET, "/api/members/addresses/**").hasAnyRole("ADMIN", "USER")  // 주소 권한 허용
 	                .requestMatchers(HttpMethod.GET, "/api/members/**").hasRole("ADMIN")  // 조회는 관리자만 가능
+	                
                     .anyRequest().permitAll() // 그 외 요청은 인증 허용
 //                    .anyRequest().authenticated()); // 그 외 요청은 인증 필요
             );

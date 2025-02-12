@@ -209,7 +209,7 @@ body, ul, li {
 
   .dot {
     width: 1px;
-    height: 6px;
+    height: 2px;
     margin-bottom: 40px;
   }
 }
@@ -226,7 +226,7 @@ body, ul, li {
   scroll-snap-type: x mandatory;
   gap: 10px;
   white-space: nowrap;
-  padding: 10px;
+  padding: 30px;
   scroll-behavior: smooth;
   width: 100%;
 }
@@ -280,7 +280,7 @@ body, ul, li {
   margin-bottom: 50px;
 }
 .main-best h3{
-  margin: 15px;
+  margin: 5px;
   margin-top: 30px;
 }
 

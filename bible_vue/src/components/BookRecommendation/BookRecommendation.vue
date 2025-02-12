@@ -3,24 +3,39 @@
 
   <div class="container">
     <h1 class="title">{{ memId }}님의 맞춤 추천 도서</h1>
-
-    <div v-if="recommendations.length > 0" class="carousel-container">
+    <button @click="updateRecommendations">추천 다시 받기</button>
+    <!-- 상위 5권: 캐러셀 영역 -->
+    <div v-if="topBooks.length > 0" class="carousel-container">
       <button class="carousel-button left" @click="prevSlide">❮</button>
 
       <div class="carousel">
-        <div v-for="(book, index) in visibleBooks" :key="index" class="book">
-          <p class="book-title">
-            {{ displayedIndex(index) + 1 }}. {{ book.title }}
-          </p>
-          <img :src="book.image_url" :alt="book.title" class="book-image" />
+        <div
+          v-for="(book, i) in visibleTopBooks"
+          :key="i"
+          class="book-card"
+        >
+          <div class="book">
+            <p class="book-title">
+              {{ displayedIndex(i) + 1 }}. {{ book.title }}
+            </p>
+            <img :src="book.image_url" :alt="book.title" class="book-image" />
+          </div>
         </div>
       </div>
 
       <button class="carousel-button right" @click="nextSlide">❯</button>
     </div>
-    <div class="button-container">
-      <button class="update-button" @click="updateRecommendations">추천 도서 업데이트</button>
-      <button class="delete-button" @click="deleteRecommendations">추천 도서 삭제</button>
+
+    <!-- 하위 5권: 리스트 영역 -->
+    <div v-if="bottomBooks.length > 0" class="list-container">
+      <div v-for="(book, idx) in bottomBooks" :key="idx" class="book-card">
+        <div class="book">
+          <p class="book-title">
+            {{ idx + 6 }}. {{ book.title }}
+          </p>
+          <img :src="book.image_url" :alt="book.title" class="book-image" />
+        </div>
+      </div>
     </div>
   </div>
 
@@ -28,10 +43,9 @@
 </template>
 
 <script>
-import axios from "axios";
-//import { sortUserPlugins } from "vite";
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRoute } from "vue-router"; // URL에서 mem_id 가져오기
+import Cookies from "js-cookie"; // js-cookie 라이브러리 필요
 import Footer from '../MainPage/components/Footer.vue';
 import Header from '../MainPage/components/Header.vue';
 
@@ -42,29 +56,30 @@ export default {
   },
   setup() {
     const route = useRoute();
-    const memId = ref(route.query.mem_id || "1030"); // URL에서 mem_id 가져오기, 기본사용자 1030
+    const memId = ref(Cookies.get("memId") || "1030"); //memId반응형으로 바꾸기
+    // const memId = ref(localStorage.getItem("memId") || "1030");
+    //const memId = ref("38668"); // 기본 사용자 ID (없을 경우 대비)
     const recommendations = ref([]);
     const currentIndex = ref(0);
-    const itemsPerPage = 3;
+    const itemsPerPage = 1;
 
     // 📌 URL에서 mem_id 가져오기
-    watch(
-      () => route.query.mem_id, // mem_id 값이 바뀔 때마다
-      (newMemId) => {
-        if (newMemId) {
-          memId.value = newMemId; // mem_id를 새로운 값으로 갱신
-          getRecommendations(); // 추천 도서 업데이트
-        }
-      }
-    );
-    console.log("Current mem_id:", memId.value);
     onMounted(() => {
-      getRecommendations(); // 페이지 로드 시 추천 도서 자동으로 가져오기
+      console.log("📢 onMounted 실행됨");
+      console.log("📢 route.query.mem_id 값:", route.query.mem_id);
+      if (route.query.mem_id) {
+        memId.value = route.query.mem_id;
+        console.log("📢 memId 값이 업데이트됨:", memId.value);
+      } else {
+        console.log("📢 route.query.mem_id 값이 없어서 기본값(1030) 사용됨");
+      }
+      console.log("📢 Vue에서 사용되는 memId:", memId.value);
+      getRecommendations(); // 페이지 로드 시 자동으로 추천 도서 가져오기
     });
 
     // 현재 보여줄 책 리스트
     const visibleBooks = computed(() => {
-      const totalBooks = recommendations.value.length;
+    const totalBooks = recommendations.value.length;
       if (totalBooks === 0) return [];
       
       return [
@@ -76,83 +91,107 @@ export default {
 
     // 추천받기 버튼 없이 자동으로 도서 가져오기
     const getRecommendations = async () => {
-      // const baseURL = this.$axios.defaults.baseURL;
-      // console.log(baseURL);
       try {
-        const response = await axios.get(
+        const response = await fetch(
           `http://localhost:8080/flask/recommend?mem_id=${memId.value}&n=10`
         );
-        //const data = await response.json();
-        recommendations.value = response.data.recommendations;
+        const data = await response.json();
+        recommendations.value = data.recommendations;
         currentIndex.value = 0;
       } catch (error) {
         console.error("추천 도서 불러오기 실패:", error);
       }
     };
 
-    //추천 도서 업데이트 (PUT 요청)
+    // // 다음 슬라이드 (무한 루프)
+    // const nextSlide = () => {
+    //   currentIndex.value = (currentIndex.value + 1) % recommendations.value.length;
+    // };
+
+    // // 이전 슬라이드 (무한 루프)
+    // const prevSlide = () => {
+    //   currentIndex.value =
+    //     (currentIndex.value - 1 + recommendations.value.length) % recommendations.value.length;
+    // };
+
+    // // 현재 책 인덱스 표시 (무한 순환되는 인덱스 반영)
+    // const displayedIndex = (index) => {
+    //   return (currentIndex.value + index) % recommendations.value.length;
+    // };
     const updateRecommendations = async () => {
       try {
-        const response = await axios.put(
-          "http://localhost:8080/flask/recommend",
-          { mem_id: memId.value, n: 10 }
+        // 예: n=20 → 서버가 1~20번 중 11~20번을 반환하도록 구현
+        // (서버 구현에 따라 달라짐)
+        const response = await fetch(
+          `http://localhost:8080/flask/recommend/update?mem_id=${memId.value}&n=20`,
+          { method: "PUT" }
         );
+        const data = await response.json();
 
-        if (response.status === 200) {
-          recommendations.value = response.data.recommendations;
-          alert("추천 도서가 업데이트되었습니다!");
-        } else {
-          console.error("추천 도서 업데이트 실패:", response.data.error);
-        }
+        // Flask/Spring 측에서 11~20번이 넘어온다고 가정
+        recommendations.value = data.recommendations.slice(10, 20);
+        currentIndex.value = 0; // 캐러셀 인덱스 초기화
       } catch (error) {
-        console.error("추천 도서 업데이트 요청 실패:", error);
+        console.error("추천 업데이트 실패:", error);
       }
     };
+    // ▶ 상위 5권 / 하위 5권 분리
+    const topBooks = computed(() => recommendations.value.slice(0, 5));
+    const bottomBooks = computed(() => recommendations.value.slice(5, 10));
 
-    // 추천 도서 삭제 (DELETE 요청)
-    const deleteRecommendations = async () => {
-      try {
-        const response = await axios.delete(
-          `http://localhost:8080/flask/recommend?mem_id=${memId.value}`
-        );
+    // 캐러셀 (한 권씩)
+    const visibleTopBooks = computed(() => {
+      const totalTop = topBooks.value.length;
+      if (totalTop === 0) return [];
+      return [
+        topBooks.value[currentIndex.value % totalTop]
+        //,
+        // topBooks.value[(currentIndex.value + 1) % totalTop],
+        // topBooks.value[(currentIndex.value + 2) % totalTop],
+      ];
+    });
 
-        if (response.status === 200) {
-          recommendations.value = [];
-          alert("추천 도서가 삭제되었습니다.");
-        } else {
-          console.error("추천 도서 삭제 실패:", response.data.error);
-        }
-      } catch (error) {
-        console.error("추천 도서 삭제 요청 실패:", error);
-      }
-    };
-
-    // 다음 슬라이드 (무한 루프)
+    // ◀ / ▶ 버튼 동작
     const nextSlide = () => {
-      currentIndex.value = (currentIndex.value + 1) % recommendations.value.length;
+      if (topBooks.value.length > 0) {
+        currentIndex.value =
+          (currentIndex.value + 1) % topBooks.value.length;
+      }
     };
-
-    // 이전 슬라이드 (무한 루프)
     const prevSlide = () => {
-      currentIndex.value =
-        (currentIndex.value - 1 + recommendations.value.length) % recommendations.value.length;
+      if (topBooks.value.length > 0) {
+        currentIndex.value =
+          (currentIndex.value - 1 + topBooks.value.length) % topBooks.value.length;
+      }
     };
 
-    // 현재 책 인덱스 표시 (무한 순환되는 인덱스 반영)
+    // 캐러셀 인덱스 계산
     const displayedIndex = (index) => {
-      return (currentIndex.value + index) % recommendations.value.length;
+      const totalTop = topBooks.value.length;
+      if (!totalTop) return 0;    // 안전장치
+      return (currentIndex.value + index) % totalTop;
     };
 
     return {
       memId,
       recommendations,
-      visibleBooks,
-      getRecommendations,
-      updateRecommendations,
-      deleteRecommendations,
+      currentIndex,
+
+      // 상위 5권: 캐러셀
+      topBooks,
+      visibleTopBooks,
+      currentIndex,
       nextSlide,
       prevSlide,
       displayedIndex,
+
+      // 하위 5권: 리스트
+      bottomBooks,
+
+      // 함수
+      getRecommendations,
+      updateRecommendations,
+      itemsPerPage,
     };
   },
 };
@@ -164,98 +203,97 @@ export default {
   flex-direction: column;
   align-items: center;
   margin-top: 20px;
+  padding: 10px;
 }
 
 .title {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: bold;
+  text-align: center;
   margin-bottom: 15px;
 }
 
+.highlight {
+  color: #679669;
+  font-weight: bold;
+}
+
 .carousel-container {
+  align-items: center;
   display: flex;
   align-items: center;
+  justify-content: center;
   position: relative;
-  max-width: 900px;
+  max-width: 100%;
+  margin-bottom: 20px;
 }
 
 .carousel {
   display: flex;
   overflow: hidden;
   justify-content: center;
-  width: 750px;
+  width: 100%;
+  max-width: 900px;
+  flex-wrap: wrap; /* ✅ 모바일에서 줄 바꿈 */
+  gap: 10px;
+}
+
+.book-card {
+  /* 카드형 배치 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0,20);
+  padding: 15px;
+  margin-bottom: 15px; /* 리스트 간 간격 */
+
+  flex: 0 0 auto; /* 가로 배치를 위해 너비 고정 */
+  width: 240px;   /* 원하는 카드 폭으로 조절 */
+  margin-right: 10px;
 }
 
 .book {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 250px;
-  margin: 0 10px;
+  text-align: center;
+  width: 30%;
+  min-width: 160px;
+  margin: 5px;
 }
 
-/* 책 이미지 크기 2배 확대 */
+/* 🖼️ 반응형 책 이미지 */
 .book-image {
-  width: 240px;
-  height: 360px;
+  width: 100%;
+  max-width: 300px;
+  height: auto;
   object-fit: cover;
   border-radius: 5px;
+  margin-top: 10px;
 }
 
 .book-title {
   font-size: 14px;
   text-align: center;
   margin-bottom: 10px;
-  min-height: 60px;
+  min-height: 40px;
   display: -webkit-box;
-  -webkit-line-clamp: 3; /* 최대 3줄 */
+  -webkit-line-clamp: 2; /* 최대 2줄 */
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-.button-container {
-  margin-top: 20px;
-  display: flex;
-  gap: 10px;
-}
-
-.update-button,
-.delete-button {
-  padding: 10px 15px;
-  font-size: 16px;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
-  transition: 0.3s;
-}
-
-.update-button {
-  background-color: #4caf50;
-  color: white;
-}
-
-.update-button:hover {
-  background-color: #45a049;
-}
-
-.delete-button {
-  background-color: #f44336;
-  color: white;
-}
-
-.delete-button:hover {
-  background-color: #d32f2f;
-}
-
-/* 🔵 동그란 버튼 스타일 */
+/* 🔵 반응형 슬라이드 버튼 */
 .carousel-button {
-  background-color: rgba(0, 0, 0, 0.6);
-  color: white;
+  background-color: rgba(0, 0, 0, 0.0);
+  color: #333;
   border: none;
-  font-size: 24px;
+  font-size: 20px;
   cursor: pointer;
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   position: absolute;
   top: 50%;
@@ -266,23 +304,72 @@ export default {
 }
 
 .left {
-  left: -60px;
+  left: 10px; /* 모바일에서 버튼 위치 조정 */
 }
 
 .right {
-  right: -60px;
+  right: 10px;
 }
 
+.list-container {
+  width: 80%;
+  margin-top: 20px;
+}
+
+.subtitle {
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.list-item {
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+}
+
+.list-image {
+  width: 80px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.list-title {
+  font-size: 16px;
+}
+
+/* ✅ 모바일 최적화 */
 @media (max-width: 768px) {
   .carousel {
-    width: 100%;
+    flex-direction: column; /* 세로로 정렬 */
+    align-items: center;
   }
+  .book-card {
+  /* 카드형 배치 */
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 15px;
+    margin-bottom: 15px; /* 리스트 간 간격 */
+  }
+
   .book {
-    width: 160px;
+    width: 80%; /* 한 줄에 1개 */
+    min-width: 200px;
   }
+
   .book-image {
-    width: 140px;
-    height: 210px;
+    max-width: 180px;
+  }
+
+  .carousel-button {
+    width: 35px;
+    height: 35px;
+    font-size: 18px;
   }
 }
 </style>

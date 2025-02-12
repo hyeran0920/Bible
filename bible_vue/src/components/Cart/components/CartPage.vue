@@ -18,7 +18,7 @@
 
           <!--img-->
 
-            <img :src=ImageUtils.getBookImg(cart.bookId)
+            <img :src=getBookImage(cart.bookId)
             :alt="books[cart.bookId]?.bookTitle || '책 제목 없음'" 
             class="cart-book-image"/>
 
@@ -84,7 +84,7 @@
 import Header from '../../MainPage/components/Header.vue';
 import Footer from '../../MainPage/components/Footer.vue';
 import Modal from '../../modal/CustomModal.vue';
-import ImageUtils from '../../../scripts/img.js';
+import ImageUtils from '/src/scripts/Img.js';
 
 export default {
   
@@ -107,7 +107,9 @@ export default {
     this.fetchCarts();
   },
   methods: {
-
+    getBookImage(bookId) {
+        return ImageUtils ? ImageUtils.getBookImg(bookId) : '';
+    },
     //Fetch Data---------------------------------------------------------------
     async fetchCarts() {
       await this.$axios.get('/carts', { withCredentials: true })

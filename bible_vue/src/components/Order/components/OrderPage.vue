@@ -6,7 +6,7 @@
 
       <tbody>
         <tr v-for="cart in cartArray" :key="cart.cartId">
-          <td><img :src=ImageUtils.getBookImg(cart.bookId) :alt="books[cart.bookId]?.bookTitle || '책 이미지 없음'"
+          <td><img :src=getBookImage(cart.bookId) :alt="books[cart.bookId]?.bookTitle || '책 이미지 없음'"
               class="bookImg" /></td>
           <td>{{ books[cart.bookId]?.bookTitle || '제목 없음' }}</td>
           <td>{{ books[cart.bookId]?.bookAuthor || '저자 없음' }}</td>
@@ -98,7 +98,7 @@
 <script>
 import AddressSearch from './AddressSearch.vue';
 import Modal from '../../modal/CustomModal.vue';
-import ImageUtils from '../../../scripts/img.js';
+import ImageUtils from '/src/scripts/Img.js';
 
 export default {
   props: ['cartIds'], // Router에서 받은 cartIds
@@ -154,7 +154,9 @@ export default {
     
   },
   methods: {
-
+    getBookImage(bookId) {
+        return ImageUtils ? ImageUtils.getBookImg(bookId) : '';
+    },
     //Fetch Data------------------------------------------------
     // 개별 책 정보 가져오기
     async fetchBook(bookId, bookCount) {

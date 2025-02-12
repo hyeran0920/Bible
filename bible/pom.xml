@@ -133,13 +133,8 @@
 	    </dependency>
     
     	<!--====================================================-->
-    	<!--Azure-->
-    	<dependency>
-		    <groupId>com.azure</groupId>
-		    <artifactId>azure-storage-blob</artifactId>
-		    <version>12.19.0</version>
-		</dependency>
-
+    	
+    	
     	<!--SMS - coolsm-->
     	<dependency>
             <groupId>net.nurigo</groupId>

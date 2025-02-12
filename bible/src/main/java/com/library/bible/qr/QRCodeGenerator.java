@@ -29,27 +29,30 @@ public class QRCodeGenerator {
 	
 	//이거 UploadController에 넣을까 고민중
 	//QR 생성하고 저장
-	public static void generateQRCode(String data, String filePath) throws WriterException, IOException {
+	public static byte[] generateQRCode(String data) throws WriterException, IOException {
 	    QRCodeWriter qrCodeWriter = new QRCodeWriter();
 	    
-	    // ✅ 한글 깨짐 방지: UTF-8 설정
+	    // 한글 깨짐 방지: UTF-8 설정
 	    HashMap<EncodeHintType, Object> hintMap = new HashMap<>();
 	    hintMap.put(EncodeHintType.CHARACTER_SET, "UTF-8");
 	    
 	    BitMatrix bitMatrix = qrCodeWriter.encode(data, BarcodeFormat.QR_CODE, 200, 200, hintMap);
+	    BufferedImage qrImage = MatrixToImageWriter.toBufferedImage(bitMatrix);
 
-	    Path path = FileSystems.getDefault().getPath(filePath);
-	    MatrixToImageWriter.writeToPath(bitMatrix, "PNG", path);
-	    
-	    System.out.println("generateQRCode = " + path);
+        // QR 코드를 바이트 배열로 변환
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(qrImage, "PNG", baos);
+
+        System.out.println("generateQRCode");
+        return baos.toByteArray();    
 	}
 
 	
-	//QR 이미지를 Base64 문자열로 반환
+	//QR 이미지를 Base64 문자열로 반환 - 지금 안쓰는거임
 	public static String generateQRCodeURL(String data) throws WriterException, IOException {
 	    QRCodeWriter qrCodeWriter = new QRCodeWriter();
 	    
-	    // ✅ 한글 깨짐 방지: UTF-8 설정
+	    //한글 깨짐 방지: UTF-8 설정
 	    HashMap<EncodeHintType, Object> hintMap = new HashMap<>();
 	    hintMap.put(EncodeHintType.CHARACTER_SET, "UTF-8");
 	    

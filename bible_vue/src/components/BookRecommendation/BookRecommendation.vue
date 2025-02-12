@@ -1,12 +1,34 @@
 <template>
   <Header />
+  <!-- 폰트어썸 아이콘 -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+  />
+  <!-- 삭제 팝업-->
+  <div v-show="showPopup" class="popup">
+    {{ popupMessage }}
+  </div>
+  <!-- 만약 목록이 비었으면, "새로운 도서를 추천받겠습니까?"만 보여줌 -->
+  <div v-if="recommendations.length === 0" class="empty-message">
+    <h1>
+      <span class="highlight">{{ memId }}</span>님의 추천 도서 목록이 없습니다.
+    </h1>
+    <p>새로운 도서를 추천받겠습니까?</p>
+    <button @click="updateRecommendations">네, 추천받기</button>
+  </div>
 
-  <div class="container">
+  <!-- 목록이 있을 경우에만 캐러셀/리스트 표시 -->
+  <div v-else class="container">
     <div class="title-container">
-    <h1 class="title"><span class="highlight">{{ memId }}</span>님의 맞춤 추천 도서</h1>
+      <h1 class="title">
+        <span class="highlight">{{ memId }}</span>님의 맞춤 추천 도서
+      </h1>
     </div>
-    <button class="text-button" @click="updateRecommendations">
-      추천 다시 받기</button>
+
+    <button class="refresh-button" @click="updateRecommendations">
+      <i class="fas fa-sync"></i> 새 추천 받기
+    </button>
 
     <!-- 상위 5권: 캐러셀 영역 -->
     <div v-if="topBooks.length > 0" class="carousel-container">
@@ -20,13 +42,14 @@
         <div
           v-for="(book, i) in visibleTopBooks"
           :key="i"
-          class="book-card">
+          class="book-card"
+        >
           <div class="rank-container">
             <span class="rank-number">{{ displayedIndex(i) + 1 }}</span>
           </div>
           <div class="book">
             <p class="book-title">
-              <!-- {{ displayedIndex(i) + 1 }}.--> {{ book.title }}
+              {{ book.title }}
             </p>
             <img :src="book.image_url" :alt="book.title" class="book-image" />
           </div>
@@ -37,80 +60,70 @@
         ❯
       </button>
     </div>
+
     <!-- 페이지네이션(dot) 영역 -->
     <div class="pagination">
-        <span
-          v-for="(book, index) in topBooks"
-          :key="index"
-          class="dot"
-          :class="{ active: currentSlide === index }"
-          @click="setSlide(index)"
-        ></span>
-      </div>
+      <span
+        v-for="(book, index) in topBooks"
+        :key="index"
+        class="dot"
+        :class="{ active: currentSlide === index }"
+        @click="setSlide(index)"
+      ></span>
+    </div>
+
     <!-- 하위 5권: 리스트 영역 -->
     <div v-if="bottomBooks.length > 0" class="list-container">
-      <div v-for="(book, idx) in bottomBooks" :key="idx" class="book-card">
+      <div v-for="(book, idx) in bottomBooks" :key="idx" class="book-card2">
+        <div class="rank-container2">
+          <!-- idx는 0부터 시작하므로, + 6 해주면 6 ~ 10이 됩니다. -->
+          <span class="rank-number">{{ idx + 6 }}</span>
+        </div>
         <div class="book">
-          <p class="book-title">
-            {{ idx + 6 }}. {{ book.title }}
-          </p>
+          <p class="book-title">{{ book.title }}</p>
           <img :src="book.image_url" :alt="book.title" class="book-image2" />
         </div>
       </div>
     </div>
   </div>
-
-  <Footer />
+  <!-- SnackBar는 딱 1번만 렌더링 & 이벤트 바인딩 -->
+  <SnackBar @delete-recommendations="deleteRecommendations" />
+  <!-- Footer (필요 시) -->
+  <!-- <Footer /> -->
 </template>
 
 <script>
 import { ref, computed, onMounted } from "vue";
-import { useRoute } from "vue-router"; // URL에서 mem_id 가져오기
-import Cookies from "js-cookie"; // js-cookie 라이브러리 필요
-import Footer from '../MainPage/components/Footer.vue';
-import Header from '../MainPage/components/Header.vue';
+import { useRoute } from "vue-router";
+import Cookies from "js-cookie";
+import Header from "../MainPage/components/Header.vue";
+import Footer from "../MainPage/components/Footer.vue";
+import SnackBar from "./SnackBar.vue";
 
 export default {
   components: {
     Header,
+    SnackBar,
     Footer,
   },
   setup() {
+    // ... 데이터 초기화
     const route = useRoute();
-    const memId = ref(Cookies.get("memId") || "1030"); //memId반응형으로 바꾸기
-    // const memId = ref(localStorage.getItem("memId") || "1030");
-    //const memId = ref("38668"); // 기본 사용자 ID (없을 경우 대비)
+    const memId = ref(Cookies.get("memId") || "1030");
     const recommendations = ref([]);
     const currentIndex = ref(0);
-    const itemsPerPage = 1;
+    const showPopup = ref(false); // 팝업 상태
+    const popupMessage = ref("");
 
-    // 📌 URL에서 mem_id 가져오기
+    // onMounted → 추천도서 불러오기
     onMounted(() => {
-      console.log("📢 onMounted 실행됨");
-      console.log("📢 route.query.mem_id 값:", route.query.mem_id);
       if (route.query.mem_id) {
         memId.value = route.query.mem_id;
-        console.log("📢 memId 값이 업데이트됨:", memId.value);
-      } else {
-        console.log("📢 route.query.mem_id 값이 없어서 기본값(1030) 사용됨");
       }
-      console.log("📢 Vue에서 사용되는 memId:", memId.value);
-      getRecommendations(); // 페이지 로드 시 자동으로 추천 도서 가져오기
+      getRecommendations();
     });
 
-    // 현재 보여줄 책 리스트
-    const visibleBooks = computed(() => {
-    const totalBooks = recommendations.value.length;
-      if (totalBooks === 0) return [];
-      
-      return [
-        recommendations.value[(currentIndex.value) % totalBooks],
-        recommendations.value[(currentIndex.value + 1) % totalBooks],
-        recommendations.value[(currentIndex.value + 2) % totalBooks],
-      ];
-    });
-
-    // 추천받기 버튼 없이 자동으로 도서 가져오기
+    // (1) 추천 도서 불러오기
     const getRecommendations = async () => {
       try {
         const response = await fetch(
@@ -124,56 +137,49 @@ export default {
       }
     };
 
-    // // 다음 슬라이드 (무한 루프)
-    // const nextSlide = () => {
-    //   currentIndex.value = (currentIndex.value + 1) % recommendations.value.length;
-    // };
-
-    // // 이전 슬라이드 (무한 루프)
-    // const prevSlide = () => {
-    //   currentIndex.value =
-    //     (currentIndex.value - 1 + recommendations.value.length) % recommendations.value.length;
-    // };
-
-    // // 현재 책 인덱스 표시 (무한 순환되는 인덱스 반영)
-    // const displayedIndex = (index) => {
-    //   return (currentIndex.value + index) % recommendations.value.length;
-    // };
+    // (2) 새 추천 받기
     const updateRecommendations = async () => {
       try {
-        // 예: n=20 → 서버가 1~20번 중 11~20번을 반환하도록 구현
-        // (서버 구현에 따라 달라짐)
         const response = await fetch(
           `http://localhost:8080/flask/recommend/update?mem_id=${memId.value}&n=20`,
           { method: "PUT" }
         );
         const data = await response.json();
-
-        // Flask/Spring 측에서 11~20번이 넘어온다고 가정
-        recommendations.value = data.recommendations;
-        currentIndex.value = 0; // 캐러셀 인덱스 초기화
+        recommendations.value = data.recommendations || [];
+        currentIndex.value = 0;
       } catch (error) {
         console.error("추천 업데이트 실패:", error);
       }
     };
-    // ▶ 상위 5권 / 하위 5권 분리
-    const topBooks = computed(() => recommendations.value ? recommendations.value.slice(0, 5) : []);
-    const bottomBooks = computed(() => recommendations.value ? recommendations.value.slice(5, 10) : []);
 
-    // 캐러셀 (한 권씩)
+    // (3) 삭제(프런트에서만)
+    const deleteRecommendations = () => {
+      console.log("추천 목록 삭제(프런트에서만)");
+      recommendations.value = [];
+      popupMessage.value = "추천 목록이 삭제되었습니다.";
+      showPopup.value = true; // 팝업 표시
+      console.log("팝업 표시 상태 (true) 확인:", showPopup.value);
+      setTimeout(() => {
+        showPopup.value = false;
+        console.log("팝업 숨김 상태 (false) 확인:", showPopup.value);
+      }, 2000);
+    };
+
+    // 상위 5권, 하위 5권
+    const topBooks = computed(() =>
+      recommendations.value.slice(0, 5)
+    );
+    const bottomBooks = computed(() =>
+      recommendations.value.slice(5, 10)
+    );
+
+    // 캐러셀 로직
     const visibleTopBooks = computed(() => {
       const totalTop = topBooks.value.length;
       if (totalTop === 0) return [];
-      return [
-        topBooks.value[currentIndex.value % totalTop]
-        //,
-        // topBooks.value[(currentIndex.value + 1) % totalTop],
-        // topBooks.value[(currentIndex.value + 2) % totalTop],
-      ];
+      return [topBooks.value[currentIndex.value % totalTop]];
     });
 
-    const currentSlide = ref(0);
-    // ◀ / ▶ 버튼 동작
     const nextSlide = () => {
       if (topBooks.value.length > 0) {
         currentIndex.value =
@@ -183,34 +189,23 @@ export default {
     const prevSlide = () => {
       if (topBooks.value.length > 0) {
         currentIndex.value =
-          (currentIndex.value - 1 + topBooks.value.length) % topBooks.value.length;
+          (currentIndex.value - 1 + topBooks.value.length) %
+          topBooks.value.length;
       }
     };
 
-    // // ▶ 다음 슬라이드 이동
-    // const nextSlide = () => {
-    //   if (topBooks.value.length > 0) {
-    //     currentSlide.value = (currentSlide.value + 1) % topBooks.value.length;
-    //   }
-    // };
-
-    // // ◀ 이전 슬라이드 이동
-    // const prevSlide = () => {
-    //   if (topBooks.value.length > 0) {
-    //     currentSlide.value = (currentSlide.value - 1 + topBooks.value.length) % topBooks.value.length;
-    //   }
-    // };
-
-    // const setSlide = (index) => {
-    // if (index >= 0 && index < topBooks.value.length) {
-    //   currentSlide.value = index;
-    //   }
-    // };
-    // 캐러셀 인덱스 계산
     const displayedIndex = (index) => {
       const totalTop = topBooks.value.length;
-      if (!totalTop) return 0;    // 안전장치
+      if (!totalTop) return 0;
       return (currentIndex.value + index) % totalTop;
+    };
+
+    // dot 페이징(선택 슬라이드)
+    const currentSlide = ref(0);
+    const setSlide = (index) => {
+      if (index >= 0 && index < topBooks.value.length) {
+        currentIndex.value = index;
+      }
     };
 
     return {
@@ -218,21 +213,26 @@ export default {
       recommendations,
       currentIndex,
 
-      // 상위 5권: 캐러셀
+      // 상위/하위
       topBooks,
+      bottomBooks,
       visibleTopBooks,
-      currentIndex,
+
+      // 메서드
+      getRecommendations,
+      updateRecommendations,
+      deleteRecommendations,
+
+      // 캐러셀
       nextSlide,
       prevSlide,
       displayedIndex,
+      currentSlide,
+      setSlide,
 
-      // 하위 5권: 리스트
-      bottomBooks,
-
-      // 함수
-      getRecommendations,
-      updateRecommendations,
-      itemsPerPage,
+      //팝업
+      showPopup,  
+      popupMessage,
     };
   },
 };
@@ -245,6 +245,7 @@ export default {
   align-items: center;
   margin-top: 20px;
   padding: 10px;
+  overflow: visible;
 }
 
 .title {
@@ -270,7 +271,7 @@ export default {
 
 .rank-container {
   position: absolute;
-  top: -20px;
+  top: -45px;
   left: -10px;
   /* background-color: rgba(128, 128, 128, 0.6);*/ /*반투명 배경 */
   padding: 8px 12px;
@@ -278,6 +279,19 @@ export default {
   font-size: 80px; /* 숫자 크기 조절 */
   font-weight: bold;
   color: #7aab84;
+  /* box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); */
+}
+
+.rank-container2 {
+  position: absolute;
+  top: -20px;
+  left: -10px;
+  /* background-color: rgba(128, 128, 128, 0.6);*/ /*반투명 배경 */
+  padding: 8px 12px;
+  border-radius: 100%;
+  font-size: 40px; /* 숫자 크기 조절 */
+  font-weight: bold;
+  color: #454545;
   /* box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); */
 }
 
@@ -289,6 +303,7 @@ export default {
   position: relative;
   max-width: 100%;
   margin-bottom: 10px;
+  overflow: visible;
 }
 
 .carousel {
@@ -298,7 +313,7 @@ export default {
   width: 100%;
   max-width: 400px;
   min-width: 400px;
-  height: 497px;
+  height: 490px;
   flex-wrap: wrap; /* ✅ 모바일에서 줄 바꿈 */
   gap: 10px;
   margin-bottom: 0;
@@ -319,6 +334,21 @@ export default {
   margin-right: 5px;
 }
 
+.book-card2 {
+  position: relative;
+  /* 카드형 배치 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,3);
+  padding: 25px;
+  margin-bottom: 15px; /* 리스트 간 간격 */
+  flex: 1 1 240px; /* 가로 배치를 위해 너비 고정 */
+  width: 240px;   /* 원하는 카드 폭으로 조절 */
+}
+
 .book {
   display: flex;
   background-color: #fff;
@@ -335,7 +365,7 @@ export default {
   width: 200%;
   max-width: 300px;
   height: auto;
-  max-height: none !important; /*450px;*/
+  max-height: 450px;
   object-fit: cover;
   border-radius: 5px;
   margin-top: 10px;
@@ -409,7 +439,7 @@ export default {
 .list-container {
   width: 80%;
   margin-top: 20px;
-  padding-bottom: 350px;
+  padding-bottom: 100px;
 }
 
 .subtitle {
@@ -435,6 +465,22 @@ export default {
 .list-title {
   font-size: 16px;
 }
+.popup {
+  opacity: 1 !important;
+  display: block !important;
+  position: fixed;
+  bottom: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #c13535;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  text-align: center;
+  z-index: 1000;
+  transition: opacity 0.3s ease-in-out;
+}
 
 /* ✅ 모바일 최적화 */
 @media (max-width: 768px) {
@@ -450,9 +496,10 @@ export default {
     align-items: center;
     background-color: #fff;
     border-radius: 8px;
-    box-shadow: 0 5px 8px rgba(0,0,0,0.1);
-    padding: 5px;
-    margin-bottom: 5px; /* 리스트 간 간격 */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+    padding: 0px;
+    margin: 0 auto;
+    margin-bottom: 20px; /* 리스트 간 간격 */
   }
 
   .book {
@@ -483,6 +530,19 @@ export default {
     color: #679669; /* 원하는 색상으로 변경 */
     font-weight: bold;
   }
+  .refresh-button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin-bottom: 10px;
+  cursor: pointer;
+  font-size: 15px; /* 아이콘 크기 조정 */
+  color: #679669; /* 아이콘 색상 */
+  }
+
+  .refresh-button:hover {
+  color: #679669; /* 호버 시 색상 변경 */
+  }
 
   .text-button {
   font-size: 15px;
@@ -493,11 +553,27 @@ export default {
   font-size: inherit;
   cursor: pointer;
   text-decoration: none; /* 밑줄 제거 가능 */
-  margin-bottom: 15px;
+  margin-bottom: 10px;
+  overflow: visible;
   }
 
   .text-button:hover {
   text-decoration: underline; /* 호버 시 밑줄 표시 */
   }
+  .popup {
+  opacity: 1;
+  position: fixed;
+  bottom: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #c13535;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  text-align: center;
+  z-index: 1000;
+  transition: opacity 0.3s ease-in-out;
+}
 }
 </style>

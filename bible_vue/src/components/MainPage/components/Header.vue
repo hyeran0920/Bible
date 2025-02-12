@@ -4,7 +4,7 @@
     <header class="head">
       <div class="logo">
         <a href="/">
-          <img src="../../../assets/logo.png" alt="Logo" class="logo-img">
+          <img src="../../../assets/logo_header.png" alt="Logo" class="logo-img">
         </a>
       </div>
         <!-- 검색 -->

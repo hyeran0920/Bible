@@ -133,7 +133,19 @@
 	    </dependency>
     
     	<!--====================================================-->
-    	
+    	<!--Azure-->
+    	<dependency>
+		    <groupId>com.azure</groupId>
+		    <artifactId>azure-storage-blob</artifactId>
+		    <version>12.19.0</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.azure</groupId>
+		    <artifactId>azure-identity</artifactId>
+		    <version>1.8.2</version>
+		</dependency>
+
+
     	
     	<!--SMS - coolsm-->
     	<dependency>
@@ -252,7 +264,12 @@
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
-    </dependencies>
+        <dependency>
+        	<groupId>com.example</groupId>
+        	<artifactId>demo</artifactId>
+        	<version>0.0.1-SNAPSHOT</version>
+        </dependency>
+	</dependencies>
 
     <build>
         <plugins>

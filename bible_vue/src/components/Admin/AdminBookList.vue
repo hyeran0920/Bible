@@ -25,7 +25,7 @@
           <!-- Img, Title 클릭 시 책 상세 페이지 -->
           <td>
             <router-link :to="'/book/' + book.bookId">
-              <img :src="getBookImageUrl(book.bookId)" 
+              <img :src="getBookImage(book.bookId)"
                 :alt="book.bookTitle" 
                 width="100" height="auto" />
             </router-link>
@@ -55,6 +55,8 @@
   </template>
   
   <script>
+  import ImageUtils from '/src/scripts/Img.js';
+
   export default {
     props: {
       paginatedBooks: Array,
@@ -62,11 +64,15 @@
       promptDelete: Function,
       userRole: String,
     },
-    methods:{
-      getBookImageUrl(bookId){
-        return `${this.$axios.defaults.baseURL}/uploads/book-image?bookid=${bookId}`;
-      },
+    mounted() {
+      console.log("ImageUtils 확인:", ImageUtils);
     },
+    methods: {
+      getBookImage(bookId) {
+        return ImageUtils ? ImageUtils.getBookImg(bookId) : ''; // 방어 코드 추가
+      }
+    }
+
   };
   </script>
   

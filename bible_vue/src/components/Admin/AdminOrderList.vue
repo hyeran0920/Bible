@@ -84,7 +84,7 @@
                     <tbody>
                         <tr v-for="order in orders" :key="order.orderId" class="order-item">
                             <td>
-                                <img :src="getBookImageUrl(order.bookId)" :alt="books[order.bookId]?.bookTitle || '책 이미지 없음'"
+                                <img :src="bookImgs[order.bookId]" :alt="books[order.bookId]?.bookTitle || '책 이미지 없음'"
                                     class="bookImg" />
                             </td>
                             <td v-if="books[order.bookId]">{{ books[order.bookId]?.bookTitle || '불러오는 중...' }}</td>
@@ -105,6 +105,8 @@
 </template>
 
 <script>
+import ImageUtils from '../../scripts/img.js';
+
 export default {
     data() {
         return {
@@ -114,7 +116,8 @@ export default {
             books: {},
             addresses: {},             
             selectedOrderHistory: null,
-            orderModalVisible: false
+            orderModalVisible: false,
+            bookImgs:{}
         };
     },
     mounted() {
@@ -196,14 +199,13 @@ export default {
             try {
                 const response = await this.$axios.get(`/books/${bookId}`);
                 this.books[bookId]=response.data;
+                
+                this.bookImgs[bookId]=ImageUtils.getBookImg(bookId);
             } catch (error) {
                 console.error("책 정보를 불러오는 중 오류 발생:", error);
             }
         },
         
-        getBookImageUrl(bookId) {
-            return `${this.$axios.defaults.baseURL}/uploads/book-image?bookid=${bookId}`;
-        },
 
         selectOrderHistory(orderHistory) {
             console.log("선택된 주문 내역:", orderHistory);

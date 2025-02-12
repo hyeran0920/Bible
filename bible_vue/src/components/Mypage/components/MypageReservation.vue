@@ -8,7 +8,7 @@
         <div class="book-image">
           <img 
             v-img-lazy-loading
-            :src="`${this.$axios.defaults.baseURL}/uploads/book-image?bookid=${item.bookId}`"
+            :src=getBookImage(item.bookId)
             :alt="item.bookTitle"
           />
         </div>
@@ -61,6 +61,7 @@
 <script>
 const RESERV_BASEURL = "/reservations/me";
 import Modal from '../../modal/CustomModal.vue';
+import ImageUtils from '/src/scripts/Img.js';
 
 export default {
   data() {
@@ -78,6 +79,9 @@ export default {
     Modal,
   },
   methods: {
+    getBookImage(bookId) {
+      return ImageUtils ? ImageUtils.getBookImg(bookId) : '';
+    },
     changeDateTimeFormat(isodate) {
       if (!isodate) return "-";
 

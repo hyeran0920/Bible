@@ -18,7 +18,7 @@
 
           <!--img-->
 
-            <img :src="`${this.$axios.defaults.baseURL}/uploads/book-image?bookid=${cart.bookId}`" 
+            <img :src=getBookImage(cart.bookId)
             :alt="books[cart.bookId]?.bookTitle || '책 제목 없음'" 
             class="cart-book-image"/>
 
@@ -84,8 +84,10 @@
 import Header from '../../MainPage/components/Header.vue';
 import Footer from '../../MainPage/components/Footer.vue';
 import Modal from '../../modal/CustomModal.vue';
+import ImageUtils from '/src/scripts/Img.js';
 
 export default {
+  
   data() {
     return {
       carts: [],             // 장바구니 목록 (cart 객체)
@@ -105,7 +107,9 @@ export default {
     this.fetchCarts();
   },
   methods: {
-
+    getBookImage(bookId) {
+        return ImageUtils ? ImageUtils.getBookImg(bookId) : '';
+    },
     //Fetch Data---------------------------------------------------------------
     async fetchCarts() {
       await this.$axios.get('/carts', { withCredentials: true })
@@ -178,11 +182,6 @@ export default {
         });
     },
     
-
-    // Book Img------------------------------------------------------------
-    async getBookImageUrl(bookId) {
-      return `${this.$axios.defaults.baseURL}/uploads/book-image?bookid=${bookId}`;
-    },
 
 
     // Order---------------------------------------------------------------

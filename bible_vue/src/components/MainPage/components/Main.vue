@@ -11,12 +11,12 @@
       <div class="carousel">
         <div class="main-image" :style="{ backgroundImage: `url(${images[currentSlide]})` }"
             @touchstart="touchStart" @touchmove="touchMove" @touchend="touchEnd"></div>
-        
-        <div class="pagination">
-          <span v-for="(image, index) in images" :key="index" class="dot" 
-              :class="{ active: currentSlide === index }" @click="setSlide(index)"></span>
-        </div>             
       </div>
+      <div class="pagination">
+        <span v-for="(image, index) in images" :key="index" class="dot" 
+            :class="{ active: currentSlide === index }" @click="setSlide(index)"></span>
+      </div>             
+      
 
       <div class="main-best">
         <h3>베스트 셀러</h3>
@@ -151,19 +151,22 @@ body, ul, li {
 
 /* Main Content */
 .carousel{
+   display: flex;
+  justify-content: center; /* 가운데 정렬 */
+  align-items: center;
   width: 100%;
   max-width: 100%;
   overflow: hidden;
-  margin: 0;
+  margin-top: 5px;
   padding: 0;
 }
 
 .main-image {
-  width: auto;
-  height: 50vh; /* 뷰포트 높이의 50%로 설정 */
+  height: 100%;
+  width: 150%;
   background-color: #f0f0f0;
   border-radius: 8px;
-  background-size: cover;
+  background-size: contain;
   background-position: center;
   transition: background-image 0.3s ease;
 }
@@ -172,26 +175,29 @@ body, ul, li {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 16px;
-  gap: 12px;
+  gap: 0%;
+  height: 1px;
+  margin: 0px;
+  border-radius: 0%;
 }
 
 .dot {
-  width: 12px;
-  height: 12px;
+  width: 5px;
+  height: 5px; 
   background-color: #ccc;
   border-radius: 0%;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.3s ease;
+  transform: scale(0.8);
 }
 
 .dot.active {
-  background-color: #333; /* 현재 활성화된 슬라이드 색상 */
-  transform: scale(1.3); /* 활성화된 점을 커지게 */
+  background-color: #333;
+  transform: scale(1);
 }
 
 .dot:not(.active):hover {
-  background-color: #bbb; /* 비활성화된 상태에서 마우스 오버 시 */
+  background-color: #bbb;
 }
 
 /* 모바일 최적화 */
@@ -201,14 +207,10 @@ body, ul, li {
     border-radius: 0;
   }
 
-  .pagination {
-    margin-top: 5px;
-    gap: 6px;
-  }
-
   .dot {
-    width: 6px;
+    width: 1px;
     height: 6px;
+    margin-bottom: 40px;
   }
 }
 
@@ -279,6 +281,7 @@ body, ul, li {
 }
 .main-best h3{
   margin: 15px;
+  margin-top: 30px;
 }
 
 /* 모바일에서 책 아이템 더 적게 표시 */

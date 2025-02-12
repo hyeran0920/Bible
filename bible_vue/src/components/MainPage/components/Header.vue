@@ -22,7 +22,7 @@
         </button>
       </div>
       <!-- 사용자 -->
-      <div class="auth-icon" @click="toggleAuthMenu">👤</div>
+      <div class="auth-icon" @click="toggleAuthMenu">···</div>
     </header>
 
     <!-- Auth menu -->

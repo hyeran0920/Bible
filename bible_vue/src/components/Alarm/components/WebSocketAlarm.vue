@@ -7,7 +7,7 @@
 
       <div class="alarm-title">{{ alarm.alarmTitle }}</div>
       <div>{{ alarm.alarmText }}</div>
-      <div><button class="close-btn" @click="removeAlarm(index)">X</button></div>
+      <div><button class="web-alarm-close-btn" @click="removeAlarm(index)">X</button></div>
 
     </div>
   </div>
@@ -82,10 +82,12 @@ export default {
 
 /* 개별 알람 스타일 */
 .webSocketAlarm {
-  background: #f5fdff; /* 부드러운 주황색 배경 */
-  color: #333;
+  background:var(--main-green);
+  color: var(--dark-green);
+  background-color: white;
   padding: 12px 16px;
   border-radius: 8px;
+  /* border: 1px solid var(--dark-green); */
   font-size: 14px;
   font-weight: bold;
   text-align: center;
@@ -129,28 +131,32 @@ export default {
 }
 
 /* 닫기 버튼 스타일 */
-.close-btn {
+.web-alarm-close-btn {
   position: absolute;
-  top: 1px;
+  top: 5px;
   right: 5px;
   background: none;
   border: none;
-  color: #ff4d4d;
+  background-color: white;
+  color: var(--dark-green);
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
-  padding: 2px;
+  padding: 0 2px 0 2px;
   width:20px;
 }
 
-.close-btn:hover {
-  color: darkred;
+.web-alarm-close-btn:hover {
+  color: var(--dark-green);
+  background-color: white;
 }
+
+
 
 .alarm-title{
   padding:2px;
   margin-bottom: 10px;
-  font-size: large;
+  font-size: 16px;
 }
 </style>
 

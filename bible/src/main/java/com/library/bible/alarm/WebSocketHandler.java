@@ -133,42 +133,44 @@ public class WebSocketHandler extends TextWebSocketHandler implements Initializi
         return null;
     }
 
+
+
     
 
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        logger.info("Runnable 시작");
-        Thread t = new Thread(new AlarmRunnable());
-        t.start();
+        //logger.info("Runnable 시작");
+        //Thread t = new Thread(new AlarmRunnable());
+        //t.start();
     }
-
-    private class AlarmRunnable implements Runnable {
-        @Override
-        public void run() {
-            while (true) {
-                try {
-                	
-                	//Send All Messages
-                    String alarmTitle = "알림";
-                    String alarmText = "반납하세요!!!";
-                    String messageContent = "{\"alarmTitle\":\"" + alarmTitle + "\",\"alarmText\":\"" + alarmText + "\"}";
-                    sendMessageToAll(messageContent);
-
-                    
-                    //Send User Messages Example
-                    String messageContent2 = "{\"alarmTitle\":\"" + "헐" + "\",\"alarmText\":\"" + "되나요" + "\"}";
-                    //sendMessageToUser((long) 62, messageContent2);
-                    
-                    
-                    Thread.sleep(10000); // 이 간격으로 메시지 전송
-                } catch (InterruptedException e) {
-                    logger.error("쓰레드 중단!", e);
-                    break;
-                } catch (Exception e) {
-                    logger.error("메시지 전송 실패!", e);
-                }
-            }
-        }
-    }
+//
+//    private class AlarmRunnable implements Runnable {
+//        @Override
+//        public void run() {
+//            while (true) {
+//                try {
+//                	
+//                	//Send All Messages
+//                    String alarmTitle = "알림";
+//                    String alarmText = "반납하세요!!!";
+//                    String messageContent = "{\"alarmTitle\":\"" + alarmTitle + "\",\"alarmText\":\"" + alarmText + "\"}";
+//                    sendMessageToAll(messageContent);
+//
+//                    
+//                    //Send User Messages Example
+//                    //String messageContent2 = "{\"alarmTitle\":\"" + "헐" + "\",\"alarmText\":\"" + "되나요" + "\"}";
+//                    //sendMessageToUser((long) 62, messageContent2);
+//                    
+//                    
+//                    Thread.sleep(10000); // 이 간격으로 메시지 전송
+//                } catch (InterruptedException e) {
+//                    logger.error("쓰레드 중단!", e);
+//                    break;
+//                } catch (Exception e) {
+//                    logger.error("메시지 전송 실패!", e);
+//                }
+//            }
+//        }
+//    }
 }

@@ -97,28 +97,29 @@ export default {
 <style scoped>
 .book-search {
   margin: 20px;
+  
 }
 
 .category {
   display: flex;
   gap: 10px;
   justify-content: center;
-  background: #EEE;
   padding: 10px;
 }
 
 .category-select {
+  flex-grow: 1;
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  min-width: 120px;
 }
 
 .search-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 20px;
+  width: 100%;
+  gap: 10px;
 }
 
 .label {
@@ -132,7 +133,7 @@ export default {
   border-radius: 5px;
   border: 1px solid #ccc;
   font-size: 14px;
-  width: 50%;
+  width: 100%;
 }
 
 /* 반응형 디자인 */

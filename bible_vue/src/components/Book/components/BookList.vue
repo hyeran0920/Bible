@@ -2,7 +2,7 @@
   <div class="book-list">
     <div v-for="book in paginatedBooks" :key="book.bookId" class="book-item" @click="goToBookDetail(book.bookId)">
       <div class="book-image">
-        <img :src="getBookImageUrl(book.bookId)" :alt="book.bookTitle" />
+        <img :src=getBookImage(book.bookId) :alt="book.bookTitle" />
       </div>
       <div class="book-info">
         <h3 class="book-title">{{ book.bookTitle }}</h3>
@@ -21,16 +21,18 @@
 </template>
 
 <script>
+import ImageUtils from '/src/scripts/Img.js';
+
 export default {
   props: {
     paginatedBooks: Array,
   },
   methods: {
-    getBookImageUrl(bookId) {
-      return `${this.$axios.defaults.baseURL}/uploads/book-image?bookid=${bookId}`;
-    },
     goToBookDetail(bookId) {
       this.$router.push(`/book/${bookId}`);
+    },
+    getBookImage(bookId) {
+      return ImageUtils ? ImageUtils.getBookImg(bookId) : '';
     }
   },
 };

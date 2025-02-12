@@ -133,7 +133,19 @@
 	    </dependency>
     
     	<!--====================================================-->
-    	
+    	<!--Azure-->
+    	<dependency>
+		    <groupId>com.azure</groupId>
+		    <artifactId>azure-storage-blob</artifactId>
+		    <version>12.19.0</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.azure</groupId>
+		    <artifactId>azure-identity</artifactId>
+		    <version>1.8.2</version>
+		</dependency>
+
+
     	
     	<!--SMS - coolsm-->
     	<dependency>
@@ -270,7 +282,7 @@
 	          <version>0.17.1</version>
 	          <scope>test</scope>
         </dependency>
-    </dependencies>
+	</dependencies>
 
     <build>
         <plugins>

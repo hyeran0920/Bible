@@ -13,7 +13,9 @@ import com.library.bible.rent.model.RentStatus;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RentMemberResponse {
+	
     private Long rentId;       // 대여 ID
+    private Long memId;
     private Timestamp rentDueDate;  // 대여 만료일
     private Timestamp rentFinishDate; // 반납 완료일 (반납 전이면 null)
     private RentStatus rentStatus; // 대여 상태 (IN_USE 등)

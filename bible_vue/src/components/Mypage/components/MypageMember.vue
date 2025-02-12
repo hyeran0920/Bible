@@ -75,7 +75,7 @@
                 </div>
                 <div class="form-group">
                     <label for="memPhone">{{ $t('mypage.member.modalPhone') }} </label>
-                    <input v-model="currentMember.memPhone" type="tel" id="memPhone" pattern="^010-\d{4}-\d{4}$" placeholder="010-1234-5678" :class="{ 'error-border': phoneError }" maxlength="13" required />
+                    <input v-model="currentMember.memPhone" type="tel" id="memPhone" pattern="^010-\d{4}-\d{4}$" placeholder="010-1234-5678" :class="{ 'error-border': phoneError }" maxlength="13" @input="formatPhoneNumber" required />
                     <span v-if="phoneError" class="error-message">{{ $t('mypage.member.modalCheckPhone') }}</span>
                 </div>
                 <div class="modal-actions">
@@ -266,6 +266,18 @@
                     this.showMessageModal(error);
                 }
             },
+            // 전화번호 자동 - 추가
+            formatPhoneNumber() {
+                let num = this.currentMember.memPhone.replace(/\D/g, ""); // 숫자만 남김
+                if (num.length > 3 && num.length <= 7) {
+                    this.currentMember.memPhone = `${num.slice(0, 3)}-${num.slice(3)}`;
+                } else if (num.length > 7) {
+                    this.currentMember.memPhone = `${num.slice(0, 3)}-${num.slice(3, 7)}-${num.slice(7, 11)}`;
+                } else {
+                    this.currentMember.memPhonee = num;
+                }
+            },
+            // 모달
             openModal(editing=false, member=null){
                 this.isEditing = editing;
                 this.currentMember = editing ? {...member} : this.getDefaultMember();

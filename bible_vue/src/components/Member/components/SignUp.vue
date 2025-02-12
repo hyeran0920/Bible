@@ -88,7 +88,9 @@
             v-model="member.memPhone"
             required
             placeholder="전화번호를 입력하세요"
-            :class="{'input-error-border': !valid.phone}"
+            :class="{'input-error-border': !valid.phone}" 
+            @input="formatPhoneNumber" 
+            maxlength="13" 
           />
           <p v-show="!valid.phone" class="input-error">
             전화번호 형식이 올바르지 않습니다. (ex: 010-1234-5678)
@@ -270,7 +272,17 @@
             this.isVerified = false;
         }
       },
-
+      // 전화번호 자동 - 추가
+      formatPhoneNumber() {
+        let num = this.member.memPhone.replace(/\D/g, ""); // 숫자만 남김
+        if (num.length > 3 && num.length <= 7) {
+          this.member.memPhone = `${num.slice(0, 3)}-${num.slice(3)}`;
+        } else if (num.length > 7) {
+          this.member.memPhone = `${num.slice(0, 3)}-${num.slice(3, 7)}-${num.slice(7, 11)}`;
+        } else {
+          this.member.memPhone = num;
+        }
+      },
       // 컴포넌트가 제거될 때 타이머 정리
       beforeDestroy() {
         if (this.timer) {

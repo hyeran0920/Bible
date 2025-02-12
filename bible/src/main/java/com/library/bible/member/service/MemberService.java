@@ -120,7 +120,7 @@ public class MemberService implements IMemberService{
 	@Transactional
 	public Member updateMember(Member member) {
 		// role 이외의 컬럼 수정
-		member.setMemPassword(passwordEncoder.encode(member.getMemPassword())); // 비밀번호 암호화
+		if(member.getMemPassword() != null) member.setMemPassword(passwordEncoder.encode(member.getMemPassword())); // 비밀번호 암호화
 		int result = memberRepository.updateMember(member);
 		if(result == 0) throw new CustomException(ExceptionCode.MEMBER_UPDATE_FAIL);
 		

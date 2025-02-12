@@ -54,7 +54,7 @@
     </div>
 
     <!-- Edit Member Modal -->
-    <div v-if="isModalVisible" class="modal-overlay">
+    <div v-if="isModalVisible" class="modal-overlay-member">
      <div class="member-modify-modal">
         <div class="modal-content">
             <h2>{{ $t('mypage.member.modalTitle') }}</h2>
@@ -75,7 +75,7 @@
                 </div>
                 <div class="form-group">
                     <label for="memPhone">{{ $t('mypage.member.modalPhone') }} </label>
-                    <input v-model="currentMember.memPhone" type="tel" id="memPhone" pattern="^010-\d{4}-\d{4}$" placeholder="010-1234-5678" :class="{ 'error-border': phoneError }" maxlength="13" required />
+                    <input v-model="currentMember.memPhone" type="tel" id="memPhone" pattern="^010-\d{4}-\d{4}$" placeholder="010-1234-5678" :class="{ 'error-border': phoneError }" maxlength="13" @input="formatPhoneNumber" required />
                     <span v-if="phoneError" class="error-message">{{ $t('mypage.member.modalCheckPhone') }}</span>
                 </div>
                 <div class="modal-actions">
@@ -124,7 +124,7 @@
         <div class="InfoBtn">
             <button @click="openAddressModal()" type="button" class="btn member-info-modify-button">{{ $t('mypage.address.addBtn') }}</button>
             <!-- 모달 컴포넌트 -->
-            <div v-if="showModal" class="modal-overlay">
+            <div v-if="showModal" class="modal-overlay-member">
                 <div class="modal-content">
                     <!-- AddressSearch 컴포넌트-->
                     <AddressSearch @address-added="addAddress"/>
@@ -266,6 +266,18 @@
                     this.showMessageModal(error);
                 }
             },
+            // 전화번호 자동 - 추가
+            formatPhoneNumber() {
+                let num = this.currentMember.memPhone.replace(/\D/g, ""); // 숫자만 남김
+                if (num.length > 3 && num.length <= 7) {
+                    this.currentMember.memPhone = `${num.slice(0, 3)}-${num.slice(3)}`;
+                } else if (num.length > 7) {
+                    this.currentMember.memPhone = `${num.slice(0, 3)}-${num.slice(3, 7)}-${num.slice(7, 11)}`;
+                } else {
+                    this.currentMember.memPhonee = num;
+                }
+            },
+            // 모달
             openModal(editing=false, member=null){
                 this.isEditing = editing;
                 this.currentMember = editing ? {...member} : this.getDefaultMember();
@@ -564,7 +576,7 @@ input:focus {
 }
 
 /* 오버레이 배경 */
-.modal-overlay {
+.modal-overlay-member {
     position: fixed;
     top: 0;
     left: 0;

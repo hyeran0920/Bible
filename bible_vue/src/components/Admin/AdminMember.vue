@@ -30,9 +30,6 @@
             </div>
         </div>
 
-
-
-        
         <!-- Edit Member Modal -->
         <div v-if="isModalVisible" class="custom-modal">
             <div class="modal-content">
@@ -43,12 +40,12 @@
                         <input v-model="currentMember.memName" type="text" id="memName" required />
                     </div>
                     <div class="form-group">
-                        <label for="memId">아이디: </label>
-                        <input v-model="currentMember.memId" type="text" id="memId" required />
-                    </div>
-                    <div class="form-group">
-                        <label for="memEmail">이메일: </label>
-                        <input v-model="currentMember.memEmail" type="text" id="memEmail" required />
+                        <label for="memPhone">전화번호: </label>
+                        <input v-model="currentMember.memPhone" type="tel" id="memPhone" 
+                            pattern="^010-\d{4}-\d{4}$" placeholder="010-1234-5678" 
+                            :class="{ 'error-border': phoneError }" maxlength="13" 
+                            @input="formatPhoneNumber" required />
+                        <span v-if="phoneError" class="error-message">올바른 전화번호 형식이 아닙니다.</span>
                     </div>
                     <div class="modal-actions">
                         <button type="submit" class="btn-primary">저장하기</button>
@@ -79,6 +76,16 @@ export default {
     components:{
         Modal,
     },
+    watch: {
+        'currentMember.memPhone': {
+            handler(newValue) {
+                if (newValue) {
+                    this.phoneError = !this.phonePattern.test(newValue);
+                }
+            },
+            immediate: true
+        }
+    },
     data() {
         return {
             members: [],  // 모든 멤버 데이터를 저장하는 변수
@@ -90,6 +97,10 @@ export default {
             isDModalVisible:false,
             systemMessage: '',
             pendingMemId: null,      // 탈퇴할 회원 ID 저장
+
+            // member 정보 수정 시 데이터 유효성 검사
+            phoneError: false,
+            phonePattern: /^010-\d{4}-\d{4}$/
         };
     },
     methods: {
@@ -165,6 +176,19 @@ export default {
                 console.log("에러 메시지: ", error);
             }
         },
+
+        // 전화번호 자동 - 추가
+        formatPhoneNumber() {
+            let num = this.currentMember.memPhone.replace(/\D/g, ""); // 숫자만 남김
+            if (num.length > 3 && num.length <= 7) {
+                this.currentMember.memPhone = `${num.slice(0, 3)}-${num.slice(3)}`;
+            } else if (num.length > 7) {
+                this.currentMember.memPhone = `${num.slice(0, 3)}-${num.slice(3, 7)}-${num.slice(7, 11)}`;
+            } else {
+                this.currentMember.memPhone = num;
+            }
+        }
+
     },
     async mounted() {
         // 페이지 로드 시 모든 멤버 데이터 가져오기
@@ -217,8 +241,6 @@ export default {
 .info {
     font-weight: bold;
 }
-
-
 
 .custom-modal {
     position: fixed;
@@ -297,4 +319,49 @@ export default {
     border:1px solid var(--primary-color);
     color: var(--primary-color);
 }
+
+/* 전화번호 입력 필드 스타일 */
+input[type="tel"] {
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+}
+
+/* 전화번호 입력 필드 포커스 시 스타일 */
+input[type="tel"]:focus {
+    border-color: #679669;
+    outline: none;
+    box-shadow: 0 0 5px rgba(103, 150, 105, 0.2);
+}
+
+/* 전화번호 에러 상태 스타일 */
+input[type="tel"].error-border {
+    border-color: #ff4444;
+    background-color: #fff8f8;
+}
+
+/* 전화번호 에러 메시지 스타일 */
+.error-message {
+    color: #ff4444;
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
+}
+
+/* 입력 필드 플레이스홀더 스타일 */
+input[type="tel"]::placeholder {
+    color: #999;
+    font-size: 13px;
+}
+
+/* 전화번호 입력 컨테이너 스타일 */
+.form-group {
+    margin-bottom: 20px;
+    position: relative;
+}
+
 </style>

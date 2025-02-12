@@ -5,11 +5,16 @@
     <!-- Footer -->
     <footer class="footer">
       <div class="footer-content">
-        <div class="menu-icon" @click="toggleCart">🛒</div>
+        <!-- 🛒 -->
+        <div class="menu-icon" @click="toggleCart">
+          <img src="../../../assets/Footer/cart.png" alt="cart logo" class="cart-icon-img">
+        </div>
         <div> <a href="/">
             <img src="../../../assets/logo.png" alt="Logo" class="logo-img">
           </a></div>
-        <div class="auth-icon" @click="toggleAuthMenu">👤</div>
+        <div class="auth-icon" @click="toggleAuthMenu">
+          <img src="../../../assets/Footer/member.png" alt="member logo" class="auth-icon-img">
+        </div>
       </div>
     </footer>
   </div>
@@ -99,6 +104,13 @@ export default {
 }
 
 .logo-img {
-  max-width: 40px;
+  max-width: 65px;
+  display: block;
+}
+
+.cart-icon-img,
+.auth-icon-img{
+  max-width: 30px;
+  display: block;
 }
 </style>

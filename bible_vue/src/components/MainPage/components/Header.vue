@@ -161,7 +161,7 @@ body, ul, li {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 15px 0 15px;
+  padding: 15px 15px 15px 15px;
 }
 
 .logo {
@@ -170,8 +170,9 @@ body, ul, li {
 }
 
 .auth-icon {
-  font-size: 24px;
+  font-size: 35px;
   cursor: pointer;
+  padding-right:10px;
 }
 
 /* Search */
@@ -192,7 +193,7 @@ body, ul, li {
 }
 
 .search-input:focus {
-  border-color: #007bff;
+  border-color: var(--dark-green);
   outline: none;
 }
 
@@ -261,7 +262,7 @@ button {
   display: flex;
   justify-content: space-around;
   flex-wrap: nowrap; /* 줄바꿈 방지 */
-  padding: 0 10px; 
+  padding: 0 25px; 
 }
 .nav-links li {
   flex-shrink: 0; /* 아이템 크기 유지 */
@@ -284,7 +285,7 @@ button {
   position: relative;
 }
 
-/* 밑줄 효과 */
+/* 선택 효과 */
 .nav-links a.active::after {
   content: '';
   position: absolute;
@@ -292,13 +293,50 @@ button {
   bottom: -4px;
   width: 100%;
   height: 2px;
-  background-color: #679669;
+  color: var(--main-green);
+}
+
+.nav-links a {
+  all: unset !important;
+  text-decoration: none !important;
+  color: inherit !important;
 }
 
 /* 호버 효과 */
 .nav-links a:hover {
-  color: #679669;
+  color: var(--main-green);
+  cursor: pointer;
 }
+
+
+
+
+/* 활성화된 링크 스타일 (Vue Router 자동 추가) */
+.nav-links a.router-link-active {
+  color: var(--main-green) !important; /* 활성화된 메뉴 색상 */
+  font-weight: bold;
+}
+
+
+
+/* 선택 효과 */
+.nav-links a.active::after,
+.nav-links a.router-link-active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 100%;
+  text-decoration: none;
+}
+
+
+
+
+
+
+
+
 
 /* 로고 스타일 */
 .logo-img {
@@ -314,7 +352,7 @@ button {
   }
 
   .search-container {
-    width: 60%;
+    width: 70%;
   }
 
   .nav-links {
@@ -323,7 +361,8 @@ button {
   .nav-links li {
     flex-basis: 22%;
     text-align: center;
-    padding: 6px;
+    padding: 7px;
+    
   }
 }
 </style>

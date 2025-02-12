@@ -6,7 +6,7 @@
 
       <tbody>
         <tr v-for="cart in cartArray" :key="cart.cartId">
-          <td><img :src="getBookImageUrl(cart.bookId)" :alt="books[cart.bookId]?.bookTitle || '책 이미지 없음'"
+          <td><img :src=ImageUtils.getBookImg(cart.bookId) :alt="books[cart.bookId]?.bookTitle || '책 이미지 없음'"
               class="bookImg" /></td>
           <td>{{ books[cart.bookId]?.bookTitle || '제목 없음' }}</td>
           <td>{{ books[cart.bookId]?.bookAuthor || '저자 없음' }}</td>
@@ -98,6 +98,7 @@
 <script>
 import AddressSearch from './AddressSearch.vue';
 import Modal from '../../modal/CustomModal.vue';
+import ImageUtils from '../../../scripts/img.js';
 
 export default {
   props: ['cartIds'], // Router에서 받은 cartIds
@@ -183,10 +184,7 @@ export default {
         console.error("Error fetching addresses:", error);
       }
     },
-    //책 이미지 가져오기--------------------------------------
-    getBookImageUrl(bookId) {
-      return `${this.$axios.defaults.baseURL}/uploads/book-image?bookid=${bookId}`;
-    },
+
 
 
     //결제----------------------------------------------------

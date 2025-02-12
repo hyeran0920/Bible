@@ -71,6 +71,9 @@
 
 
 <script>
+import ImageUtils from '../../../scripts/img.js';
+
+
 export default {
   props: ['isModalVisible', 'isEditing', 'currentBook'],
   data() {
@@ -85,7 +88,7 @@ export default {
       handler(newVal) {
         if (this.isEditing && newVal.bookId) {
           // Edit 모드에서 bookId 기반으로 이미지 URL 설정
-          this.previewImage = this.getBookImageUrl(newVal.bookId);
+          this.previewImage = ImageUtils.getBookImg(newVal.bookId);
         } else {
           // Add 모드에서는 미리보기 초기화
           this.previewImage = null;
@@ -97,7 +100,7 @@ export default {
       handler(newVal) {
         if (newVal) {
           // Edit 모드일 경우 bookId 기반으로 이미지 URL 설정
-          this.previewImage = this.getBookImageUrl(this.currentBook.bookId);
+          this.previewImage = ImageUtils.getBookImg(this.currentBook.bookId);
         } else {
           // Add 모드일 경우 미리보기 초기화
           this.previewImage = null;

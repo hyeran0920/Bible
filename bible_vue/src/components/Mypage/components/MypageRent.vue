@@ -19,7 +19,7 @@
           <div class="book-image">
             <img 
               v-img-lazy-loading
-              :src="`http://localhost:8080/api/uploads/book-image?bookid=${item.bookId}`"
+              :src="getBookImage(item.bookId)"
               :alt="item.bookTitle"
             />
           </div>
@@ -104,6 +104,7 @@
 <script>
 const RENT_BASEURL = "/rents/me";
 import Modal from '../../modal/CustomModal.vue';
+import ImageUtils from '/src/scripts/Img.js';
 
 export default {
   name: 'MyRentHistory',
@@ -146,6 +147,9 @@ export default {
     },
   },
   methods: {
+    getBookImage(bookId) {
+      return ImageUtils ? ImageUtils.getBookImg(bookId) : '';
+    },
     // 날짜 포맷 변환
     changeDateFormat(isodate) {
       return isodate ? new Date(isodate).toLocaleDateString() : "-";
@@ -257,6 +261,9 @@ export default {
       }
     },
   },
+  
+
+
   async mounted() {
     await this.fetchRentList(0);
   },

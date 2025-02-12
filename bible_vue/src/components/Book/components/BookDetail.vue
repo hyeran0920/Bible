@@ -3,7 +3,7 @@
   <div class="book-details-page">
     <div v-if="book" class="book-details">
       <div class="book-image" :style="backgroundStyle">
-        <img :src="getBookImageUrl(book.bookId)" :alt="book.bookTitle" />
+        <img :src="getBookImage(book.bookId)" :alt="book.bookTitle" />
       </div>
       <div class="book-info">
         <h1>{{ book.bookTitle }}</h1>
@@ -67,6 +67,7 @@ import Footer from '../../MainPage/components/Footer.vue';
 import Header from '../../MainPage/components/Header.vue';
 import BookReview from './BookReview.vue'; // BookReview 컴포넌트 임포트
 import Modal from '../../modal/CustomModal.vue';
+import ImageUtils from '/src/scripts/Img.js';
 
 export default {
   props: {
@@ -96,17 +97,17 @@ export default {
       if (this.book) {
         return {
           backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)), 
-                url(${this.getBookImageUrl(this.book.bookId)})`,
+                url(${this.getBookImage(this.book.bookId)})`,
           backgroundSize: 'cover',
-          backgroundPosition: 'center'
+          backgroundPosition: 'center',
         }
       }
       return {}
     }
   },
   methods: {
-    getBookImageUrl(bookId) {
-      return `${this.$axios.defaults.baseURL}/uploads/book-image?bookid=${bookId}`;
+    getBookImage(bookId) {
+      return ImageUtils ? ImageUtils.getBookImg(bookId) : '';
     },
     async addCart(bookid) {
       await this.$axios.post(`/carts`, {
@@ -360,7 +361,7 @@ export default {
   background-size: cover;
   background-position: center;
   filter: blur(15px);
-  opacity: 0.6;
+  opacity: 0.7;
 }
 
 @media screen and (max-width: 768px) {

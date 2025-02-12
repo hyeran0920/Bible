@@ -51,7 +51,7 @@
             <tbody>
                 <tr v-for="order in orders" :key="order.orderId" class="order-item" >
                     <td>
-                        <img :src="getBookImageUrl(order.bookId)" :alt="books[order.bookId]?.bookTitle || '책 이미지 없음'"
+                        <img :src=getBookImage(order.bookId) :alt="books[order.bookId]?.bookTitle || '책 이미지 없음'"
                             class="bookImg" />
                     </td>
                     <td v-if="books[order.bookId]">{{ books[order.bookId]?.bookTitle || '불러오는 중...' }}</td>
@@ -100,6 +100,7 @@
 
 <script>
 import Modal from '../../modal/CustomModal.vue';
+import ImageUtils from '/src/scripts/Img.js';
 
 export default {
     components: {
@@ -220,17 +221,17 @@ export default {
             }
         },
 
-        getBookImageUrl(bookId) {
-            return `${this.$axios.defaults.baseURL}/uploads/book-image?bookid=${bookId}`;
-        },
-
         selectOrderHistory(orderHistory) {
             console.log("선택된 주문 내역:", orderHistory);
             this.selectedOrderHistory = orderHistory;
             this.orderModalVisible = true;
             this.fetchOrder(orderHistory.orderHistoryId);
             
+        },
+        getBookImage(bookId) {
+            return ImageUtils ? ImageUtils.getBookImg(bookId) : '';
         }
+
     }
 };
 </script>

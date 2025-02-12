@@ -36,6 +36,7 @@
 </template>
 
 <script>
+import ImageUtils from '../../scripts/img.js';
     export default {
         name: 'BookInfoModal',
         props: {
@@ -64,16 +65,12 @@
                     try {
                         const response = await this.$axios.get(`/books/${this.bookId}`);
                         this.bookInfo = response.data;
-                        this.bookImageUrl = this.getBookImageUrl(this.bookId);
+                        this.bookImageUrl = ImageUtils.getBookImg(this.bookId);
                     } catch (error) {
                         console.error('책 정보를 불러오는데 실패했습니다:', error);
                     }
                 }
-            },
-            // 도서 이미지
-            getBookImageUrl(bookId){
-                return `${this.$axios.defaults.baseURL}/uploads/book-image?bookid=${bookId}`;
-            },        
+            },      
         },
     }
 </script>

@@ -97,6 +97,9 @@ public class BookService implements IBookService {
         
     	//update book in database
     	bookRepository.updateBook(book);
+    	
+    	// 책 QR 코드 이미지 생성
+        uploadService.createBookQRImage(book, book.getBookId());
         
         //book cover img
     	if (file != null && !file.isEmpty()) {

@@ -8,8 +8,7 @@
 
         <!--QR IMG-->
         <div class="qrContainer">
-            <img v-if="memberQRImg":src="memberQRImg" alt="Member QR Code" class="qr-image" />
-            <span v-else>{{ $t('mypage.member.QRInfo') }}</span>
+            <img :src="getMemberQRImage(member.memId)" alt="Member QR Code" class="qr-image" />
         </div>
 
         <!-- Member Info -->
@@ -55,7 +54,7 @@
     </div>
 
     <!-- Edit Member Modal -->
-    <div v-if="isModalVisible" class="modal-overlay">
+    <div v-if="isModalVisible" class="modal-overlay-member">
      <div class="member-modify-modal">
         <div class="modal-content">
             <h2>{{ $t('mypage.member.modalTitle') }}</h2>
@@ -76,7 +75,7 @@
                 </div>
                 <div class="form-group">
                     <label for="memPhone">{{ $t('mypage.member.modalPhone') }} </label>
-                    <input v-model="currentMember.memPhone" type="tel" id="memPhone" pattern="^010-\d{4}-\d{4}$" placeholder="010-1234-5678" :class="{ 'error-border': phoneError }" maxlength="13" required />
+                    <input v-model="currentMember.memPhone" type="tel" id="memPhone" pattern="^010-\d{4}-\d{4}$" placeholder="010-1234-5678" :class="{ 'error-border': phoneError }" maxlength="13" @input="formatPhoneNumber" required />
                     <span v-if="phoneError" class="error-message">{{ $t('mypage.member.modalCheckPhone') }}</span>
                 </div>
                 <div class="modal-actions">
@@ -125,7 +124,7 @@
         <div class="InfoBtn">
             <button @click="openAddressModal()" type="button" class="btn member-info-modify-button">{{ $t('mypage.address.addBtn') }}</button>
             <!-- 모달 컴포넌트 -->
-            <div v-if="showModal" class="modal-overlay">
+            <div v-if="showModal" class="modal-overlay-member">
                 <div class="modal-content">
                     <!-- AddressSearch 컴포넌트-->
                     <AddressSearch @address-added="addAddress"/>
@@ -153,6 +152,7 @@
     import MessageModal from '../../modal/CustomModal.vue';
     import DelageAddressModal from '../../modal/CustomModal.vue';
     import Modal from '../../modal/CustomModal.vue';
+    import ImageUtils from '/src/scripts/Img.js';
 
     export default{
         name:'Mypage',
@@ -173,7 +173,6 @@
                 isModalVisible: false,
                 isEditing: false,
                 member: [],
-                memberQRImg:null,
                 showModal: false,
 
                 // 정보 수정 시 
@@ -267,6 +266,18 @@
                     this.showMessageModal(error);
                 }
             },
+            // 전화번호 자동 - 추가
+            formatPhoneNumber() {
+                let num = this.currentMember.memPhone.replace(/\D/g, ""); // 숫자만 남김
+                if (num.length > 3 && num.length <= 7) {
+                    this.currentMember.memPhone = `${num.slice(0, 3)}-${num.slice(3)}`;
+                } else if (num.length > 7) {
+                    this.currentMember.memPhone = `${num.slice(0, 3)}-${num.slice(3, 7)}-${num.slice(7, 11)}`;
+                } else {
+                    this.currentMember.memPhonee = num;
+                }
+            },
+            // 모달
             openModal(editing=false, member=null){
                 this.isEditing = editing;
                 this.currentMember = editing ? {...member} : this.getDefaultMember();
@@ -328,21 +339,8 @@
                 }
             },
 
-            async getMemberQRImage() {
-                try {
-                    const response = await this.$axios.get(QR_BASEURL, {
-                        responseType: 'blob' // ✅ 이미지 요청 시 blob 타입으로 변환
-                    });
-
-                    if (response.status === 200) {
-                        this.memberQRImg = URL.createObjectURL(response.data);
-                    } else {
-                        this.memberQRImg = "";
-                    }
-                } catch (error) {
-                    console.error("Error fetching QR image: ", error);
-                    this.memberQRImg = ""; // QR 이미지 없음
-                }
+            getMemberQRImage(memId) {
+                return ImageUtils ? ImageUtils.getMemberQRImg(memId) : '';
             },
             //주소록 추가 모달 띄워짐
             openAddressModal() {
@@ -391,14 +389,6 @@
                 }
             },
 
-            async initializeQR() {
-                try {
-                    await this.getMemberQRImage();
-                } catch (error) {
-                    console.error("QR 이미지 조회 실패:", error);
-                }
-            },
-
             async initializeAddress() {
                 try {
                     const responseAddress = await this.$axios.get(ADDRESS_BASEURL);
@@ -412,7 +402,7 @@
                 // 데이터 초기화
                 await this.initializeAddress();
                 await this.initializeMember();
-                await this.initializeQR();
+                this.getMemberQRImage();
             }
 
         },
@@ -586,7 +576,7 @@ input:focus {
 }
 
 /* 오버레이 배경 */
-.modal-overlay {
+.modal-overlay-member {
     position: fixed;
     top: 0;
     left: 0;

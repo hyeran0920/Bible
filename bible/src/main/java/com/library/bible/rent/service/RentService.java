@@ -603,7 +603,7 @@ public class RentService implements IRentService {
 	        
 	        if (overdueDays > 0) {
 	            String message = String.format(
-	                "대여ID: %d, 회원명: %s, 전화번호: %s, 도서명: %s, 대여만기일: %s, 반납일: %s, 대여상태: %s, 연체일수: %d일",
+	                "대여ID: %d, 회원명: %s, 전화번호: %s, 도서명: %s, 대여만기일: %s, 반납일: %s, 대여상태: %s, 연체일수: %d일, 회원ID: %d",
 	                rent.getRentId(),
 	                rent.getMemName(),
 	                rent.getMemPhone(),
@@ -611,7 +611,8 @@ public class RentService implements IRentService {
 	                rent.getRentDueDate(),
 	                rent.getRentFinishDate(),
 	                rent.getRentStatus(),
-	                overdueDays
+	                overdueDays,
+	                rent.getMemId()
 	            );
 	            overdueMessages.add(message);
 	        }

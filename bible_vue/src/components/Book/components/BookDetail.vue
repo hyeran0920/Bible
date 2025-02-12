@@ -6,27 +6,33 @@
         <img :src="getBookImage(book.bookId)" :alt="book.bookTitle" />
       </div>
       <div class="book-info">
-        <h1>{{ book.bookTitle }}</h1>
-        <p class="author">by {{ book.bookAuthor }}</p>
+        <div class="title-author">
+          <h1>{{ book.bookTitle }}</h1>
+          <p class="author">by {{ book.bookAuthor }}</p>
+        </div>
+        <div class="book-meta">
+          <p><strong>카테고리:</strong> {{ book.bookCategory }}</p>
+          <p class="stock">총 재고: {{ book.bookTotalStock }}권</p>
+        </div>
         <div class="book-meta">
           <p>{{ book.bookPublisher }} · {{ formatDate(book.bookReleaseDate) }}</p>
-          <p><strong>카테고리:</strong> {{ book.bookCategory }}</p>
-        </div>
-        <div class="book-price">
-          <p class="price">{{ formatPrice(book.bookPrice) }}원</p>
-          <p class="stock">총 재고: {{ book.bookTotalStock }}권</p>
           <p class="stock">대여 가능 수량: {{ book.bookTotalStock-book.bookRentStock }}권</p>
         </div>
         <div class="cart-actions">
           <div class="quantity-input">
-            <button @click="decreaseQuantity">-</button>
-            <input 
-              type="number" 
-              v-model="nowBookCount" 
-              min="1"
-              :max="book.bookTotalStock"
-            />
-            <button @click="increaseQuantity">+</button>
+            <div>
+              <button @click="decreaseQuantity">-</button>
+              <input 
+                type="number" 
+                v-model="nowBookCount" 
+                min="1"
+                :max="book.bookTotalStock"
+              />
+              <button @click="increaseQuantity">+</button>
+            </div>
+            <div class="book-price">
+              <p class="price">{{ formatPrice(book.bookPrice) }}원</p>
+            </div>
           </div>
           <button class="add-to-cart-btn" @click="addCart(book.bookId)">
             장바구니에 추가
@@ -252,10 +258,15 @@ export default {
   color: #333;
 }
 
-.book-info .author {
+.book-info {
   font-size: 14px;
   color: #888;
   margin-bottom: 16px;
+}
+
+.book-meta {
+  display: flex;
+  justify-content: space-between;
 }
 
 .book-meta p {
@@ -269,11 +280,9 @@ export default {
   color: #333;
 }
 
-.book-price {
-  margin-top: 20px;
-}
-
 .book-price .price {
+  display: flex;
+  align-items: center;
   font-size: 18px;
   font-weight: bold;
   color: #e91e63;
@@ -312,13 +321,19 @@ export default {
 }
 
 .quantity-input button {
-  background-color: #f0f0f0;
-  border: none;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 18px;
+  background-color: #fff;
+    border: 1px solid var(--main-green);
+    border-radius: 50%;
+    
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    color: var(--main-green);
+    font-size: 14px;
+
+    align-items: center;
+    justify-content: center;
+    padding:0px;
 }
 
 .book-description{
@@ -364,11 +379,31 @@ export default {
   opacity: 0.7;
 }
 
+/* 책 저자 */
+.title-author {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.title-author h1 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: extra-bold;
+  color: #333;
+}
+
+.title-author .author {
+  margin: 0;
+  font-size: 14px;
+  color: #888;
+}
+
 @media screen and (max-width: 768px) {
   .book-details {
     flex-direction: column;
     align-items: center;
-    text-align: center;
   }
 
   .book-image {
@@ -408,14 +443,9 @@ export default {
 
   .quantity-input {
     width: 100%;
-    justify-content: center;
+    justify-content: space-between;
     margin-bottom: 10px;
-  }
-
-  .quantity-input button {
-    width: 40px;
-    height: 40px;
-    font-size: 20px;
+    margin-top: 55px;
   }
 
   .quantity-input input {

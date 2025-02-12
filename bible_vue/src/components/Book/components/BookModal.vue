@@ -71,7 +71,7 @@
 
 
 <script>
-import ImageUtils from '../../../scripts/img.js';
+import ImageUtils from '/src/scripts/Img.js';
 
 
 export default {

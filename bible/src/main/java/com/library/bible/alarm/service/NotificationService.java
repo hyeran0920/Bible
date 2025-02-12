@@ -8,6 +8,7 @@ import java.util.Map;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import com.library.bible.alarm.dto.AlarmMessage;
 import com.library.bible.book.service.BookService;
 import com.library.bible.book.service.IBookService;
 import com.library.bible.rent.dto.RentMemberResponse;
@@ -22,16 +23,21 @@ public class NotificationService {
 	private final SmsService smsService;
     private final IRentService rentService;
     private final IBookService bookService;
+    private final AlarmService alarmService;
 
-    public NotificationService(SmsService smsService, IRentService rentService, IBookService bookService ) {
+    public NotificationService(SmsService smsService, 
+    		IRentService rentService, 
+    		IBookService bookService, 
+    		AlarmService alarmService) {
         this.smsService = smsService;
 		this.rentService = rentService;
 		this.bookService = bookService;
+		this.alarmService=alarmService;
     }
 
     //전송하는거
     private void sendSmsNotification(String phone, String text) {
-//        SmsService.sendSms(phone, text); //이거 활성화하면 정해진 시간에 문자가 갑니다
+        SmsService.sendSms(phone, text); //이거 활성화하면 정해진 시간에 문자가 갑니다
     }
     
     //연체된게 있는지 확인하기
@@ -45,10 +51,13 @@ public class NotificationService {
     public void sendOverdueCheck() {
         List<String> overdueMessages = rentService.processOverdueBooks();    
         for (String message : overdueMessages) {
+        	
             String[] parts = message.split(", ");
             String phone = "";
             String memberName = "";
             String overdueDays = "";
+            String memberId="";
+           
             
             for (String part : parts) {
                 if (part.startsWith("전화번호: ")) {
@@ -57,6 +66,8 @@ public class NotificationService {
                     memberName = part.substring("회원명: ".length());
                 } else if (part.startsWith("연체일수: ")) {
                     overdueDays = part.substring("연체일수: ".length()).replace("일", "");
+                } else if(part.startsWith("회원ID")) {
+                	memberId=part.substring("회원ID: ".length());
                 }
             }
             
@@ -66,7 +77,16 @@ public class NotificationService {
             System.out.println("메시지: " + text);
             System.out.println("--------------------");
             
-             sendSmsNotification(phone, text);
+            //send sms
+            sendSmsNotification(phone, text);
+             
+         	
+            //send websocket alarm
+            AlarmMessage alarm=new AlarmMessage();
+            alarm.setAlarmTitle("연체");
+            alarm.setAlarmImgUrl("");
+            alarm.setAlarmText(text);
+            alarmService.sendUserAlarm(Long.parseLong(memberId), alarm);
         }
     }
 

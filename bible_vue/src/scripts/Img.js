@@ -7,10 +7,15 @@ const ImageUtils = {
         return `https://ifh.cc/g/Oc2y14.jpg`;
     },
     getBookQRImg(bookId) {
-        return `https://bibleblob.blob.core.windows.net/qrcodes/book/${bookId}.png`;
+        //return `https://bibleblob.blob.core.windows.net/bookqr/${bookId}.png`;
+        return `https://ifh.cc/g/WdcvqT.png`;
     },
     getMemberQRImg(memId) {
-        return `https://bibleblob.blob.core.windows.net/qrcodes/member/${memId}.png`;
+        if(memId==null){
+            return `https://ifh.cc/g/WdcvqT.png`;
+        }
+        //return `https://bibleblob.blob.core.windows.net/memberqr/${memId}.png`;
+        return `https://ifh.cc/g/WdcvqT.png`;
     }
 };
 

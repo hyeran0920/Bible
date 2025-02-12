@@ -8,8 +8,7 @@
 
         <!--QR IMG-->
         <div class="qrContainer">
-            <img v-if="memberQRImg":src="memberQRImg" alt="Member QR Code" class="qr-image" />
-            <span v-else>{{ $t('mypage.member.QRInfo') }}</span>
+            <img :src="getMemberQRImage(member.memId)" alt="Member QR Code" class="qr-image" />
         </div>
 
         <!-- Member Info -->
@@ -153,6 +152,7 @@
     import MessageModal from '../../modal/CustomModal.vue';
     import DelageAddressModal from '../../modal/CustomModal.vue';
     import Modal from '../../modal/CustomModal.vue';
+    import ImageUtils from '/src/scripts/Img.js';
 
     export default{
         name:'Mypage',
@@ -173,7 +173,6 @@
                 isModalVisible: false,
                 isEditing: false,
                 member: [],
-                memberQRImg:null,
                 showModal: false,
 
                 // 정보 수정 시 
@@ -328,21 +327,8 @@
                 }
             },
 
-            async getMemberQRImage() {
-                try {
-                    const response = await this.$axios.get(QR_BASEURL, {
-                        responseType: 'blob' // ✅ 이미지 요청 시 blob 타입으로 변환
-                    });
-
-                    if (response.status === 200) {
-                        this.memberQRImg = URL.createObjectURL(response.data);
-                    } else {
-                        this.memberQRImg = "";
-                    }
-                } catch (error) {
-                    console.error("Error fetching QR image: ", error);
-                    this.memberQRImg = ""; // QR 이미지 없음
-                }
+            getMemberQRImage(memId) {
+                return ImageUtils ? ImageUtils.getMemberQRImg(memId) : '';
             },
             //주소록 추가 모달 띄워짐
             openAddressModal() {
@@ -391,14 +377,6 @@
                 }
             },
 
-            async initializeQR() {
-                try {
-                    await this.getMemberQRImage();
-                } catch (error) {
-                    console.error("QR 이미지 조회 실패:", error);
-                }
-            },
-
             async initializeAddress() {
                 try {
                     const responseAddress = await this.$axios.get(ADDRESS_BASEURL);
@@ -412,7 +390,7 @@
                 // 데이터 초기화
                 await this.initializeAddress();
                 await this.initializeMember();
-                await this.initializeQR();
+                this.getMemberQRImage();
             }
 
         },

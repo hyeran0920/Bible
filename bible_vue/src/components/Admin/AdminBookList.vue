@@ -7,8 +7,8 @@
         <tr>
           <th>ID</th>
           <th>Img</th>
+          <th>QR</th>
           <th>Title</th>
-          <th>Author</th>
           <th>Publisher</th>
           <th>Release</th>
           <th>Category</th>
@@ -21,7 +21,8 @@
       <tbody>
         <tr v-for="book in paginatedBooks" :key="book.bookId">
           <td>{{ book.bookId }}</td>
-  
+          
+
           <!-- Img, Title 클릭 시 책 상세 페이지 -->
           <td>
             <router-link :to="'/book/' + book.bookId">
@@ -30,14 +31,19 @@
                 width="100" height="auto" />
             </router-link>
           </td>
+
+          <!-- qr img -->
+          <td>
+            <img :src="getBookQRImg(book.bookId)" width="100" height="auto"/>
+          </td>
   
           <td class="book-title">
             <router-link :to="'/book/' + book.bookId" class="plain-link"> 
-              {{ book.bookTitle }} 
+              {{ book.bookTitle }} <br>- {{ book.bookAuthor }}
             </router-link>
           </td>
   
-          <td>{{ book.bookAuthor }}</td>
+          <td></td>
           <td>{{ book.bookPublisher }}</td>
           <td>{{ book.bookReleaseDate }}</td>
           <td>{{ book.bookCategory }}</td>
@@ -69,9 +75,12 @@
     },
     methods: {
       getBookImage(bookId) {
-        return ImageUtils ? ImageUtils.getBookImg(bookId) : ''; // 방어 코드 추가
+        return ImageUtils ? ImageUtils.getBookImg(bookId) : '';
+      },
+      getBookQRImg(bookId) {
+        return ImageUtils ? ImageUtils.getBookQRImg(bookId) : '';
       }
-    }
+    },
 
   };
   </script>
@@ -89,6 +98,7 @@
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    
 }
 
 

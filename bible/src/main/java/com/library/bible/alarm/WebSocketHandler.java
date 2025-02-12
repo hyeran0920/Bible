@@ -133,6 +133,8 @@ public class WebSocketHandler extends TextWebSocketHandler implements Initializi
         return null;
     }
 
+
+
     
 
 
@@ -157,7 +159,7 @@ public class WebSocketHandler extends TextWebSocketHandler implements Initializi
 
                     
                     //Send User Messages Example
-                    String messageContent2 = "{\"alarmTitle\":\"" + "헐" + "\",\"alarmText\":\"" + "되나요" + "\"}";
+                    //String messageContent2 = "{\"alarmTitle\":\"" + "헐" + "\",\"alarmText\":\"" + "되나요" + "\"}";
                     //sendMessageToUser((long) 62, messageContent2);
                     
                     

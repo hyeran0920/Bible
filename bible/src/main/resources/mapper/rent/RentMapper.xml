@@ -208,6 +208,7 @@
 	    <!-- RentMemberResponse를 위한 ResultMap 정의 -->
 	<resultMap id="rentMemberResponseMap" type="RentMemberResponse">
 	    <id property="rentId" column="rent_id"/>
+	    <result property="memId" column="mem_id"/>
 	    <result property="rentDueDate" column="rent_due_date"/>
 	    <result property="rentFinishDate" column="rent_finish_date"/>
 	    <result property="rentStatus" column="rent_status"/>
@@ -219,6 +220,7 @@
 	<select id="findActiveRents" resultMap="rentMemberResponseMap">
 	    SELECT 
 	        r.rent_id, 
+	        m.mem_id,
 	        r.rent_due_date, 
 	        r.rent_finish_date, 
 	        r.rent_status, 

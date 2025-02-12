@@ -103,7 +103,7 @@ def recommend_get():
 def recommend_update():
     mem_id = request.args.get("mem_id", type=int)
     n = request.args.get("n", default=5, type=int)
-
+    print(f"📢 recommend_books_update() 실행: mem_id={mem_id}, n={n}")
     if not mem_id:
         return jsonify({"error": "mem_id가 필요합니다."}), 400
 

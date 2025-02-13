@@ -43,7 +43,6 @@
             </router-link>
           </td>
   
-          <td></td>
           <td>{{ book.bookPublisher }}</td>
           <td>{{ book.bookReleaseDate }}</td>
           <td>{{ book.bookCategory }}</td>

@@ -6,6 +6,7 @@
       class="webSocketAlarm">
 
       <div class="alarm-title">{{ alarm.alarmTitle }}</div>
+      <hr>
       <div>{{ alarm.alarmText }}</div>
       <div><button class="web-alarm-close-btn" @click="removeAlarm(index)">X</button></div>
 
@@ -157,6 +158,7 @@ export default {
   padding:2px;
   margin-bottom: 10px;
   font-size: 16px;
+  color: #679669;
 }
 </style>
 

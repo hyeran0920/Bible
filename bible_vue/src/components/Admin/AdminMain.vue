@@ -9,23 +9,23 @@
       <div class="stats">
         <div class="stat-item">
           <span class="icon">👤</span>
-          <h2>New Visits</h2>
-          <p>102,400</p>
+          <h2>신규 회원</h2>
+          <p>132</p>
         </div>
         <div class="stat-item">
           <span class="icon">💬</span>
-          <h2>Messages</h2>
-          <p>81,212</p>
+          <h2>오늘의 대여량</h2>
+          <p>28</p>
         </div>
         <div class="stat-item">
           <span class="icon">💴</span>
-          <h2>Purchases</h2>
-          <p>9,280</p>
+          <h2>오늘의 매출</h2>
+          <p>219,600</p>
         </div>
         <div class="stat-item">
           <span class="icon">🛒</span>
-          <h2>Shoppings</h2>
-          <p>13,600</p>
+          <h2>장바구니 수량</h2>
+          <p>41</p>
         </div>
       </div>
 
@@ -36,15 +36,7 @@
         <div class="radar-chart">
           <RentChart/>
         </div>
-        <div class="pie-chart">
-          <h3>Pie Chart</h3>
-          <p>(Fake pie chart data)</p>
-        </div>
-        <div class="bar-chart">
-          <h3>Bar Chart</h3>
-          <p>(Fake bar chart data)</p>
-        </div>
-      </div>
+       </div>
     </main>
 </div>
 <Modal v-model="isModalVisible" @confirm="onConfirm">

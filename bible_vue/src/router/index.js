@@ -39,6 +39,7 @@ const routes = [
   { path: "/order/:cartIds", name:"order", component:OrderPage, props:true},
 
   { path: "/bookRecommendation", name: "bookRecommendation", component: BookRecommendation, props: true},
+  { path: "/bookRecommendation", name: "snackBar", component: BookRecommendation, props: true},
 
   { path: "/book/excel", name:"addBookExcel", component: AddBookExcel},
 

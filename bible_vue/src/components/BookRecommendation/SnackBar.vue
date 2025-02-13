@@ -1,7 +1,6 @@
 <template>
   <div class="snackbar">
-    <span>📚 추천 목록을 삭제하려면 클릭하세요!</span>
-    <button class="delete-button" @click="emitDelete">삭제</button>
+    <button class="delete-button" @click="emitDelete">추천 목록 삭제</button>
   </div>
 </template>
 
@@ -22,33 +21,33 @@ function emitDelete() {
   position: fixed;
   bottom: 0;
   left: 0;
-  width: 100%;
-  background-color: #333;
-  color: white;
+  width: 80%;
+  box-shadow: 0 20px 20px rgba(0,0,0,2);
+  color: rgb(227, 218, 218);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 20px;
+  padding: 15px 70px;
   font-size: 16px;
   font-weight: bold;
   z-index: 1000;
 }
 .delete-button {
-  background-color: #ffffff;
-  color: #0c0c0c;
+  background-color: #679669;
+  color: #fff;
   padding: 10px 15px;
-  border-radius: 5px;
+  border-radius: 10px;
   font-size: 16px;
   cursor: pointer;
   margin-bottom: 50px;
+  align-items: center;
   display: block;
-  width: 100%;
-  max-width: 300px;
+  width: 80%;
   text-align: center;
   border: none;
 }
-.delete-button:hover {
+/* .delete-button:hover {
   background-color: #cc0000;
   color: #fff;
-}
+} */
 </style>

@@ -11,11 +11,11 @@
   </div>
   <!-- 만약 목록이 비었으면, "새로운 도서를 추천받겠습니까?"만 보여줌 -->
   <div v-if="recommendations.length === 0" class="empty-message">
-    <h1>
-      <span class="highlight">{{ memId }}</span>님의 추천 도서 목록이 없습니다.
+    <h1 class="new-quest">
+      <span class="highlight">{{ memId }}</span>님,<br>
+      새로운 도서를 추천받겠습니까?
     </h1>
-    <p>새로운 도서를 추천받겠습니까?</p>
-    <button @click="updateRecommendations">네, 추천받기</button>
+    <button class="new-quest-button"@click="updateRecommendations">새 추천받기</button>
   </div>
 
   <!-- 목록이 있을 경우에만 캐러셀/리스트 표시 -->
@@ -88,8 +88,7 @@
   </div>
   <!-- SnackBar는 딱 1번만 렌더링 & 이벤트 바인딩 -->
   <SnackBar @delete-recommendations="deleteRecommendations" />
-  <!-- Footer (필요 시) -->
-  <!-- <Footer /> -->
+  <Footer />
 </template>
 
 <script>
@@ -156,7 +155,7 @@ export default {
     const deleteRecommendations = () => {
       console.log("추천 목록 삭제(프런트에서만)");
       recommendations.value = [];
-      popupMessage.value = "추천 목록이 삭제되었습니다.";
+      // popupMessage.value = "추천 목록이 삭제되었습니다.";
       showPopup.value = true; // 팝업 표시
       console.log("팝업 표시 상태 (true) 확인:", showPopup.value);
       setTimeout(() => {
@@ -256,7 +255,7 @@ export default {
 }
 
 .title-container {
-  background-color: rgba(128, 128, 128, 0.15); /* 연한 회색 */
+  /* background-color: rgba(128, 128, 128, 0.15); 연한 회색 */
   padding: 1px 10px; /* 내부 여백 */
   border-radius: 20px; /* 둥근 모서리 */
   text-align: center; /* 가운데 정렬 */
@@ -527,6 +526,7 @@ export default {
     text-align: center;
   }
   .highlight {
+    width: 80%;
     color: #679669; /* 원하는 색상으로 변경 */
     font-weight: bold;
   }
@@ -536,7 +536,7 @@ export default {
   padding: 0;
   margin-bottom: 10px;
   cursor: pointer;
-  font-size: 15px; /* 아이콘 크기 조정 */
+  font-size: 13px; /* 아이콘 크기 조정 */
   color: #679669; /* 아이콘 색상 */
   }
 
@@ -574,6 +574,23 @@ export default {
   text-align: center;
   z-index: 1000;
   transition: opacity 0.3s ease-in-out;
+}
+.empty-message{
+  flex-direction: column;
+  display: flex;
+  height: 50vh;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 20px;
+}
+.new-quest{
+  align-items: center;
+  font-size: 26px;
+  text-align: center;
+}
+.new-quest-button{
+  font-size: 15px;
+  text-align: center;
 }
 }
 </style>

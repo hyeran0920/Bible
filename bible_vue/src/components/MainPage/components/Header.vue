@@ -92,6 +92,8 @@ export default {
       modalMessage: "",
 
       searchKeyword: "", // 검색 키워드
+
+      showRecommMenu: false,//수민
     };
   },
   mounted() {
@@ -106,6 +108,9 @@ export default {
     },
     toggleAuthMenu() {
       this.showAuthMenu = !this.showAuthMenu;
+    },
+    bookRecomm() {
+      this.showRecommMenu = !this.showRecommMenu;
     },
     // 로그아웃
     async logout() {
@@ -253,6 +258,25 @@ button {
   color: #333;
 }
 
+.recomm-menu {
+  position: absolute;
+  right: 150px;
+  top: 127px;
+  width: 100px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 8px 0;
+  z-index: 10;
+}
+
+.recomm-menu span {
+  display: block;
+  padding: 8px 16px;
+  text-decoration: none;
+  color: #333;
+}
+
 /* Navigation */
 .nav {
   padding: 4px 0;
@@ -329,10 +353,6 @@ button {
   width: 100%;
   text-decoration: none;
 }
-
-
-
-
 
 
 

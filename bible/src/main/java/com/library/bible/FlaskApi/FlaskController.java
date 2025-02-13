@@ -41,7 +41,7 @@ public class FlaskController {
 	    String response = flaskClientService.updateRecommendation(mem_id, n);
 	    return ResponseEntity.ok(response);
 	}
-	@DeleteMapping("/recommend")
+	@DeleteMapping("/recommend/delete")
 	public ResponseEntity<String> deleteFlaskRecommendation(@RequestParam int mem_id) {
 	    String response = flaskClientService.deleteRecommendation(mem_id);
 	    return ResponseEntity.ok(response);

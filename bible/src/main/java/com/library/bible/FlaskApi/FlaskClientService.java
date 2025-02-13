@@ -49,15 +49,8 @@ public class FlaskClientService {
     //Rest API
     //추천 도서 업데이트
     public String updateRecommendation(int memId, int n) {
-        Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("mem_id", memId);
-        requestBody.put("n", n);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
-
-        ResponseEntity<String> response = restTemplate.exchange(FLASK_API_URL, HttpMethod.PUT, requestEntity, String.class);
+        String requestUrl = FLASK_API_URL + "/update?mem_id=" + memId + "&n=" + n;
+        ResponseEntity<String> response = restTemplate.exchange(requestUrl, HttpMethod.PUT, null, String.class);
         return response.getBody();
     }
     //추천 도서 삭제

@@ -25,6 +25,7 @@
     
     <!-- Book List -->
     <AdminBookList 
+      class="admin-book-list-final"
       :paginatedBooks="paginatedBooks" 
       :openModal="openModal" 
       :promptDelete="promptDelete"
@@ -154,6 +155,22 @@ export default {
   background-color: var(--hover-color);
   color:white;
 }
+
+/* 컨테이너 스타일 */
+#app.container {
+  max-width: 1800px; /* 최대 너비 */
+  margin: 0 auto; /* 가운데 정렬 */
+  padding: 20px;
+  
+}
+
+/* 테이블 스타일 */
+.admin-book-list-final {
+  width: 100%; /* 부모 요소(container)의 너비에 맞춤 */
+  max-width: 1200px; /* 최대 너비 설정 */
+  border-collapse: collapse; /* 테두리 겹침 제거 */
+}
+
 
 
 </style>

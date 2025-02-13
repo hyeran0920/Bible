@@ -13,7 +13,7 @@ import CartPage from "../components/Cart/components/CartPage.vue";
 import OrderPage from "../components/Order/components/OrderPage.vue";
 
 import BookRecommendation from "../components/BookRecommendation/BookRecommendation.vue";
-
+import AiLanding from '../components/BookRecommendation/AiLanding.vue';
 import AddBookExcel from "../components/Admin/AdminAddBookExcel.vue";
 
 import Mypage from "../components/Mypage/components/Mypage.vue";
@@ -38,6 +38,7 @@ const routes = [
   { path: "/cart", name:"cart", component:CartPage},
   { path: "/order/:cartIds", name:"order", component:OrderPage, props:true},
 
+  {path: '/ai-landing', name: 'AiLanding', component: AiLanding, props: true},
   { path: "/bookRecommendation", name: "bookRecommendation", component: BookRecommendation, props: true},
   { path: "/bookRecommendation", name: "snackBar", component: BookRecommendation, props: true},
 

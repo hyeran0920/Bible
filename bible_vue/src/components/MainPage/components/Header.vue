@@ -53,7 +53,7 @@
           </router-link>
         </li>
         <li>
-          <router-link to="/bookRecommendation" :class="{ 'active': isActive('/bookRecommendation') }">
+          <router-link to="/ai-landing" :class="{ 'active': isActive('/ai-landing') }">
             추천도서
           </router-link>
         </li>

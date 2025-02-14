@@ -23,10 +23,10 @@
         </div>
         <button type="submit">로그인</button>
       </form>
-      <div class="admin-login-link">
+    </div>
+    <div class="admin-login-link">
         <router-link to="/admin-login">관리자 페이지 로그인</router-link>
       </div>
-    </div>
     <Footer />
     <Modal v-model="isModelVisible" :message="modalMessage">
         <p>{{ modalMessage }}</p>
@@ -126,11 +126,11 @@
   }
   .admin-login-link {
     text-align: center;
-    margin-top: 15px;
+    margin-top: 60px;
   }
 
   .admin-login-link a {
-    color: #007bff;
+    opacity: 0;
     text-decoration: none;
   }
 

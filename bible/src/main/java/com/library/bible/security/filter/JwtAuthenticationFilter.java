@@ -19,6 +19,7 @@ import lombok.*;
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
@@ -85,8 +86,11 @@ public class JwtAuthenticationFilter  extends UsernamePasswordAuthenticationFilt
 
             return authentication;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+//            throw new RuntimeException(e);
+        	throw new BadCredentialsException("인증 처리 중 오류가 발생했습니다");
+
         }
+        
     }
 
     // 4. JWT 토큰을 만들어서 반환
@@ -143,6 +147,8 @@ public class JwtAuthenticationFilter  extends UsernamePasswordAuthenticationFilt
 	        exceptionCode = ExceptionCode.ACCOUNT_EXPIRED;
 	    } else if (failed instanceof CredentialsExpiredException) {
 	        exceptionCode = ExceptionCode.CREDENTIALS_EXPIRED;
+	    } else if(failed instanceof BadCredentialsException) {
+	        exceptionCode = ExceptionCode.INVALID_CREDENTIALS;
 	    } else if (failed instanceof RuntimeException) {
 	        exceptionCode = ExceptionCode.FORBIDDEN;
 	    } else {

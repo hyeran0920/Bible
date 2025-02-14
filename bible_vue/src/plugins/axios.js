@@ -49,6 +49,7 @@ instance.interceptors.response.use(
       const errorMessage = await error.response?.data?.message || "에러 발생";
       console.log("errorMessage: ", errorMessage);
       if(error.status === 403) store.commit('showErrorModal', errorMessage);
+      else if(error.status === 401) store.commit('showErrorModal', errorMessage);
     }
 
     return Promise.reject(error);

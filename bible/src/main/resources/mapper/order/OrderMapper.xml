@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.library.bible.order.repository.IOrderRepository">
+
+    <!-- Result Mapping -->
+    <resultMap id="orderResultMap" type="com.library.bible.order.model.Order">
+        <id property="orderId" column="order_id"/>
+        <result property="bookId" column="book_id"/>
+        <result property="orderHistoryId" column="order_history_id"/>
+        <result property="bookCount" column="book_count"/>
+    </resultMap>
+
+    <!-- Retrieve all orders -->
+    <select id="getAllOrder" resultMap="orderResultMap">
+        SELECT * FROM orders
+    </select>
+
+    <!-- Retrieve orders - member ID -->
+    <select id="getOrderByMemId" resultMap="orderResultMap">
+        SELECT o.* FROM orders o
+        JOIN order_history oh ON o.order_history_id = oh.order_history_id
+        WHERE oh.mem_id = #{memId}
+    </select>
+
+    <!-- Retrieve orders - order history ID -->
+    <select id="getOrderByHistoryId" resultMap="orderResultMap">
+        SELECT * FROM orders WHERE order_history_id = #{orderHistory}
+    </select>
+
+    <!-- Retrieve a specific order by ID -->
+    <select id="getOrderById" resultMap="orderResultMap">
+        SELECT * FROM orders WHERE order_id = #{orderId}
+    </select>
+
+    <!-- Insert a new order -->
+    <insert id="insertOrder" parameterType="com.library.bible.order.model.Order">
+        INSERT INTO orders (book_id, order_history_id, book_count)
+        VALUES (#{bookId}, #{orderHistoryId}, #{bookCount})
+    </insert>
+
+    <!-- Delete an order -->
+    <delete id="deleteOrder">
+        DELETE FROM orders WHERE order_id = #{orderId}
+    </delete>
+
+    <!-- Update an existing order -->
+    <update id="updateOrder" parameterType="com.library.bible.order.model.Order">
+        UPDATE orders
+        SET book_id = #{bookId},
+            order_history_id = #{orderHistoryId},
+            book_count = #{bookCount}
+        WHERE order_id = #{orderId}
+    </update>
+
+    <!-- Count all orders -->
+    <select id="countAllOrders" resultType="int">
+        SELECT COUNT(*) FROM orders
+    </select>
+
+    <!-- Count orders by member ID -->
+    <select id="countMemOrders" resultType="int">
+        SELECT COUNT(*) FROM orders o
+        JOIN order_history oh ON o.order_history_id = oh.order_history_id
+        WHERE oh.mem_id = #{memId}
+    </select>
+
+</mapper>

@@ -1,1 +1,5 @@
 /.metadata/
+bible/.metadata/
+bible/uploads/
+bible_flask/Books.csv
+bible_flask/*.json

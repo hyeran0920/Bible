@@ -1,0 +1,86 @@
+{
+    "mypage":{
+        "menubar":{
+            "title": "마이페이지",
+            "backHome": "메인 화면으로 돌아가기",
+            "myInfo": "내 정보",
+            "reservation": "예약 기록",
+            "rentHistory": "대여 기록",
+            "review": "리뷰 관리",
+            "orderHistory": "구매 내역"
+        },
+        "member":{
+            "title": "내 정보 관리",
+            "titleInfo": "회원정보",
+            "name": "이름",
+            "email": "이메일",
+            "password": "비밀번호",
+            "phone": "전화번호",
+            "QR":"QR 코드",
+            "QRInfo":"QR이 발급되지 않았습니다. 관리자에게 문의하세요.",
+            "insertBtn": "정보 수정",
+            "deleteBtn": "회원 탈퇴",
+            "modalTitle": "회원 정보 수정",
+            "modalName": "이름",
+            "modalEmail": "이메일",
+            "modalPassword": "비밀번호",
+            "modalPassword2": "비밀번호 확인",
+            "modalPhone": "전화번호",
+            "modalSaveBtn": "저장하기",
+            "modalCancleBtn": "취소하기",
+            "modalCheckEmail": "유효한 이메일 형식이 아닙니다.",
+            "modalCheckPasswordPattern": "비밀번호는 대소문자, 숫자, 특수기호(@$!%*?&#)를 포함한 8자 이상입니다.",
+            "modalCheckPassword": "비밀번호가 일치하지 않습니다.",
+            "modalCheckPhone": "010-XXXX-XXXX 형식입니다.",
+            "deleteEmailInfo": "탈퇴하시려면 이메일을 입력해주세요.",
+            "deleteComplete": "계정이 정상적으로 삭제되었습니다.",
+            "deleteEmailError": "이메일이 맞지 않습니다. 다시 한번 확인해주세요."
+        },
+        "address":{
+            "title": "주소록",
+            "postal": "우편 주소",
+            "road": "도로명 주소",
+            "detail":"상세 주소",
+            "addBtn": "주소 추가",
+            "deleteBtn": "삭제",
+            "addressInfo1": "저장된 주소가 없습니다.",
+            "deleteAddress": "삭제되었습니다.",
+            "deleteFail": "내부적인 이유로 삭제에 실패했습니다.",
+            "addFail": "주소 추가 실패",
+            "addSuccess": "주소를 정상적으로 추가하였습니다."
+        },
+        "reserv": {
+            "title": "예약 목록",
+            "bookName": "도서명",
+            "reservDate": "예약일",
+            "cancelBtn": "예약 취소"
+        },
+        "rent":{
+            "title": "대여 내역",
+            "rentDate": "대여일",
+            "bookName": "책 이름",
+            "expectedDate": "반납 예정일",
+            "returnDate": "반납일",
+            "status": "상태",
+            "all": "전체",
+            "requested": "대여신청",
+            "cancle": "대여취소",
+            "inUse": "대여중",
+            "returned": "반납",
+            "none": "알 수 없음",
+            "cancelBtn":"신청 취소"
+        },
+        "order":{
+            "orderHistory":"구매 기록",
+            "orderDate":"구매 날짜",
+            "receiver":"수취인",
+            "amount":"결제 금액",
+            "checkout":"결제 상태"
+        },
+        "reviews":{
+            "title":"나의 리뷰",
+            "noReviews":"리뷰가 존재하지 않습니다.",
+            "errorMessage":"리뷰를 가져오는 데 실패했습니다."
+        }
+    }
+}

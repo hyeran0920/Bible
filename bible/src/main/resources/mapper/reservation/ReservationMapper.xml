@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.library.bible.reservation.repository.IReservationRepository">
+	
+	<!-- ResultMap -->
+	<resultMap id="reservMap" type="Reservation">
+		<id property="reservId" column="reserv_id"/>
+		<result property="memId" column="mem_id"/>
+		<result property="bookId" column="book_id"/>
+		<result property="reservDate" column="reserv_date"/>
+	</resultMap>
+	
+	<!-- rentIds로 rents 조회 -->
+	<select id="selectReservByBookIds"  resultMap="reservMap">
+		SELECT
+			reserv_id,
+			mem_id,
+			book_id,
+			reserv_date
+		FROM reservation
+	    WHERE book_id IN
+	    <foreach collection="bookIds" item="bookId" open="(" separator="," close=")">
+	        #{bookId}
+	    </foreach>
+	</select>
+	
+	<!-- 특정 예약 조회 -->
+	<select id="selectReserv" resultMap="reservMap">
+		SELECT
+			reserv_id,
+			mem_id,
+			book_id,
+			reserv_date
+		FROM reservation
+		WHERE reserv_id = #{reservId}
+	</select>
+	
+	<!-- bookIds에 해당하는 예약 개수 세기 -->
+	<select id="selectReservCountByBookIds">
+		SELECT COUNT(*)
+		FROM reservation
+		WEHRE book_id IN 
+		<foreach collection="bookIds" item="bookId" open="(" separator=", " close=")">
+			#{bookId}
+		</foreach>
+	</select>
+	
+	<!-- 예약 추가 -->
+	<insert id="insertReserv" parameterType="Reservation" useGeneratedKeys="true" keyProperty="reservId" keyColumn="reserv_id">
+		INSERT INTO reservation
+			(mem_id, book_id, reserv_date)
+		VALUES
+			(#{memId}, #{bookId}, #{reservDate})
+	</insert>
+	
+	<!-- 예약 수정 -->
+	<update id="updateReserv" parameterType="Reservation">
+		UPDATE reservation
+		SET
+			mem_id = #{memId},
+			book_id = #{bookId},
+			reserv_date = #{reservDate}
+		WHERE reserv_id = #{reservId}
+	</update>
+	
+	<!-- 예약 삭제 -->
+	<delete id="deleteReserv">
+		DELETE FROM reservation WHERE reserv_id = #{reservId}
+	</delete>
+	
+	<!-- 여러 개의 예약 삭제 -->
+	<delete id="deleteReservs">
+		DELETE FROM reservation 
+	    WHERE reserv_id IN
+	    <foreach collection="reservIds" item="reservId" open="(" separator="," close=")">
+	        #{reservId}
+	    </foreach>
+	</delete>
+	
+	<!-- 여러 개의 예약 삭제 -->
+	<delete id="deleteReservsByMemId">
+	    DELETE FROM reservation 
+	    WHERE reserv_id IN
+	    <foreach collection="reservIds" item="reservId" open="(" separator="," close=")">
+	        #{reservId}
+	    </foreach>
+	    AND mem_id = #{memId}
+	</delete>
+
+		
+	<!-- ResultMap -->
+	<resultMap id="reservResponseMap" type="ReservationResponse">
+		<id property="reservId" column="reserv_id"/>
+		<result property="memId" column="mem_id"/>
+		<result property="bookId" column="book_id"/>
+		<result property="reservDate" column="reserv_date"/>
+		<result property="bookTitle" column="book_title"/>
+		<result property="bookImgPath" column="book_img_path"/>
+	</resultMap>
+	
+	<!-- memId로 예약 조회 또는 모든 예약 조회 -->
+	<select id="selectReservResponsesByMemId" resultMap="reservResponseMap">
+		SELECT
+			r.reserv_id,
+			r.mem_id,
+			r.book_id,
+			r.reserv_date,
+			b.book_title,
+			b.book_img_path
+		FROM reservation r
+	    LEFT JOIN book b ON r.book_id = b.book_id
+	    <if test="memId != null">
+		    WHERE mem_id = #{memId}
+	    </if>
+	</select>
+	
+</mapper>

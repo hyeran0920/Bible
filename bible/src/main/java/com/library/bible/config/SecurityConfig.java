@@ -77,10 +77,36 @@ public class SecurityConfig {
 	                .requestMatchers(HttpMethod.GET, "/api/members/token").permitAll()     // token으로 member 조회
 	                .requestMatchers(HttpMethod.POST, "/api/members/admin").hasRole("ADMIN")  // 관리자만 관리자 생성 가능
 	                .requestMatchers(HttpMethod.GET, "/api/members/me/**").hasAnyRole("ADMIN", "USER")  // 조회는 관리자만 가능
-
+	                .requestMatchers(HttpMethod.GET, "/api/members/admin-page").hasAnyRole("ADMIN")  // 조회는 관리자만 가능
+	                
 	                // address
 	                .requestMatchers(HttpMethod.GET, "/api/members/addresses/**").hasAnyRole("ADMIN", "USER")  // 주소 권한 허용
 	                .requestMatchers(HttpMethod.GET, "/api/members/**").hasRole("ADMIN")  // 조회는 관리자만 가능
+	                
+	                // cart
+	                .requestMatchers(HttpMethod.GET, "/api/carts/**").hasAnyRole("ADMIN", "USER")  // 조회는 관리자만 가능
+	                .requestMatchers(HttpMethod.POST, "/api/carts/**").hasAnyRole("ADMIN", "USER")  // 조회는 관리자만 가능
+	                .requestMatchers(HttpMethod.PUT, "/api/carts/**").hasAnyRole("ADMIN", "USER")  // 조회는 관리자만 가능
+	                .requestMatchers(HttpMethod.DELETE, "/api/carts/**").hasAnyRole("ADMIN", "USER")  // 조회는 관리자만 가능
+	                
+	                // flask
+	                .requestMatchers(HttpMethod.GET, "/flask/**").hasAnyRole("ADMIN", "USER")  // 조회는 관리자만 가능
+	                .requestMatchers(HttpMethod.POST, "/flask/**").hasAnyRole("ADMIN", "USER")  // 조회는 관리자만 가능
+	                .requestMatchers(HttpMethod.PUT, "/flask/**").hasAnyRole("ADMIN", "USER")  // 조회는 관리자만 가능
+	                .requestMatchers(HttpMethod.DELETE, "/flask/**").hasAnyRole("ADMIN", "USER")  // 조회는 관리자만 가능
+	                
+	                // order, order history
+	                .requestMatchers(HttpMethod.GET, "/api/order**").hasAnyRole("ADMIN", "USER")  // 조회는 관리자만 가능
+	                .requestMatchers(HttpMethod.POST, "/api/order**").hasAnyRole("ADMIN", "USER")  // 조회는 관리자만 가능
+	                .requestMatchers(HttpMethod.PUT, "/api/order**").hasAnyRole("ADMIN", "USER")  // 조회는 관리자만 가능
+	                .requestMatchers(HttpMethod.DELETE, "/api/order**").hasAnyRole("ADMIN", "USER")  // 조회는 관리자만 가능
+
+	                // reservations
+	                .requestMatchers(HttpMethod.GET, "/api/reservations/**").hasAnyRole("ADMIN", "USER")  // 조회는 관리자만 가능
+	                .requestMatchers(HttpMethod.POST, "/api/reservations/**").hasAnyRole("ADMIN", "USER")  // 조회는 관리자만 가능
+	                .requestMatchers(HttpMethod.PUT, "/api/reservations/**").hasAnyRole("ADMIN", "USER")  // 조회는 관리자만 가능
+	                .requestMatchers(HttpMethod.DELETE, "/api/reservations/**").hasAnyRole("ADMIN", "USER")  // 조회는 관리자만 가능
+
 	                
                     .anyRequest().permitAll() // 그 외 요청은 인증 허용
 //                    .anyRequest().authenticated()); // 그 외 요청은 인증 필요

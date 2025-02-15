@@ -14,6 +14,9 @@ instance.interceptors.request.use(
     if (token) {
       config.headers.Authorization = token;  // 또는 `Bearer ${token}`
     }
+    config.headers['Access-Control-Allow-Origin'] = '*';  // CORS 헤더 추가
+    config.headers['access-control-expose-headers'] = 'Authorization, authorization';  // CORS 헤더 추가
+
     // console.log("요청 전 처리:", config);
     return config;
   },
@@ -41,7 +44,7 @@ instance.interceptors.response.use(
         await generateByRefreshToken(); // 토큰 재발급
         return instance(error.config); // 원래 요청 재시도
       } catch (refreshError) {
-        store.commit('showErrorModal', '로그인이 만료되었습니다. 다시 로그인해주세요.');
+        store.commit('showErrorModal', '로그인 후 사용해주세요.');
         console.log("refreshError: ", refreshError);
         return Promise.reject(refreshError);
       }
@@ -71,7 +74,7 @@ const generateByRefreshToken = async () => {
     // 재발급 실패시 로그아웃 처리
     localStorage.removeItem("isLoggedIn");
     localStorage.removeItem("isAdmin");
-    router.push("/");
+    router.push("/login");
     return Promise.reject(error);
   }
 }

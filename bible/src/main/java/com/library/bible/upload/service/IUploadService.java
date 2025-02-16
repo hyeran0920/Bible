@@ -19,5 +19,5 @@ public interface IUploadService {
     void createMemberQRImage(Member member);
     void createBookQRImage(Book book,long bookId);
 
-    
+    String decryptAES(String encryptedText);
 }

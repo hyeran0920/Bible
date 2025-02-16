@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -138,37 +139,89 @@ public class UploadService implements IUploadService {
     //INSERT///////////////////////////////////////////////////////////////////////////////////////
     @Override
     public boolean uploadBookImage(long bookId, MultipartFile file) {
-    	
     	try {
-    		azureService.uploadFile(bookImageContainer,String.valueOf(bookId),file);
-    		return true;
-    	}catch(Exception e) {
-    		log.error("Failed to upload book image for book ID: {}", bookId, e);
+        	
+            String originalFileName = file.getOriginalFilename();
+            String fileExtension = originalFileName.substring(originalFileName.lastIndexOf(".")); // 확장자 추출
+            String fileName = String.valueOf(bookId) + fileExtension;
+            Path filePath = Paths.get(BOOK_IMAGE_DIR, fileName);
+            
+            Files.createDirectories(filePath.getParent()); // 디렉토리 생성 (없을 경우)
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            log.info("Uploaded book image to: {}", filePath);
+            return true;
+        } catch (IOException e) {
+            log.error("Failed to upload book image for book ID: {}", bookId, e);
             return false;
-    	}
+        }
+
+    	
+    	
+    	//AZURE
+//    	try {
+//    		azureService.uploadFile(bookImageContainer,String.valueOf(bookId),file);
+//    		return true;
+//    	}catch(Exception e) {
+//    		log.error("Failed to upload book image for book ID: {}", bookId, e);
+//            return false;
+//    	}
     }
 
     
   //CREATE QR///////////////////////////////////////
     @Override
     public void createMemberQRImage(Member member) {
+    	
         try {
         	String memId=String.valueOf(member.getMemId());
             String data = "Member ID: " + memId + ", Email: " + member.getMemEmail();
+            String filePath = MEMBER_QR_DIR + memId + ".png";
             
+            // 디렉토리 존재 여부 확인 후 생성
+            Path directoryPath = Paths.get(MEMBER_QR_DIR);
+            if (!Files.exists(directoryPath)) {
+                Files.createDirectories(directoryPath);
+            }
             
-            byte[] qrImg=QRCodeGenerator.generateQRCode(data);
-            azureService.uploadByteFile(memberQrContainer, memId, qrImg);
-            
+            QRCodeGenerator.generateQRCodeAES(data, filePath);
             log.info("Generated QR Code for member ID: {}", memId);
         } catch (WriterException | IOException e) {
             log.error("Error generating QR code for member ID: {}", member.getMemId(), e);
             throw new CustomException(ExceptionCode.QR_IMAGE_CREATION_FAIL);
         }
+    	
+    	
+    	//AZURE
+//        try {
+//        	String memId=String.valueOf(member.getMemId());
+//            String data = "Member ID: " + memId + ", Email: " + member.getMemEmail();
+//            
+//            
+//            byte[] qrImg=QRCodeGenerator.generateQRCode(data);
+//            azureService.uploadByteFile(memberQrContainer, memId, qrImg);
+//            
+//            log.info("Generated QR Code for member ID: {}", memId);
+//        } catch (WriterException | IOException e) {
+//            log.error("Error generating QR code for member ID: {}", member.getMemId(), e);
+//            throw new CustomException(ExceptionCode.QR_IMAGE_CREATION_FAIL);
+//        }
     }
     
     @Override
+    public String decryptAES(String encryptedText) {
+        try {
+            return QRCodeGenerator.decryptAES(encryptedText);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Decryption failed";
+        }
+    }
+    
+    
+    @Override
     public void createBookQRImage(Book book, long bookId) {
+    	
     	try {
     		//System.out.println("book qr id="+bookId);
         	//create qr
@@ -177,15 +230,49 @@ public class UploadService implements IUploadService {
             		", Author: " + book.getBookAuthor() + 
             		", Publisher: "+ book.getBookPublisher() +
             		", Category: "+book.getBookCategory();
-
+            String filePath = BOOK_QR_DIR + String.valueOf(bookId) + ".png";
             
-            byte[] qrImg=QRCodeGenerator.generateQRCode(data);
-            azureService.uploadByteFile(bookQrContainer,String.valueOf(bookId),qrImg);
+            // 디렉토리 존재 여부 확인 후 생성
+            Path directoryPath = Paths.get(BOOK_QR_DIR);
+            if (!Files.exists(directoryPath)) {
+                Files.createDirectories(directoryPath);
+            }
+            
+
+            //inset img transactional test
+            //if(true) {	throw new IOException("Simulated file upload failure"); }
+            	
+            
+            QRCodeGenerator.generateQRCode(data, filePath);
             
         } catch (WriterException | IOException e) {
             log.error("Error generating QR code for book ID: {}", bookId, e);
             throw new CustomException(ExceptionCode.QR_IMAGE_CREATION_FAIL);
         }
+
+
+    	
+    	
+    	//AZURE
+//    	try {
+//    		//System.out.println("book qr id="+bookId);
+//        	//create qr
+//            String data = "Book ID: " + String.valueOf(bookId) + 
+//            		", Title: " + book.getBookTitle() + 
+//            		", Author: " + book.getBookAuthor() + 
+//            		", Publisher: "+ book.getBookPublisher() +
+//            		", Category: "+book.getBookCategory();
+//
+//            
+//            byte[] qrImg=QRCodeGenerator.generateQRCode(data);
+//            azureService.uploadByteFile(bookQrContainer,String.valueOf(bookId),qrImg);
+//            
+//        } catch (WriterException | IOException e) {
+//            log.error("Error generating QR code for book ID: {}", bookId, e);
+//            throw new CustomException(ExceptionCode.QR_IMAGE_CREATION_FAIL);
+//        }
+    	
+    	
 
     }
     

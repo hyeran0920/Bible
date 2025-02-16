@@ -255,21 +255,28 @@ export default {
             this.rentBooks=[];
             this.scannedData="";
             this.tempBooks=[];
-        }
+        },
+        async decryptMemberQR(qrData) {
+            try {
+                const response = await this.$axios.post("/uploads/decrypt", 
+                    new URLSearchParams({ encryptedText: qrData }),
+                    { withCredentials: true });
+
+                if (response.status === 200 && response.data) {
+                    console.log("🍏 복호화된 데이터!!!",response.data);
+                    return response.data; // 복호화되 데이터
+                }
+            } catch (error) {
+                console.error("QR 복호화 실패:", error);
+            }
+            return null; // 복호화 실패하면 null 반환
+        },
 
     },
     watch: {
         scannedData(newVal) {
             console.log("QR 데이터 인식:", newVal);
 
-            // 회원 QR인지 확인
-            const memId = this.extractMemberId(newVal);
-            if (memId) {
-                console.log("회원 QR 감지, 회원 ID:", memId);
-                this.fetchCurrentMember(memId);
-                this.fetchRentList(memId);
-                return;
-            }
 
             // 책 QR인지 확인
             const bookId = this.extractBookId(newVal);
@@ -282,7 +289,37 @@ export default {
                 console.log("책 QR 감지, 책 ID:", bookId);
                 this.fetchBook(newVal);
                 this.scannedData="";
+                return;
             }
+
+            //회원 QR 복호화
+            this.decryptMemberQR(newVal).then((decryptedData) => {
+                if (decryptedData) {
+                    console.log("회원 QR 감지 (복호화 완료), 회원 ID:", decryptedData);
+                    const memId = this.extractMemberId(decryptedData);
+
+                    if(memId){
+                        console.log(memId);
+                        this.fetchCurrentMember(memId);
+                        this.fetchRentList(memId);
+                    }
+                    
+                    return;
+                }
+            }).catch(error => {
+                console.log("QR 복호화 실패 or book:", error);
+            });
+
+            // 회원 QR - 구 버전
+            const memId = this.extractMemberId(newVal);
+            if (memId) {
+                console.log("회원 QR 감지, 회원 ID:", memId);
+                this.fetchCurrentMember(memId);
+                this.fetchRentList(memId);
+                return;
+            }
+
+
         }
     }
 };

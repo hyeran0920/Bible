@@ -96,6 +96,8 @@ public class UploadController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
+    
+    
 
 
     
@@ -110,6 +112,13 @@ public class UploadController {
     	} else {
     		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     	}
+    }
+    
+    
+    @PostMapping("/decrypt")
+    public ResponseEntity<String> decryptAES(@RequestParam("encryptedText") String encryptedText) {
+        String decryptedText = uploadService.decryptAES(encryptedText);
+        return ResponseEntity.ok(decryptedText);
     }
     
 }

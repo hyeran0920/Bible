@@ -59,17 +59,17 @@ export default {
 
         async downloadExcel() {
             try {
-                const response = await fetch("${this.$axios.defaults.baseURL}/books/download-excel", {
-                    method: "GET",
+                const response = await axios.get(`${this.$axios.defaults.baseURL}/books/download-excel`, {
+                    responseType: 'blob',
                 });
 
-                if (!response.ok) {
+                if (response.status !== 200) {
                     throw new Error("엑셀 다운로드 실패");
                 }
 
-                // Blob 데이터를 받아서 엑셀 파일로 변환
-                const blob = await response.blob();
+                const blob = response.data;
                 const url = window.URL.createObjectURL(blob);
+                
                 const a = document.createElement("a");
                 a.href = url;
                 a.download = "books.xlsx"; // 파일 이름 지정
@@ -82,6 +82,7 @@ export default {
                 console.error("Error downloading Excel file:", error);
             }
         },
+
 
     }
 };

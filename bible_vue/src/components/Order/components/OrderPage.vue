@@ -35,7 +35,7 @@
     </div>
 
     <!--결제 버튼-->
-    <button @click="confirmPayment()" class="pay-btn">결제하기</button>
+    <button @click="confirmPayment()" class="pay-btn" :disabled="!selectedAddress">결제하기</button>
 
     <Modal v-model="isModalVisible" @confirm="onConfirm">
       <p>{{ singleModalMessage }}</p>
@@ -56,7 +56,7 @@
       <!-- 주소 목록을 카드 형식으로 표시 -->
       <div v-if="addressArray.length > 0" class="order-address-list">
         <div v-for="addressInfo in addressArray" :key="addressInfo.addressId" class="order-address-card">
-          <div><input type="checkbox" @change="selectAddress(addressInfo)"></div>
+          <div><input type="radio" :value="addressInfo.addressId" v-model="selectedAddressId" @change="selectAddress(addressInfo)"></div>
           <!-- 카드 헤더 -->
           <div class="order-address-card-head">
             <span class="order-address-recipient">{{ addressInfo.receiverName }}</span>
@@ -499,7 +499,7 @@ export default {
 }
 
 /* 선택 버튼 (체크박스) 위치 조정 */
-.order-address-card input[type="checkbox"] {
+.order-address-card input[type="radio"] {
   position: absolute;
   top: 10px;
   left: 10px;

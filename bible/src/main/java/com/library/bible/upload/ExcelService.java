@@ -63,47 +63,54 @@ public class ExcelService {
     
     
     public static void generateExcelFile(List<Book> books, HttpServletResponse response) throws IOException {
-        // 워크북 생성
+        if (books == null || books.isEmpty()) {
+            response.sendError(HttpServletResponse.SC_NO_CONTENT, "No books found to generate Excel.");
+            return;
+        }
+
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Book List");
 
         // 헤더 생성
         Row headerRow = sheet.createRow(0);
-        String[] columns = {"Book ID", "Title", "Author", "Publisher", "Release Date", "Category", "Price", "Stock", "Rent Stock", "Location"};
+        String[] columns = {"Book ID", "Title", "Author", "Publisher", "Release Date", "Category", "Price", "Stock", "Rent Stock"};
         for (int i = 0; i < columns.length; i++) {
             Cell cell = headerRow.createCell(i);
             cell.setCellValue(columns[i]);
-            CellStyle style = workbook.createCellStyle();
-            Font font = workbook.createFont();
-            font.setBold(true);
-            style.setFont(font);
-            cell.setCellStyle(style);
         }
 
         // 데이터 추가
         int rowNum = 1;
         for (Book book : books) {
             Row row = sheet.createRow(rowNum++);
-            row.createCell(0).setCellValue(book.getBookTitle());
-            row.createCell(1).setCellValue(book.getBookAuthor());
-            row.createCell(2).setCellValue(book.getBookPublisher());
-            row.createCell(3).setCellValue(book.getBookReleaseDate().toString());
-            row.createCell(4).setCellValue(book.getBookCategory());
-            row.createCell(5).setCellValue(book.getBookPrice());
-            row.createCell(6).setCellValue(book.getBookDetail());
+            row.createCell(0).setCellValue(book.getBookId());
+            row.createCell(1).setCellValue(book.getBookTitle());
+            row.createCell(2).setCellValue(book.getBookAuthor());
+            row.createCell(3).setCellValue(book.getBookPublisher());
+            row.createCell(4).setCellValue(book.getBookReleaseDate().toString());
+            row.createCell(5).setCellValue(book.getBookCategory());
+            row.createCell(6).setCellValue(book.getBookPrice());
             row.createCell(7).setCellValue(book.getBookTotalStock());
             row.createCell(8).setCellValue(book.getBookRentStock());
-            row.createCell(9).setCellValue(book.getBookLocation());
         }
 
-        // HTTP 응답 설정 및 파일 반환
+        // Content-Type 설정
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setHeader("Content-Disposition", "attachment; filename=books.xlsx");
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        workbook.write(outputStream);
-        workbook.close();
-        response.getOutputStream().write(outputStream.toByteArray());
+
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            workbook.write(outputStream);
+            workbook.close();
+
+            response.getOutputStream().write(outputStream.toByteArray());
+            response.flushBuffer();
+        } catch (Exception e) {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error generating Excel file.");
+            e.printStackTrace();
+        }
     }
+
+
     
     
     

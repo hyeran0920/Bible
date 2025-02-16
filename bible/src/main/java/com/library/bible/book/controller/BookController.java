@@ -100,11 +100,18 @@ public class BookController {
 	
 	
 	//Download - excel
-    @GetMapping("/download-excel")
-    public void downloadExcel(HttpServletResponse response) throws IOException {
-        List<Book> books = bookService.getBookList();
-        ExcelService.generateExcelFile(books, response);
-    }
+	@GetMapping("/download-excel")
+	public void downloadExcel(HttpServletResponse response) throws IOException {
+	    List<Book> books = bookService.getBookList();
+	    
+	    if (books == null || books.isEmpty()) {
+	        response.sendError(HttpServletResponse.SC_NO_CONTENT, "No books found to generate Excel.");
+	        return;
+	    }
+	    
+	    ExcelService.generateExcelFile(books, response);
+	}
+
     
     
 	

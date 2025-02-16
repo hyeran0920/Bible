@@ -23,7 +23,7 @@ function fetchOrderHistory(orderHistoryId) {
      return new Promise(async (resolve, reject) => {
      	
      	if (!orderHistoryId) {
-             console.error("❌ orderHistoryId가 없습니다.");
+             console.error("orderHistoryId가 없습니다.");
              reject(new Error("orderHistoryId가 없습니다."));
              return;
          }

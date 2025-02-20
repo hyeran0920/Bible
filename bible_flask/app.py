@@ -13,7 +13,7 @@ app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
 #저장 모드 load
-PATH = "C:/dev/metanet/workspace/meta3/Bible/bible_flask/"
+PATH = "C:/dev/metanet/workspace/meta3/Bible/bible_flask/" #"/app"
 MODEL_PATH = os.path.join(PATH, "lightfm_model_bible.pkl")
 DATASET_PATH = os.path.join(PATH, "dataset_bible.pkl")
 BOOKS_CSV_PATH = os.path.join(PATH, "books.csv")
@@ -36,9 +36,6 @@ def home():
     return "Flask API is running!"
 def recommend_books(model, dataset, mem_id , n=5):
     print(f"recommend_books() 실행: mem_id={mem_id}, n={n}")
-    #print("📌 dataset.mapping() 구조 확인:", dataset.mapping()) # 수정 후 삭제
-    #print(f"📌 scores 데이터 타입: {type(scores)}")
-    #print(f"📌 개별 score 타입: {[type(score) for score in scores[:5]]}")  # 상위 5개만 확인
 
     mem_index = dataset.mapping()[0].get(mem_id , None)
     if mem_index is None:
@@ -68,34 +65,19 @@ def recommend_books(model, dataset, mem_id , n=5):
             "image_url": image_url,
             "score": float(score)  # JSON 직렬화 오류 방지
         })
-    #recommendations = [{"title": dataset.mapping()[2][book_id], "score": float(score)} for book_id, score in top_books]
 
     return recommendations
 
-@app.route("/recommend", methods=["POST"])
-def recommend_post():
-    data = request.get_json()
-    mem_id = data.get("mem_id")
-    n = data.get("n", 5)
-    #mem_id 없을 시
-    if not mem_id:
-        return jsonify({"error": "mem_id가 필요합니다."}), 400
-    
-    recommendations = recommend_books(model, dataset, mem_id, n)
-    #recommendations = [f"Book {i+1}" for i in range(n)]
-
-    return jsonify({"mem_id": mem_id, "recommendations": recommendations})
 
 @app.route("/recommend", methods=["GET"])
 def recommend_get():
     mem_id  = request.args.get("mem_id", type=int)
     n = request.args.get("n", default=5, type=int)
-    print(f"📢 recommend_books() 실행: mem_id={mem_id}, n={n}")  # 요청 확인용 로그
+    print(f"📢 recommend_books() 실행: mem_id={mem_id}, n={n}")  
     if not mem_id:
         return jsonify({"error": "mem_id 필요합니다."}), 400
 
     recommendations = recommend_books(model, dataset, mem_id, n)
-    #recommendations = [f"Book {i+1}" for i in range(n)]  # 임시 결과
     return jsonify({"mem_id": mem_id, "recommendations": recommendations})
 
 # 추천 도서 업데이트 (PUT)
@@ -126,6 +108,5 @@ def recommend_delete():
 # Flask 서버 실행
 if __name__ == "__main__":
 
-    app.run(host="0.0.0.0", port=5000) #모든 네트워크 실행 0.0.0.0
-
+    app.run(host="0.0.0.0", port=5000)
     #app.run()

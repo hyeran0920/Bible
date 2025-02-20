@@ -28,14 +28,6 @@ public class FlaskController {
         return ResponseEntity.ok(response);
     }
 	
-//	@PostMapping("/recommend")
-//    public ResponseEntity<String> postFlaskRecommendation(@RequestBody Map<String, Object> request) {
-//        int memId = (int) request.get("mem_id");
-//        int n = request.containsKey("n") ? (int) request.get("n") : 5;
-//
-//        String response = flaskClientService.postRecommendation(memId, n);
-//        return ResponseEntity.ok(response);
-//    }
 	@PutMapping("/recommend/update")
 	public ResponseEntity<String> updateRecommendations(@RequestParam int mem_id, @RequestParam int n) {
 	    String response = flaskClientService.updateRecommendation(mem_id, n);

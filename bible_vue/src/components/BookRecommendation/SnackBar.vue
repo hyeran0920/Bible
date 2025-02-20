@@ -7,10 +7,7 @@
 <script setup>
 import { defineEmits } from "vue";
 
-// 부모에서 "delete-recommendations"를 받으므로 등록
 const emit = defineEmits(["delete-recommendations"]);
-
-// SnackBar의 "삭제" 버튼을 누르면, 부모에게 이벤트 전달
 function emitDelete() {
   emit("delete-recommendations");
 }
@@ -46,8 +43,4 @@ function emitDelete() {
   text-align: center;
   border: none;
 }
-/* .delete-button:hover {
-  background-color: #cc0000;
-  color: #fff;
-} */
 </style>

@@ -33,19 +33,6 @@ public class FlaskClientService {
         System.out.println("📢 Sending GET request to Flask: " + requestUrl);
         return restTemplate.getForObject(requestUrl, String.class);
     } 
-    //요청 받기
-    public String postRecommendation(int memId, int n) {
-        Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("mem_id", memId);
-        requestBody.put("n", n);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
-
-        ResponseEntity<String> response = restTemplate.exchange(FLASK_API_URL, HttpMethod.POST, requestEntity, String.class);
-        return response.getBody();
- }
     //Rest API
     //추천 도서 업데이트
     public String updateRecommendation(int memId, int n) {

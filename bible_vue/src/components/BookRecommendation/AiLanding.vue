@@ -3,18 +3,15 @@
     <div class="header">
       <span class="bible-ai-text">BibleAI</span>
     </div>
-      <!-- 상단 인사 문구 -->
       <h1 class="ai-landing-title">
         안녕하세요, <span class="highlight">{{ memId }}</span>님!<br />
         원하시는 책을 찾아드릴까요?
       </h1>
   
-      <!-- 동적 이미지 -->
       <div class="ai-landing-banner">
         <img src="/ai_book.png" alt="책 추천 배너" class="banner-image" />
       </div>
   
-      <!-- 버튼 -->
       <div class="ai-landing-actions">
         <button class="recommend-button" @click="gotoBookRecommend">
           책 추천 받기
@@ -33,16 +30,13 @@
   export default {
     name: "AiLanding",
     components: {
-        Footer, // ✅ Footer 등록
+        Footer, 
     },
     setup() {
       const route = useRoute();
       const router = useRouter();
-  
-      // ✅ `BookRecommendation.vue`와 동일한 방식으로 `mem_id` 가져오기
       const memId = ref(route.query.mem_id || Cookies.get("memId") || "Guest");
   
-      // ✅ `mem_id`를 `localStorage`에 저장하여 유지 (로그인 정보 유지)
       onMounted(() => {
         if (route.query.mem_id) {
           Cookies.set("memId", route.query.mem_id);
@@ -53,7 +47,6 @@
         }
       });
   
-      // ✅ 동적 이미지 설정
       const bookImage = new URL("@/assets/ai_book.png", import.meta.url).href;
       const images = [
         new URL("@/assets/ai_banner1.png", import.meta.url).href,
@@ -62,7 +55,6 @@
       const currentIndex = ref(0);
       const currentImage = ref(images[0]);
   
-      // ✅ 이미지 자동 변경
       let sliderInterval = null;
       onMounted(() => {
         sliderInterval = setInterval(() => {
@@ -70,8 +62,7 @@
           currentImage.value = images[currentIndex.value];
         }, 3000);
       });
-  
-      // ✅ `bookRecommendation.vue`로 이동할 때 `mem_id` 포함
+
       function gotoBookRecommend() {
         if (memId.value === "Guest") {
           alert("로그인 후 추천을 받을 수 있습니다!");
@@ -104,7 +95,7 @@
     .bible-ai-text {
   font-size: 16px;
   font-weight: bold;
-  color: #ffffff; /* 흰색 */
+  color: #ffffff; 
   opacity: 0.8;
         }
         
@@ -113,9 +104,9 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-color: #000000; /* 배경색 */
+    background-color: #000000; 
     min-height: 95vh;
-    color: #ffffff; /* 글자 흰색 */
+    color: #ffffff;
   }
   
   .ai-landing-title {

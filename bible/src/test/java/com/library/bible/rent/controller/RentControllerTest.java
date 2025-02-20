@@ -10,19 +10,25 @@
 //import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 //
 //import java.util.Arrays;
+//import java.util.List;
+//import java.util.Optional;
 //
 //import org.junit.jupiter.api.BeforeEach;
+//import org.junit.jupiter.api.Disabled;
+//import org.junit.jupiter.api.DisplayName;
 //import org.junit.jupiter.api.Test;
 //import org.mockito.InjectMocks;
 //import org.mockito.Mock;
 //import org.mockito.MockitoAnnotations;
+//import org.springframework.data.domain.PageRequest;
 //import org.springframework.http.MediaType;
 //import org.springframework.test.web.servlet.MockMvc;
 //import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 //
-//import com.library.bible.rent.dto.RentRequest;
-//import com.library.bible.rent.dto.RentResponse;
-//import com.library.bible.rent.service.RentService;
+//import com.library.bible.pageresponse.PageResponse;
+//import com.library.bible.rent.dto.RentPageResponse;
+//import com.library.bible.rent.model.RentStatus;
+//import com.library.bible.rent.service.IRentService;
 //
 //class RentControllerTest {
 //
@@ -32,48 +38,56 @@
 //    private RentController rentController;
 //
 //    @Mock
-//    private RentService rentService;
+//    private IRentService rentService;
 //
 //    @BeforeEach
 //    void setUp() {
 //        MockitoAnnotations.openMocks(this);
 //        mockMvc = MockMvcBuilders.standaloneSetup(rentController).build();
 //    }
-//
 //    @Test
+//    @DisplayName("회원 ID로 대여 목록 조회 테스트")
 //    void testGetRentsByMemberId() throws Exception {
-//        RentResponse response1 = new RentResponse(1L, 101L, 201L, "Active");
-//        RentResponse response2 = new RentResponse(2L, 102L, 202L, "Returned");
+//        PageResponse<RentPageResponse> pageResponse = new PageResponse<>(
+//            Arrays.asList(new RentPageResponse()), // RentStatus 수정
+//            1, 1, true
+//        );
 //
-//        when(rentService.getRentsByMemberId(101L)).thenReturn(Arrays.asList(response1, response2));
+//        when(rentService.selectRentResponses(101L, Optional.empty(), PageRequest.of(0, 10)))
+//            .thenReturn(pageResponse);
 //
-//        mockMvc.perform(get("/rents/member/101")
+//        mockMvc.perform(get("/api/rents/me")
+//                .param("page", "0")
+//                .param("size", "10")
 //                .contentType(MediaType.APPLICATION_JSON))
 //                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.length()").value(2))
-//                .andExpect(jsonPath("$[0].rentId").value(1L))
-//                .andExpect(jsonPath("$[0].status").value("Active"));
+//                .andExpect(jsonPath("$.totalPages").value(1))
+//                .andExpect(jsonPath("$.content[0].rentId").value(1L));
 //    }
-//
 //    @Test
+//    @DisplayName("도서 대여 생성 테스트")
 //    void testCreateRent() throws Exception {
-//        RentRequest request = new RentRequest(101L, 201L);
-//        RentResponse response = new RentResponse(1L, 101L, 201L, "Active");
+//        RentPageResponse rentResponse = new RentPageResponse();
 //
-//        when(rentService.createRent(any(RentRequest.class))).thenReturn(response);
+//        when(rentService.insertRequestRents(any(Long.class), any(List.class), any(RentStatus.class)))
+//        .thenReturn(List.of(rentResponse));
 //
-//        mockMvc.perform(post("/rents")
+//
+//        mockMvc.perform(post("/api/rents")
 //                .contentType(MediaType.APPLICATION_JSON)
-//                .content("{\"memberId\": 101, \"bookId\": 201}"))
+//                .content("{\"memId\": 101, \"bookId\": 201, \"rentStatus\": \"REQUESTED\"}"))
 //                .andExpect(status().isCreated())
-//                .andExpect(jsonPath("$.rentId").value(1L))
-//                .andExpect(jsonPath("$.status").value("Active"));
+//                .andExpect(jsonPath("$[0].rentId").value(1L))
+//                .andExpect(jsonPath("$[0].rentStatus").value("REQUESTED"));
 //    }
 //
 //    @Test
+//    @DisplayName("대여 정보 삭제 테스트")
 //    void testDeleteRent() throws Exception {
-//        doNothing().when(rentService).deleteRent(1L);
+//    	doNothing().when(rentService).deleteRent(1L);
+// // void 메서드라 doNothing 사용
 //
-//        mockMvc.perform(delete("/rents/1"))
-//                .andExpect(stat
+//        mockMvc.perform(delete("/api/rents/1"))
+//                .andExpect(status().isNoContent());
 //    }
+//}

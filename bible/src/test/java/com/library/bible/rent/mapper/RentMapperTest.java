@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
@@ -24,6 +25,7 @@ class RentMapperTest {
     }
 
     @Test
+    @DisplayName("Rent 리스트를 RentResponse 리스트로 변환하는지 테스트")
     void testRentsToRentResponses() {
         // Given
         List<Rent> rents = Arrays.asList(

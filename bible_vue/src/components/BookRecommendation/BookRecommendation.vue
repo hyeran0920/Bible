@@ -1,5 +1,5 @@
 <template>
-  <Header />
+  <Header class ="header" />
   <!-- 폰트어썸 아이콘 -->
   <link
     rel="stylesheet"
@@ -86,7 +86,7 @@
       </div>
     </div>
   </div>
-  <!-- SnackBar는 딱 1번만 렌더링 & 이벤트 바인딩 -->
+  <!-- SnackBar는 딱 1번만 렌더링, 이벤트 바인딩 -->
   <SnackBar @delete-recommendations="deleteRecommendations" />
   <Footer />
 </template>
@@ -199,7 +199,6 @@ export default {
       return (currentIndex.value + index) % totalTop;
     };
 
-    // dot 페이징(선택 슬라이드)
     const currentSlide = ref(0);
     const setSlide = (index) => {
       if (index >= 0 && index < topBooks.value.length) {
@@ -246,6 +245,9 @@ export default {
   padding: 10px;
   overflow: visible;
 }
+.header {
+  color: #679669;
+}
 
 .title {
   font-size: 22px;
@@ -272,13 +274,11 @@ export default {
   position: absolute;
   top: -45px;
   left: -10px;
-  /* background-color: rgba(128, 128, 128, 0.6);*/ /*반투명 배경 */
   padding: 8px 12px;
   border-radius: 100%;
-  font-size: 80px; /* 숫자 크기 조절 */
+  font-size: 80px; 
   font-weight: bold;
   color: #7aab84;
-  /* box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); */
 }
 
 .rank-container2 {
@@ -288,7 +288,7 @@ export default {
   /* background-color: rgba(128, 128, 128, 0.6);*/ /*반투명 배경 */
   padding: 8px 12px;
   border-radius: 100%;
-  font-size: 40px; /* 숫자 크기 조절 */
+  font-size: 40px; 
   font-weight: bold;
   color: #454545;
   /* box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); */
@@ -307,13 +307,12 @@ export default {
 
 .carousel {
   display: flex;
-  /*overflow: hidden;*/
   justify-content: center;
   width: 100%;
   max-width: 400px;
   min-width: 400px;
   height: 490px;
-  flex-wrap: wrap; /* ✅ 모바일에서 줄 바꿈 */
+  flex-wrap: wrap; 
   gap: 10px;
   margin-bottom: 0;
 }
@@ -343,9 +342,9 @@ export default {
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0,0,0,3);
   padding: 25px;
-  margin-bottom: 15px; /* 리스트 간 간격 */
-  flex: 1 1 240px; /* 가로 배치를 위해 너비 고정 */
-  width: 240px;   /* 원하는 카드 폭으로 조절 */
+  margin-bottom: 15px; 
+  flex: 1 1 240px; 
+  width: 240px;  
 }
 
 .book {
@@ -359,7 +358,6 @@ export default {
   margin: 5px;
 }
 
-/* 🖼️ 반응형 책 이미지 */
 .book-image {
   width: 200%;
   max-width: 300px;
@@ -400,16 +398,7 @@ export default {
   margin: 0px;
 }
 
-.dot.active {
-  background-color: #0c0c0c; /* 현재 활성화된 슬라이드 색상 */
-  transform: scale(1.3); /* 활성화된 점을 커지게 */
-}
-
-.dot:not(.active):hover {
-  background-color: #727070; /* 비활성화된 상태에서 마우스 오버 시 */
-}
-
-/* 🔵 반응형 슬라이드 버튼 */
+/*반응형 슬라이드 버튼 */
 .carousel-button {
   background-color: rgba(0, 0, 0, 0.0);
   color: #333;
@@ -481,10 +470,9 @@ export default {
   transition: opacity 0.3s ease-in-out;
 }
 
-/* ✅ 모바일 최적화 */
 @media (max-width: 768px) {
   .carousel {
-    flex-direction: column; /* 세로로 정렬 */
+    flex-direction: column; 
     align-items: center;
   }
   
@@ -498,11 +486,11 @@ export default {
     box-shadow: 0 5px 15px rgba(0,0,0,0.4);
     padding: 0px;
     margin: 0 auto;
-    margin-bottom: 20px; /* 리스트 간 간격 */
+    margin-bottom: 20px; 
   }
 
   .book {
-    width: 80%; /* 한 줄에 1개 */
+    width: 80%; 
     min-width: 200px;
   }
 
@@ -527,7 +515,7 @@ export default {
   }
   .highlight {
     width: 80%;
-    color: #679669; /* 원하는 색상으로 변경 */
+    color: #679669; 
     font-weight: bold;
   }
   .refresh-button {
@@ -552,13 +540,13 @@ export default {
   color: #679669; /* 기존 스타일과 맞추기 */
   font-size: inherit;
   cursor: pointer;
-  text-decoration: none; /* 밑줄 제거 가능 */
+  text-decoration: none; 
   margin-bottom: 10px;
   overflow: visible;
   }
 
   .text-button:hover {
-  text-decoration: underline; /* 호버 시 밑줄 표시 */
+  text-decoration: underline; 
   }
   .popup {
   opacity: 1;

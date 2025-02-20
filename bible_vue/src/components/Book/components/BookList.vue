@@ -1,4 +1,6 @@
 <template>
+  <WebSocketAlarm/>
+
   <div class="book-list">
     <div v-for="book in paginatedBooks" :key="book.bookId" class="book-item" @click="goToBookDetail(book.bookId)">
       <div class="book-image">
@@ -21,11 +23,16 @@
 </template>
 
 <script>
+import WebSocketAlarm from '../../Alarm/components/WebSocketAlarm.vue';
 import ImageUtils from '/src/scripts/Img.js';
 
 export default {
   props: {
     paginatedBooks: Array,
+    WebSocketAlarm,
+  },
+  components: {
+    WebSocketAlarm
   },
   methods: {
     goToBookDetail(bookId) {

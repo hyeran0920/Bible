@@ -226,9 +226,13 @@ export default {
 
         //결제 창으로 이동
         //window.location.href = "http://localhost:8080/";
+        // const url = new URL(this.$axios.defaults.baseURL);
+        // const baseOrigin = url.origin; // "http://localhost:8080"
+        // window.location.href = `${baseOrigin}/?orderHistoryId=${orderHisResponse.data}`;
+
         const url = new URL(this.$axios.defaults.baseURL);
         const baseOrigin = url.origin; // "http://localhost:8080"
-        window.location.href = `${baseOrigin}/?orderHistoryId=${orderHisResponse.data}`;
+        window.location.href = `${baseOrigin}/api/order/toss/checkout?orderHistoryId=${orderHisResponse.data}`;
 
 
       } catch (error) {

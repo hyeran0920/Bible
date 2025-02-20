@@ -1,5 +1,10 @@
 <template>
   <Header />
+
+  <div>
+    <WebSocketAlarm/>
+  </div>
+
   <div class="cart-page">
     <h3>장바구니</h3>
 
@@ -85,6 +90,7 @@ import Header from '../../MainPage/components/Header.vue';
 import Footer from '../../MainPage/components/Footer.vue';
 import Modal from '../../modal/CustomModal.vue';
 import ImageUtils from '/src/scripts/Img.js';
+import WebSocketAlarm from '../../Alarm/components/WebSocketAlarm.vue';
 
 export default {
   
@@ -102,6 +108,7 @@ export default {
     Footer,
     Header,
     Modal,
+    WebSocketAlarm,
   },
   mounted() {
     this.fetchCarts();

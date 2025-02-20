@@ -1,5 +1,7 @@
 <template>
   <Header />
+
+  <WebSocketAlarm/>
   <div class="book-details-page">
     <div v-if="book" class="book-details">
       <div class="book-image" :style="backgroundStyle">
@@ -74,12 +76,13 @@ import Header from '../../MainPage/components/Header.vue';
 import BookReview from './BookReview.vue'; // BookReview 컴포넌트 임포트
 import Modal from '../../modal/CustomModal.vue';
 import ImageUtils from '/src/scripts/Img.js';
+import WebSocketAlarm from '../../Alarm/components/WebSocketAlarm.vue';
 
 export default {
   props: {
     bookId: 0,
   },
-  components: { Footer, Header, BookReview, Modal },
+  components: { Footer, Header, BookReview, Modal,WebSocketAlarm },
   data() {
     return {
       book: null,

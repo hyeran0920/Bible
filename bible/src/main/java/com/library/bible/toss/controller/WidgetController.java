@@ -26,6 +26,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
+@RequestMapping("/api/order/toss")
 public class WidgetController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -37,7 +38,7 @@ public class WidgetController {
 	
 	@PostConstruct
 	public void init() {
-		System.out.println("toss key="+tossKeyTemp);
+		//System.out.println("toss key="+tossKeyTemp);
 		tossKey=tossKeyTemp;
 	}
 
@@ -105,11 +106,11 @@ public class WidgetController {
     //인증 성공
     @GetMapping("/success")
     public String paymentRequest(HttpServletRequest request, Model model) throws Exception {
-        return "/success";
+        return "success";
     }
 
     //결제 시작 창
-    @GetMapping("/")
+    @GetMapping("/checkout")
     public String index(HttpServletRequest request, Model model) throws Exception {
     	String orderHistoryId=request.getParameter("orderHistoryId");
     	model.addAttribute("orderHistoryId",orderHistoryId);
@@ -125,6 +126,6 @@ public class WidgetController {
         model.addAttribute("code", failCode);
         model.addAttribute("message", failMessage);
 
-        return "/fail";
+        return "fail";
     }
 }

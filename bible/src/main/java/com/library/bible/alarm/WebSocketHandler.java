@@ -140,11 +140,11 @@ public class WebSocketHandler extends TextWebSocketHandler implements Initializi
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        //logger.info("Runnable 시작");
-        //Thread t = new Thread(new AlarmRunnable());
-        //t.start();
+//        logger.info("Runnable 시작");
+//        Thread t = new Thread(new AlarmRunnable());
+//        t.start();
     }
-//
+
 //    private class AlarmRunnable implements Runnable {
 //        @Override
 //        public void run() {
@@ -163,7 +163,7 @@ public class WebSocketHandler extends TextWebSocketHandler implements Initializi
 //                    //sendMessageToUser((long) 62, messageContent2);
 //                    
 //                    
-//                    Thread.sleep(10000); // 이 간격으로 메시지 전송
+//                    Thread.sleep(1000); // 이 간격으로 메시지 전송
 //                } catch (InterruptedException e) {
 //                    logger.error("쓰레드 중단!", e);
 //                    break;

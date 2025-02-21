@@ -49,6 +49,7 @@ public class UploadService implements IUploadService {
      */
     
     private byte[] getImageFromDirectory(String directory, long id, String imageType) {
+    	//System.out.println("get book img from directory");
         for (String extension : IMAGE_EXTENSIONS) {
             Path filePath = Paths.get(directory, id + extension);
 
@@ -221,7 +222,7 @@ public class UploadService implements IUploadService {
     
     @Override
     public void createBookQRImage(Book book, long bookId) {
-    	
+    	System.out.println("create book qr image");
     	try {
     		//System.out.println("book qr id="+bookId);
         	//create qr

@@ -1,4 +1,5 @@
 const axios = window.axios;
+axios.defaults.withCredentials = true;
 
 const BASE_URL=`http://localhost:8080/api/`;
 

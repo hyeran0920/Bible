@@ -96,10 +96,10 @@ public class SecurityConfig {
 	                .requestMatchers(HttpMethod.DELETE, "/flask/**").hasAnyRole("ADMIN", "USER")  // 조회는 관리자만 가능
 	                
 	                // order, order history
-	                .requestMatchers(HttpMethod.GET, "/api/order**").hasAnyRole("ADMIN", "USER")  // 조회는 관리자만 가능
-	                .requestMatchers(HttpMethod.POST, "/api/order**").hasAnyRole("ADMIN", "USER")  // 조회는 관리자만 가능
-	                .requestMatchers(HttpMethod.PUT, "/api/order**").hasAnyRole("ADMIN", "USER")  // 조회는 관리자만 가능
-	                .requestMatchers(HttpMethod.DELETE, "/api/order**").hasAnyRole("ADMIN", "USER")  // 조회는 관리자만 가능
+//	                .requestMatchers(HttpMethod.GET, "/api/order**", "/api/orderhistory/**").hasAnyRole("ADMIN", "USER")  // 조회는 관리자만 가능
+//	                .requestMatchers(HttpMethod.POST, "/api/order**", "/api/orderhistory/**").hasAnyRole("ADMIN", "USER")  // 조회는 관리자만 가능
+//	                .requestMatchers(HttpMethod.PUT, "/api/order**", "/api/orderhistory/**").hasAnyRole("ADMIN", "USER")  // 조회는 관리자만 가능
+//	                .requestMatchers(HttpMethod.DELETE, "/api/order**", "/api/orderhistory/**").hasAnyRole("ADMIN", "USER")  // 조회는 관리자만 가능
 
 	                // reservations
 	                .requestMatchers(HttpMethod.GET, "/api/reservations/**").hasAnyRole("ADMIN", "USER")  // 조회는 관리자만 가능

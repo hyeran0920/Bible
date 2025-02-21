@@ -39,6 +39,7 @@ public class MemberService implements IMemberService{
 	@Override
 	public Member selectMember(long memId) {
 		Member member = memberRepository.selectMember(memId);
+		
 		if(member == null) throw new CustomException(ExceptionCode.MEMBER_NOT_FOUND);
 		return member;
 	}
@@ -97,7 +98,6 @@ public class MemberService implements IMemberService{
 		
 		//QR이미지 생성
 		uploadService.createMemberQRImage(member);
-		// TODO : QR 이미지 생성 후 이미지 경로 저장하기
 		
 		// member 권한 설정
 		List<Role> roles = new ArrayList<>();
@@ -124,6 +124,7 @@ public class MemberService implements IMemberService{
 		int result = memberRepository.updateMember(member);
 		if(result == 0) throw new CustomException(ExceptionCode.MEMBER_UPDATE_FAIL);
 		
+		uploadService.createMemberQRImage(member);
 		// role 수정
 //        if (member.getRoles() != null && !member.getRoles().isEmpty()) {
 //        	memberRepository.deleteRoles(member.getMemId()); // 이전에 저장된 role 제거

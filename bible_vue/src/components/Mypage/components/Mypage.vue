@@ -1,6 +1,7 @@
 <template>
     <Header />
     
+    <WebSocketAlarm/>
     <div class="mypage-container">
         <button class="hamburger-btn" @click="toggleSidebar">☰</button>
         <div class="sidebar" :class="{ 'sidebar-hidden': !isSidebarOpen }">
@@ -31,6 +32,7 @@
 </template>
   
 <script>
+    import WebSocketAlarm from '../../Alarm/components/WebSocketAlarm.vue';
     import Footer from '../../MainPage/components/Footer.vue';
     import Header from '../../MainPage/components/Header.vue';
 
@@ -39,6 +41,7 @@
         components:{
             Header,
             Footer,
+            WebSocketAlarm,
         },
         data() {
             return {

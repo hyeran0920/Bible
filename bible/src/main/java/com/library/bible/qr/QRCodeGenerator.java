@@ -55,13 +55,8 @@ private static final String AES_ALGORITHM = "AES";
 	        System.out.println("QR Code generated: " + path);
 	        
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} // AES 암호화
-        
-        
-
-        
     }
 
     // AES 암호화

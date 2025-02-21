@@ -85,7 +85,8 @@ public class UploadController {
     //GET IMG/////////////////////////////////////////////////////////
     @GetMapping("/book-image")
     public ResponseEntity<byte[]> getBookImage(@RequestParam("bookid") long bookId) {
-        //System.out.println("here is get obok img");
+        System.out.println("📖 get book img!!!!!!!!!!");
+
     	byte[] imageBytes = uploadService.getBookImage(bookId);
 
         if (imageBytes != null) {
@@ -95,6 +96,8 @@ public class UploadController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+
+        //return ResponseEntity.ok().header("Content-Type", "image/jpeg").body(null);
     }
     
     
@@ -103,6 +106,7 @@ public class UploadController {
     
     @GetMapping("/member-qr-image")
     public ResponseEntity<byte[]> getMemberQRImageByToken(@AuthMember Long memId) {
+    	System.out.println("get member qrqrqrqrqr image");
     	byte[] imageBytes = uploadService.getMemberQRImage(memId);
     	
     	if (imageBytes != null) {
@@ -112,6 +116,37 @@ public class UploadController {
     	} else {
     		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     	}
+    }
+    
+    @GetMapping("/member-qr-image/mem")
+    public ResponseEntity<byte[]> getMemberQRImage(@RequestParam("memid") long memId) {
+    	System.out.println("get member qrqrqrqrqr image");
+    	byte[] imageBytes = uploadService.getMemberQRImage(memId);
+    	
+    	if (imageBytes != null) {
+    		return ResponseEntity.ok()
+    				.header("Content-Type", "image/jpeg")
+    				.body(imageBytes);
+    	} else {
+    		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    	}
+    }
+    
+    
+    
+    @GetMapping("/book-qr-image")
+    public ResponseEntity<byte[]> getBookQRImage(@RequestParam("bookid") long bookId) {
+    	System.out.println("📖 get book QRQRQR img!!!!!!!!!!");
+
+    	byte[] imageBytes = uploadService.getBookQRImage(bookId);
+
+        if (imageBytes != null) {
+            return ResponseEntity.ok()
+                    .header("Content-Type", "image/jpeg")
+                    .body(imageBytes);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
     
     

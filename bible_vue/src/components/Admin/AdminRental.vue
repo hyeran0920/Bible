@@ -174,6 +174,7 @@ export default {
                 this.selectedBookIds=[];
                 this.fetchRentList(memId); 
             } catch (error) {
+                this.openSystemModal(error);
                 console.error("대여/반납 요청 실패:", error);
             }
         },
